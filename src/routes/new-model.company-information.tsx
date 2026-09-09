@@ -308,7 +308,7 @@ function CompanyInformation() {
 
                 <Question
                   number={3}
-                  label="Does the company have common shares, preferred shares, or both?"
+                  label="Does IFC have common shares or preferred shares?"
                   required
                 >
                   <OptionRow
@@ -321,6 +321,16 @@ function CompanyInformation() {
                       { value: "both", label: "Both common and preferred" },
                     ]}
                   />
+                  {(a.shareClasses === "preferred" || a.shareClasses === "both") && (
+                    <div className="mt-4">
+                      <TextField
+                        label="Describe the rights of the preferred shares"
+                        value={a.preferredShareRights}
+                        onChange={(value) => setAnswer("preferredShareRights", value)}
+                        placeholder="e.g., liquidation preference, dividend rights, conversion terms"
+                      />
+                    </div>
+                  )}
                 </Question>
 
                 <Question number={4} label="Does the company have a liquidity put?" required>

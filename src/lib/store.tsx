@@ -48,6 +48,7 @@ export type Answers = {
   customYears: string;
   compsCount: string;
   shareClasses: "" | "common" | "preferred" | "both";
+  preferredShareRights: string;
   liquidityPut: "" | "yes" | "no";
   putMechanisms: string[];
 };
@@ -73,6 +74,7 @@ export const EMPTY_ANSWERS: Answers = {
   customYears: "",
   compsCount: "",
   shareClasses: "",
+  preferredShareRights: "",
   liquidityPut: "",
   putMechanisms: [],
 };
