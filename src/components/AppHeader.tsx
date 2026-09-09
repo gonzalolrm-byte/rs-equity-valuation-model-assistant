@@ -13,7 +13,7 @@ export function AppHeader({ showDeveloper = true }: { showDeveloper?: boolean })
               IFC Valuation Assistant
             </span>
             <span className="block text-sm text-muted-foreground">
-              Templates. Insights. Better Decisions.
+              CROMC Equity Team
             </span>
           </span>
         </Link>
