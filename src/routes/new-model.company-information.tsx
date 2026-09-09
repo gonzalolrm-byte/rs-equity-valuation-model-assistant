@@ -14,13 +14,17 @@ import {
   TextField,
 } from "@/components/form";
 import {
+  CAPACITY_MEASUREMENTS,
   COGS_CATEGORIES,
   CURRENCIES,
   defaultCurrencyForCountry,
+  OTHER_MEASUREMENT,
+  OUTPUT_MEASUREMENTS,
   PUT_PRICE_MECHANISMS,
+  recommendedMeasurements,
   SECTORS,
 } from "@/lib/data";
-import { useApp } from "@/lib/store";
+import { useApp, type SegmentMeasurement } from "@/lib/store";
 
 export const WORKFLOW_A_STEPS = [
   "Company Information",
