@@ -390,3 +390,18 @@ function CompanyInformation() {
     </div>
   );
 }
+
+function CurrencyDisplay({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-[13px] font-medium text-navy/80">{label}</label>
+      <div className="flex h-11 items-center rounded-lg border border-panel-border bg-panel/40 px-3 text-[15px] text-navy">
+        {value ? (
+          <span>{value}</span>
+        ) : (
+          <span className="text-muted-foreground">Currency will appear here</span>
+        )}
+      </div>
+    </div>
+  );
+}
