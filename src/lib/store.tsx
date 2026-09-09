@@ -82,6 +82,7 @@ export const EMPTY_ANSWERS: Answers = {
   reportingCurrency: "",
   segmentBasis: "",
   selectedSegments: [],
+  segmentMeasurements: {},
   cogsBasis: "",
   capexBasis: "",
   otherDirectCosts: [],
