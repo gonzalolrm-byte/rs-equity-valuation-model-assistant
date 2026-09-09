@@ -27,6 +27,19 @@ export type UploadedFile = { id: string; name: string; size: number; addedAt: st
 
 export type FileSlots = Record<string, UploadedFile[]>;
 
+/**
+ * Operational driver measurement units for one segment. Maximum Output and
+ * Units Sold always share a single unit, so only one output value is stored.
+ * `*Other` holds the manual entry used when "Other Measurement" is selected.
+ */
+export type SegmentMeasurement = {
+  description: string;
+  capacity: string;
+  capacityOther: string;
+  output: string;
+  outputOther: string;
+};
+
 export type Answers = {
   companyName: string;
   sector: string;
