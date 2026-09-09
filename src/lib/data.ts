@@ -217,8 +217,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-01",
     title: "Identify the appropriate standardized DCF template",
-    category: "Company Information",
-    step: "Workflow A – Step 1",
+    category: "General Information",
+    step: "Workflow A – Step 1: Company Information",
     status: "Active",
     lastUpdated: "2026-08-21",
     promptText:
@@ -229,8 +229,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-02",
     title: "Number of business lines / revenue streams",
-    category: "Company Information",
-    step: "Workflow A – Step 1",
+    category: "Segmentation and Categorization",
+    step: "Workflow A – Step 1: Company Information",
     status: "Active",
     lastUpdated: "2026-08-21",
     promptText:
@@ -241,8 +241,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-03",
     title: "Map COGS categories to 'Other Direct Costs'",
-    category: "Company Information",
-    step: "Workflow A – Step 1",
+    category: "Segmentation and Categorization",
+    step: "Workflow A – Step 1: Company Information",
     status: "Active",
     lastUpdated: "2026-08-09",
     promptText:
@@ -253,8 +253,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-04",
     title: "Configure projection horizon",
-    category: "Valuation",
-    step: "Workflow A – Step 1",
+    category: "Other Modeling Considerations",
+    step: "Workflow A – Step 1: Company Information",
     status: "Active",
     lastUpdated: "2026-07-28",
     promptText:
@@ -265,8 +265,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-05",
     title: "Configure share classes and preferred waterfall",
-    category: "Valuation",
-    step: "Workflow A – Step 1",
+    category: "Other Modeling Considerations",
+    step: "Workflow A – Step 1: Company Information",
     status: "Active",
     lastUpdated: "2026-07-28",
     promptText:
@@ -277,8 +277,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-06",
     title: "Configure liquidity put mechanics",
-    category: "Valuation",
-    step: "Workflow A – Step 1",
+    category: "Other Modeling Considerations",
+    step: "Workflow A – Step 1: Company Information",
     status: "Active",
     lastUpdated: "2026-07-28",
     promptText:
@@ -289,8 +289,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-07",
     title: "Extract historical financial statements",
-    category: "Extraction",
-    step: "Workflow A – Step 2",
+    category: "Document Upload",
+    step: "Workflow A – Step 2: Document Upload",
     status: "Active",
     lastUpdated: "2026-08-30",
     promptText:
@@ -301,8 +301,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-08",
     title: "Extract operational drivers by segment",
-    category: "Extraction",
-    step: "Workflow A – Step 2",
+    category: "Document Upload",
+    step: "Workflow A – Step 2: Document Upload",
     status: "Active",
     lastUpdated: "2026-08-30",
     promptText:
@@ -313,8 +313,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-09",
     title: "Populate standardized template and flag gaps",
-    category: "Generation",
-    step: "Workflow A – Step 3",
+    category: "Model Generation",
+    step: "Workflow A – Step 3: Model Generation",
     status: "Active",
     lastUpdated: "2026-09-02",
     promptText:
@@ -325,8 +325,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "B-01",
     title: "Add one year of historicals",
-    category: "Model Update",
-    step: "Workflow B – Step 2",
+    category: "Model Updates",
+    step: "Workflow B – Step 2: Model Updates",
     status: "Active",
     lastUpdated: "2026-09-03",
     promptText:
@@ -337,8 +337,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "B-02",
     title: "Update Cost of Equity Parameters",
-    category: "Model Update",
-    step: "Workflow B – Step 2",
+    category: "Model Updates",
+    step: "Workflow B – Step 2: Model Updates",
     status: "Active",
     lastUpdated: "2026-09-03",
     promptText:
@@ -349,8 +349,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "B-03",
     title: "Update macro variables",
-    category: "Model Update",
-    step: "Workflow B – Step 2",
+    category: "Model Updates",
+    step: "Workflow B – Step 2: Model Updates",
     status: "Active",
     lastUpdated: "2026-09-03",
     promptText:
@@ -361,8 +361,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "B-04",
     title: "Update YTD financials",
-    category: "Model Update",
-    step: "Workflow B – Step 2",
+    category: "Model Updates",
+    step: "Workflow B – Step 2: Model Updates",
     status: "Active",
     lastUpdated: "2026-08-27",
     promptText:
@@ -373,8 +373,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "B-05",
     title: "Update calibration factors (revenue, COGS, CapEx)",
-    category: "Model Update",
-    step: "Workflow B – Step 2",
+    category: "Model Updates",
+    step: "Workflow B – Step 2: Model Updates",
     status: "Active",
     lastUpdated: "2026-08-27",
     promptText:
@@ -385,8 +385,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "B-06",
     title: "Update debt inputs",
-    category: "Model Update",
-    step: "Workflow B – Step 2",
+    category: "Model Updates",
+    step: "Workflow B – Step 2: Model Updates",
     status: "Active",
     lastUpdated: "2026-08-27",
     promptText:
@@ -397,8 +397,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "B-07",
     title: "Missing information report",
-    category: "Generation",
-    step: "Workflow B – Step 3",
+    category: "Review and Generate",
+    step: "Workflow B – Step 3: Review and Generate",
     status: "Inactive",
     lastUpdated: "2026-06-30",
     promptText:
@@ -409,20 +409,24 @@ export const INITIAL_PROMPTS: PromptAction[] = [
 ];
 
 export const PROMPT_CATEGORIES = [
-  "Company Information",
-  "Valuation",
-  "Extraction",
-  "Generation",
-  "Model Update",
+  // Categories mirror the section / step names the end user sees in the app.
+  "General Information",
+  "Modeling Approach",
+  "Segmentation and Categorization",
+  "Other Modeling Considerations",
+  "Document Upload",
+  "Model Generation",
+  "Model Updates",
+  "Review and Generate",
 ];
 
 export const PROMPT_STEPS = [
-  "Workflow A – Step 1",
-  "Workflow A – Step 2",
-  "Workflow A – Step 3",
-  "Workflow B – Step 1",
-  "Workflow B – Step 2",
-  "Workflow B – Step 3",
+  "Workflow A – Step 1: Company Information",
+  "Workflow A – Step 2: Document Upload",
+  "Workflow A – Step 3: Model Generation",
+  "Workflow B – Step 1: Document Upload",
+  "Workflow B – Step 2: Model Updates",
+  "Workflow B – Step 3: Review and Generate",
 ];
 
 /**
