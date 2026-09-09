@@ -223,229 +223,248 @@ const NO_GUESSING =
 
 export const INITIAL_PROMPTS: PromptAction[] = [
   // --- Workflow A, Step 1: Company Information ---------------------------
-  // A.1-A.5 mirror section "A. General Information"
+  // One instruction block per Company Information question. Grouped exactly
+  // like the questionnaire the user sees: A. General Information,
+  // B. Modeling Approach, C. Segmentation and Categorization,
+  // D. Other Modeling Considerations.
   {
-    id: "A-01",
-    title: "A.1 Company name",
+    id: "A-001",
+    title: "Company Name",
     category: "General Information",
     step: "Workflow A – Step 1: Company Information",
     status: "Active",
-    lastUpdated: "2026-08-21",
+    lastUpdated: "2026-09-09",
+    variables: ["{{company_name}}"],
     promptText:
-      "Confirm the legal and commercial name of the company from the uploaded documents and compare it with the company name entered by the user. Report the name used in the source documents and flag any mismatch." +
-      NO_GUESSING,
+      "Use {{company_name}} as the company name throughout the model. Replace company-specific references or placeholders in the template with this name where applicable. Do not modify formulas or model structure solely because of the company name.",
     requiredResources: [],
   },
   {
-    id: "A-02",
-    title: "A.2 Primary sector",
+    id: "A-002",
+    title: "Primary Sector",
     category: "General Information",
     step: "Workflow A – Step 1: Company Information",
     status: "Active",
-    lastUpdated: "2026-08-21",
+    lastUpdated: "2026-09-09",
+    variables: ["{{primary_sector}}"],
     promptText:
-      "Using the company description in the uploaded documents, confirm whether the sector selected by the user is the primary sector. State the sector evidenced by the documents and identify which standardized DCF template that sector maps to." +
-      NO_GUESSING,
+      "Treat {{primary_sector}} as the company's primary sector. Use this sector classification when selecting the appropriate standardized DCF template and when determining sector-appropriate terminology, operating drivers, measurement units, assumptions, and model conventions. Do not change the standardized template structure unless required by another questionnaire response.",
     requiredResources: ["res-dcf"],
   },
   {
-    id: "A-03",
-    title: "A.3 Main countries of operation (up to 3) and local currencies",
+    id: "A-003",
+    title: "Countries of Operation",
     category: "General Information",
     step: "Workflow A – Step 1: Company Information",
     status: "Active",
-    lastUpdated: "2026-08-21",
+    lastUpdated: "2026-09-09",
+    variables: ["{{country_1}}", "{{country_2}}", "{{country_3}}"],
     promptText:
-      "Identify the main countries in which the company operates (maximum three, ranked by contribution to revenue) and the local currency of each. Return the country, its local currency and the evidence used for the ranking." +
-      NO_GUESSING,
+      "Configure the model for the following operating countries: {{country_1}}, {{country_2}}, and {{country_3}}, where provided. Use the corresponding local currencies and country-specific macroeconomic assumptions, including inflation and real GDP growth, where required by the template. Ignore unused country slots.",
     requiredResources: ["res-macro"],
   },
   {
-    id: "A-04",
-    title: "A.4 Material foreign-currency revenues, costs or investments",
+    id: "A-004",
+    title: "Foreign Currency Exposure",
     category: "General Information",
     step: "Workflow A – Step 1: Company Information",
     status: "Active",
-    lastUpdated: "2026-08-21",
+    lastUpdated: "2026-09-09",
+    variables: ["{{foreign_currency_exposure}}"],
     promptText:
-      "Determine whether the company has material revenues, costs or investments denominated in a currency other than the local currency. Quote the disclosures relied upon and list the currencies involved with their approximate share of revenue and costs." +
-      NO_GUESSING,
+      "The response to material foreign-currency exposure is {{foreign_currency_exposure}}. If Yes, reflect material revenues, costs, or investments denominated in a currency other than the local operating currency. To avoid unnecessary complexity, use USD as the default foreign currency unless another currency is explicitly provided in the source information. If No, do not introduce an additional FX exposure solely for modeling purposes.",
     requiredResources: [],
   },
   {
-    id: "A-05",
-    title: "A.5 Reporting currency",
+    id: "A-005",
+    title: "Reporting Currency",
     category: "General Information",
     step: "Workflow A – Step 1: Company Information",
     status: "Active",
-    lastUpdated: "2026-08-21",
+    lastUpdated: "2026-09-09",
+    variables: ["{{reporting_currency}}"],
     promptText:
-      "State the reporting (presentation) currency and the units of the audited financial statements, and confirm whether it matches the reporting currency selected by the user." +
-      NO_GUESSING,
-    requiredResources: [],
-  },
-  // B.1-B.3 mirror section "B. Modeling Approach"
-  {
-    id: "A-06",
-    title: "B.1 Revenue modeling approach",
-    category: "Modeling Approach",
-    step: "Workflow A – Step 1: Company Information",
-    status: "Active",
-    lastUpdated: "2026-08-21",
-    promptText:
-      "Given the sector, business description and data available in the uploaded documents, recommend whether revenue should be modeled on a percentage-based (simplified) basis or using unit economics (price x volume). Justify the recommendation with the specific historical data available." +
-      NO_GUESSING,
-    requiredResources: ["res-dcf"],
-  },
-  {
-    id: "A-07",
-    title: "B.2 COGS modeling approach",
-    category: "Modeling Approach",
-    step: "Workflow A – Step 1: Company Information",
-    status: "Active",
-    lastUpdated: "2026-08-21",
-    promptText:
-      "Recommend whether COGS should be modeled as a percentage of revenue or from per-unit cost assumptions, based on the cost disclosures available. State which historical inputs support the recommended approach." +
-      NO_GUESSING,
-    requiredResources: ["res-dcf"],
-  },
-  {
-    id: "A-08",
-    title: "B.3 CapEx modeling approach",
-    category: "Modeling Approach",
-    step: "Workflow A – Step 1: Company Information",
-    status: "Active",
-    lastUpdated: "2026-08-21",
-    promptText:
-      "Recommend whether CapEx should be modeled as a percentage of revenue or driven by per-unit capacity and expansion assumptions, based on the capital expenditure and capacity data disclosed." +
-      NO_GUESSING,
-    requiredResources: ["res-dcf"],
-  },
-  // C.1-C.5 mirror section "C. Segmentation and Categorization"
-  {
-    id: "A-09",
-    title: "C.1 Segmentation basis: business line or revenue stream",
-    category: "Segmentation and Categorization",
-    step: "Workflow A – Step 1: Company Information",
-    status: "Active",
-    lastUpdated: "2026-08-21",
-    promptText:
-      "Using the company's business model and internal reporting, recommend whether operations should be segmented by business line or by revenue stream. Explain the operating-model and market-dynamic differences that justify the recommendation." +
-      NO_GUESSING,
-    requiredResources: ["res-dcf"],
-  },
-  {
-    id: "A-10",
-    title: "C.2 Segments to include and measurement units per segment",
-    category: "Segmentation and Categorization",
-    step: "Workflow A – Step 1: Company Information",
-    status: "Active",
-    lastUpdated: "2026-08-21",
-    promptText:
-      "List the segments that should be included in the model and, for each segment, recommend the measurement unit for Maximum Output / Units Sold and for Capacity. Maximum Output and Units Sold must share the same unit; Capacity may differ. If the applicable template defines units, use those; otherwise default to 'Units'. Also report the segment sheets and input blocks that must exist in the adapted template, without altering formula logic." +
-      NO_GUESSING,
-    requiredResources: ["res-dcf"],
-  },
-  {
-    id: "A-11",
-    title: "C.3 COGS segmented or aggregate",
-    category: "Segmentation and Categorization",
-    step: "Workflow A – Step 1: Company Information",
-    status: "Active",
-    lastUpdated: "2026-08-21",
-    promptText:
-      "State whether historical COGS can be reliably split by the selected segmentation basis. Recommend a segmented or aggregate COGS build and list the structural changes required in the template." +
-      NO_GUESSING,
-    requiredResources: ["res-dcf"],
-  },
-  {
-    id: "A-12",
-    title: "C.4 CapEx segmented or aggregate",
-    category: "Segmentation and Categorization",
-    step: "Workflow A – Step 1: Company Information",
-    status: "Active",
-    lastUpdated: "2026-08-21",
-    promptText:
-      "State whether historical CapEx can be reliably split by the selected segmentation basis. Recommend a segmented or aggregate CapEx build and list the structural changes required in the template." +
-      NO_GUESSING,
-    requiredResources: ["res-dcf"],
-  },
-  {
-    id: "A-13",
-    title: 'C.5 Map COGS categories to "Other Direct Costs"',
-    category: "Segmentation and Categorization",
-    step: "Workflow A – Step 1: Company Information",
-    status: "Active",
-    lastUpdated: "2026-08-09",
-    promptText:
-      "The user selected a set of standard COGS categories to be combined under 'Other Direct Costs'. Return the mapping between the template's standard COGS line items and the aggregated line, flagging any selected category that does not exist in the template or that is disclosed separately in the financial statements." +
-      NO_GUESSING,
-    requiredResources: ["res-dcf"],
-  },
-  // D.1-D.5 mirror section "D. Other Modeling Considerations"
-  {
-    id: "A-14",
-    title: "D.1 Projection horizon",
-    category: "Other Modeling Considerations",
-    step: "Workflow A – Step 1: Company Information",
-    status: "Active",
-    lastUpdated: "2026-07-28",
-    promptText:
-      "Given the requested number of projection years, report the projection columns that must be added or removed in each worksheet, and confirm which formulas must be extended. Application code performs the workbook edit; you only return the instruction set." +
-      NO_GUESSING,
-    requiredResources: ["res-dcf"],
-  },
-  {
-    id: "A-15",
-    title: "D.2 Working capital days by line item",
-    category: "Other Modeling Considerations",
-    step: "Workflow A – Step 1: Company Information",
-    status: "Active",
-    lastUpdated: "2026-08-21",
-    promptText:
-      "For each working capital line item (trade receivables, contract assets, inventories, prepayments and other current assets, trade payables, contract liabilities / deferred revenue, accrued expenses and other operating payables), extract the historical balances and compute the implied days for the last 1, 2, 3 and 5 years. Return the values for the basis the user selected, with the arithmetic shown." +
-      NO_GUESSING,
+      "Use {{reporting_currency}} as the company's reporting and model presentation currency. Convert financial information from other currencies into the reporting currency using the template's FX methodology where required.",
     requiredResources: [],
   },
   {
-    id: "A-16",
-    title: "D.3 Comparable companies (comps)",
+    id: "A-006",
+    title: "Revenue Modeling Approach",
+    category: "Modeling Approach",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-09-09",
+    variables: ["{{revenue_modeling_approach}}"],
+    promptText:
+      "Model revenue using {{revenue_modeling_approach}}. If Percentage-based is selected, use the template's simplified revenue forecasting methodology. If Unit Economics is selected, model revenue using Units Sold (or equivalent) x Price per Unit, together with the relevant operating and pricing drivers.",
+    requiredResources: [],
+  },
+  {
+    id: "A-007",
+    title: "COGS Modeling Approach",
+    category: "Modeling Approach",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-09-09",
+    variables: ["{{cogs_modeling_approach}}"],
+    promptText:
+      "Model COGS using {{cogs_modeling_approach}}. If Percentage-based is selected, forecast COGS using the template's percentage-based methodology. If Unit Economics is selected, model applicable variable costs using cost per Unit Sold (or equivalent) and applicable fixed or semi-fixed costs using Maximum Output or capacity-related drivers where appropriate.",
+    requiredResources: [],
+  },
+  {
+    id: "A-008",
+    title: "CapEx Modeling Approach",
+    category: "Modeling Approach",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-09-09",
+    variables: ["{{capex_modeling_approach}}"],
+    promptText:
+      "Model CapEx using {{capex_modeling_approach}}. If Percentage-based is selected, forecast CapEx as a percentage of revenue. If Unit Economics is selected, model maintenance and expansion CapEx using the applicable capacity-based methodology, distinguishing existing capacity from incremental capacity where required.",
+    requiredResources: [],
+  },
+  {
+    id: "A-009",
+    title: "Segmentation Type: Business Line vs. Revenue Stream",
+    category: "Segmentation and Categorization",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-09-09",
+    variables: ["{{segmentation_type}}"],
+    promptText:
+      "Segment operations and revenues by {{segmentation_type}}. If Business Line is selected, each segment should represent a distinct operating segment based on differences in operating models or market dynamics. If Revenue Stream is selected, each segment should represent a distinct source of revenue within the company's operations. Apply the selected segmentation consistently throughout the relevant model schedules.",
+    requiredResources: [],
+  },
+  {
+    id: "A-010",
+    title: "Segments & Measurement Units",
+    category: "Segmentation and Categorization",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-09-09",
+    variables: [
+      "{{segmentation_type}}",
+      "{{segment_1}}",
+      "{{segment_2}}",
+      "{{segment_3}}",
+      "{{other_segment}}",
+      "{{segment_descriptions}}",
+      "{{units_sold_measurements}}",
+      "{{capacity_measurements}}",
+      "{{capacity_modeling_level}}",
+    ],
+    promptText:
+      "Configure the model using the selected {{segmentation_type}} segments: {{segment_1}}, {{segment_2}}, {{segment_3}}, and {{other_segment}}, where selected.\n\nUse the segment descriptions to confirm appropriate terminology and operating drivers.\n\nWhere Revenue or COGS uses Unit Economics, use the selected {{units_sold_measurements}} for Maximum Output and Units Sold (or equivalent) for each applicable segment. Maximum Output and Units Sold must always use the same measurement unit.\n\nWhere CapEx uses Unit Economics, use {{capacity_measurements}} as the applicable capacity measure. Capacity may use the same or a different measurement unit from Maximum Output / Units Sold.\n\nApply {{capacity_modeling_level}} when determining whether capacity should be modeled separately by revenue stream or at the aggregate company level.\n\nIf Revenue, COGS and CapEx are all Percentage-based, do not create operational measurement-unit schedules solely for forecasting purposes.\n\nDo not create segments that were not selected by the user.",
+    requiredResources: [],
+  },
+  {
+    id: "A-011",
+    title: "COGS Segmentation",
+    category: "Segmentation and Categorization",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-09-09",
+    variables: ["{{cogs_segmentation}}"],
+    promptText:
+      "Model COGS on a {{cogs_segmentation}} basis. If Segmented is selected, align COGS with the selected business lines or revenue streams wherever the source information permits. If Aggregate is selected, maintain COGS at the company level and do not create separate COGS schedules by segment.",
+    requiredResources: [],
+  },
+  {
+    id: "A-012",
+    title: "CapEx Segmentation",
+    category: "Segmentation and Categorization",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-09-09",
+    variables: ["{{capex_segmentation}}"],
+    promptText:
+      "Model CapEx on a {{capex_segmentation}} basis. If Segmented is selected, align CapEx with the selected business lines or revenue streams wherever applicable. If Aggregate is selected, maintain CapEx at the company level and do not create separate CapEx schedules by segment.",
+    requiredResources: [],
+  },
+  {
+    id: "A-013",
+    title: "COGS Categories Combined under Other Direct Costs",
+    category: "Segmentation and Categorization",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-09-09",
+    variables: ["{{cogs_categories_to_combine}}"],
+    promptText:
+      "Combine the following selected COGS categories under Other Direct Costs: {{cogs_categories_to_combine}}.\n\nKeep all unselected standard COGS categories separate. This is a reclassification only. Ensure Total COGS remains unchanged and preserve all historical, projection, subtotal, and downstream formula linkages.",
+    requiredResources: [],
+  },
+  {
+    id: "A-014",
+    title: "Projection Horizon",
     category: "Other Modeling Considerations",
     step: "Workflow A – Step 1: Company Information",
     status: "Active",
-    lastUpdated: "2026-08-21",
+    lastUpdated: "2026-09-09",
+    variables: ["{{projection_years}}"],
     promptText:
-      "Given the number of comparable companies requested, list the comps input rows the template requires and the data points needed for each comp. Do not propose comparable companies or multiples that are not present in the supplied documents." +
-      NO_GUESSING,
+      "Configure the model for {{projection_years}} years of projections. Add or remove forecast-year columns as necessary while preserving formulas, dependencies, formatting, valuation calculations, terminal-value calculations, and references throughout the workbook. Ensure that no formulas or links are broken by the change in projection horizon.",
     requiredResources: ["res-dcf"],
   },
   {
-    id: "A-17",
-    title: "D.4 Share classes and preferred rights",
+    id: "A-015",
+    title: "Working Capital Methodology",
     category: "Other Modeling Considerations",
     step: "Workflow A – Step 1: Company Information",
     status: "Active",
-    lastUpdated: "2026-07-28",
+    lastUpdated: "2026-09-09",
+    variables: [
+      "{{trade_receivables_basis}}",
+      "{{contract_assets_basis}}",
+      "{{inventories_basis}}",
+      "{{prepayments_basis}}",
+      "{{trade_payables_basis}}",
+      "{{contract_liabilities_basis}}",
+      "{{accrued_expenses_basis}}",
+      "{{manual_days_inputs}}",
+    ],
     promptText:
-      "Based on the share class answer and the preferred share rights described, state whether the preferred waterfall template must be appended and which inputs it requires from the uploaded documents (liquidation preference, dividend rights, conversion terms)." +
-      NO_GUESSING,
-    requiredResources: ["res-waterfall"],
+      "Forecast each working-capital line item using the historical basis selected by the user.\n\nApply the selected basis independently to Trade Receivables, Contract Assets, Inventories, Prepayments and Other Current Assets, Trade Payables, Contract Liabilities / Deferred Revenue, and Accrued Expenses and Other Operating Payables.\n\nWhere Manual Input is selected, use the corresponding value in {{manual_days_inputs}} instead of calculating a historical average.\n\nPreserve the appropriate revenue, COGS, or other denominator used by the standardized template for each working-capital calculation.",
+    requiredResources: [],
   },
   {
-    id: "A-18",
-    title: "D.5 Liquidity put mechanics",
+    id: "A-016",
+    title: "Number of Comparable Companies",
     category: "Other Modeling Considerations",
     step: "Workflow A – Step 1: Company Information",
     status: "Active",
-    lastUpdated: "2026-07-28",
+    lastUpdated: "2026-09-09",
+    variables: ["{{number_of_comps}}"],
     promptText:
-      "The user indicated a liquidity put and selected one or more pricing mechanisms. For each mechanism, list the inputs the liquidity put template requires and the source document where each input should be found." +
-      NO_GUESSING,
+      "Configure the comparable-company section to accommodate {{number_of_comps}} comparable companies. Add or remove comparable-company rows as necessary while preserving formulas, summary statistics, valuation multiples, formatting, and downstream references.",
+    requiredResources: [],
+  },
+  {
+    id: "A-017",
+    title: "IFC Share Classes & Preferred Share Rights",
+    category: "Other Modeling Considerations",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-09-09",
+    variables: ["{{ifc_share_type}}", "{{preferred_share_rights}}"],
+    promptText:
+      "Reflect IFC's investment as {{ifc_share_type}}.\n\nIf Common Shares Only is selected, use the common-equity valuation methodology.\n\nIf Preferred Shares Only or Both is selected, incorporate the preferred-share rights described in {{preferred_share_rights}}, including any liquidation preference, dividend rights, conversion rights, participation features, or other economically relevant provisions.\n\nDo not assume preferred-share rights that are not stated in the questionnaire or supporting documents.",
+    requiredResources: [],
+  },
+  {
+    id: "A-018",
+    title: "Liquidity Put",
+    category: "Other Modeling Considerations",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-09-09",
+    variables: ["{{liquidity_put}}", "{{put_price_mechanisms}}"],
+    promptText:
+      "The response to whether IFC has a liquidity put is {{liquidity_put}}.\n\nIf No, do not include a liquidity-put valuation.\n\nIf Yes, incorporate the selected put-price mechanisms in {{put_price_mechanisms}}.\n\nExtract detailed contractual terms from the supporting documentation where available, including the counterparty, exercise dates, IRR requirements, multiples, fixed prices, fair-value provisions, caps, floors, and other relevant terms.\n\nWhere multiple pricing mechanisms apply, determine from the supporting documentation whether the contractual put price uses the maximum, minimum, combination, or another relationship between those mechanisms.\n\nDo not infer missing contractual terms. If required information cannot be identified, return \"Data not found.\"",
     requiredResources: ["res-put"],
   },
   // --- Workflow A, Step 2 and Step 3 -------------------------------------
   {
-    id: "A-19",
+    id: "A-019",
     title: "Extract historical financial statements",
     category: "Document Upload",
     step: "Workflow A – Step 2: Document Upload",
@@ -457,7 +476,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-20",
+    id: "A-020",
     title: "Extract operational drivers by segment",
     category: "Document Upload",
     step: "Workflow A – Step 2: Document Upload",
@@ -469,7 +488,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-21",
+    id: "A-021",
     title: "Populate standardized template and flag gaps",
     category: "Model Generation",
     step: "Workflow A – Step 3: Model Generation",
