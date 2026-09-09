@@ -50,7 +50,6 @@ function CompanyInformation() {
     a.companyName.trim() &&
     a.sector &&
     a.mainCountry.trim() &&
-    a.fxMovements &&
     a.reportingCurrency &&
     a.segmentBasis &&
     a.segmentCount &&
