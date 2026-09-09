@@ -15,7 +15,7 @@ const WORKFLOWS = [
     prefix: "A",
     title: "Use Standardized Model for the First Time",
     description:
-      "Prompts executed during Workflow A: company information, document extraction and first-time model generation.",
+      "AI instructions used during Workflow A. Step 1 instructions correspond directly to the questions and decisions collected in the Company Information questionnaire and are used to configure the standardized DCF model.",
   },
   {
     key: "Workflow B",
@@ -144,11 +144,14 @@ function WorkflowSection({
   const current = Math.min(page, pages);
   const rows = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
 
+  let digits = 2;
   const maxNumber = state.prompts.reduce((max, prompt) => {
     const match = prompt.id.match(new RegExp(`^${workflow.prefix}-(\\d+)$`));
-    return match ? Math.max(max, Number(match[1])) : max;
+    if (!match) return max;
+    digits = Math.max(digits, match[1].length);
+    return Math.max(max, Number(match[1]));
   }, 0);
-  const nextId = `${workflow.prefix}-${String(maxNumber + 1).padStart(2, "0")}`;
+  const nextId = `${workflow.prefix}-${String(maxNumber + 1).padStart(digits, "0")}`;
 
   const workflowSteps = PROMPT_STEPS.filter((step) => step.startsWith(workflow.key));
 
