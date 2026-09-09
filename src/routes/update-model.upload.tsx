@@ -32,7 +32,7 @@ export const UPDATE_MODEL_SLOTS: UploadSlot[] = [
     description: "The most recent audited financial information available.",
     formats: "PDF, Excel (XLS/XLSX)",
     accept: ".pdf,.xls,.xlsx",
-    required: true,
+    required: false,
   },
   {
     key: "client_model",
@@ -41,7 +41,7 @@ export const UPDATE_MODEL_SLOTS: UploadSlot[] = [
     description: "The latest management / company financial model.",
     formats: "Excel (XLS/XLSX)",
     accept: ".xls,.xlsx",
-    required: true,
+    required: false,
   },
   {
     key: "additional_documents",
@@ -117,7 +117,7 @@ function UpdateUpload() {
             </div>
             {!ready && (
               <p className="mt-2 text-right text-sm text-muted-foreground">
-                Upload the three required documents to continue.
+                Upload the Last Quarter Standardized Valuation Model to continue.
               </p>
             )}
           </div>
