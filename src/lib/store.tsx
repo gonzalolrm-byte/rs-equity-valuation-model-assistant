@@ -133,7 +133,16 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setState({ ...INITIAL_STATE, ...(JSON.parse(raw) as Partial<AppState>) });
+      if (raw) {
+        const saved = JSON.parse(raw) as Partial<AppState>;
+        setState({
+          ...INITIAL_STATE,
+          ...saved,
+          // merge answers field-by-field so saved state from an older question
+          // set never leaves newly added fields undefined
+          answers: { ...EMPTY_ANSWERS, ...(saved.answers ?? {}) },
+        });
+      }
     } catch {
       /* ignore corrupt local state */
     }
