@@ -516,23 +516,6 @@ function SegmentMeasurements({
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <div>
           <SelectField
-            label="Capacity measurement"
-            value={current.capacity}
-            onChange={(value) => update({ capacity: value })}
-            options={CAPACITY_MEASUREMENTS}
-          />
-          {current.capacity === OTHER_MEASUREMENT && (
-            <div className="mt-2">
-              <TextField
-                value={current.capacityOther}
-                onChange={(value) => update({ capacityOther: value })}
-                placeholder="Enter capacity measurement"
-              />
-            </div>
-          )}
-        </div>
-        <div>
-          <SelectField
             label="Maximum Output / Units Sold measurement"
             value={current.output}
             onChange={(value) => update({ output: value })}
@@ -544,6 +527,23 @@ function SegmentMeasurements({
                 value={current.outputOther}
                 onChange={(value) => update({ outputOther: value })}
                 placeholder="Enter output / units sold measurement"
+              />
+            </div>
+          )}
+        </div>
+        <div>
+          <SelectField
+            label="Capacity measurement"
+            value={current.capacity}
+            onChange={(value) => update({ capacity: value })}
+            options={CAPACITY_MEASUREMENTS}
+          />
+          {current.capacity === OTHER_MEASUREMENT && (
+            <div className="mt-2">
+              <TextField
+                value={current.capacityOther}
+                onChange={(value) => update({ capacityOther: value })}
+                placeholder="Enter capacity measurement"
               />
             </div>
           )}
