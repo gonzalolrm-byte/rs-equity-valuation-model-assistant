@@ -322,6 +322,8 @@ function CompanyInformation() {
                       value={a.customYears}
                       onChange={(value) => setAnswer("customYears", value.replace(/\D/g, ""))}
                       placeholder="e.g. 15"
+                      error={!!customYearsError}
+                      errorMessage={customYearsError}
                     />
                   )}
                 </Question>
