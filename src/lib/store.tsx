@@ -111,7 +111,7 @@ type Ctx = {
   state: AppState;
   patch: (partial: Partial<AppState>) => void;
   setAnswer: <K extends keyof Answers>(key: K, value: Answers[K]) => void;
-  toggleAnswerItem: (key: "otherDirectCosts" | "putMechanisms", value: string) => void;
+  toggleAnswerItem: (key: "otherDirectCosts" | "putMechanisms" | "selectedSegments", value: string) => void;
   addFiles: (slotGroup: "newFiles" | "updateFiles", slot: string, files: File[]) => void;
   removeFile: (slotGroup: "newFiles" | "updateFiles", slot: string, id: string) => void;
   toggleAction: (actionId: string) => void;
