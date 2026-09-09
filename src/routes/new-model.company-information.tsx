@@ -200,15 +200,39 @@ function CompanyInformation() {
 
                 <Question
                   number={3}
-                  label="Which segments should be included in the model?"
+                  label="How many segments should be included in the model?"
                   required
                   hint='Select the segments that apply. "Other" can be used for any additional segment that is not one of the primary three.'
                 >
                   <div className="grid gap-3 sm:grid-cols-2">
                     {[
-                      { value: "segment1", label: "Segment 1" },
-                      { value: "segment2", label: "Segment 2" },
-                      { value: "segment3", label: "Segment 3" },
+                      {
+                        value: "segment1",
+                        label:
+                          a.segmentBasis === "revenue_stream"
+                            ? "Revenue Stream 1"
+                            : a.segmentBasis === "business_line"
+                              ? "Business Line 1"
+                              : "Segment 1",
+                      },
+                      {
+                        value: "segment2",
+                        label:
+                          a.segmentBasis === "revenue_stream"
+                            ? "Revenue Stream 2"
+                            : a.segmentBasis === "business_line"
+                              ? "Business Line 2"
+                              : "Segment 2",
+                      },
+                      {
+                        value: "segment3",
+                        label:
+                          a.segmentBasis === "revenue_stream"
+                            ? "Revenue Stream 3"
+                            : a.segmentBasis === "business_line"
+                              ? "Business Line 3"
+                              : "Segment 3",
+                      },
                       { value: "other", label: "Other" },
                     ].map((option) => (
                       <CheckItem
