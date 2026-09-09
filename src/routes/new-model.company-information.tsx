@@ -645,7 +645,7 @@ function SegmentMeasurements({
       )}
 
 
-      {a.segmentBasis === "revenue_stream" && (
+      {needsCapacityUnit && a.segmentBasis === "revenue_stream" && (
         <div className="mt-3 rounded-lg border border-panel-border bg-background/60 p-3">
           <p className="text-[13px] font-medium text-navy">
             Should capacity be modeled by revenue stream or on an aggregate basis?
