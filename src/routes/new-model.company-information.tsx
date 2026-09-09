@@ -225,7 +225,7 @@ function CompanyInformation() {
                   number={3}
                   label="Do you want COGS to be segmented or modeled on an aggregate basis?"
                   required
-                  hint="Choose the level of detail based on data availability and whether cost structures differ materially across segments."
+                  hint="If operations and revenues are segmented by business line, it is recommended that COGS also be segmented by business line to maintain consistency across the model."
                 >
                   <OptionRow
                     value={a.cogsBasis}
