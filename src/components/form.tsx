@@ -90,11 +90,15 @@ export function TextField({
   value,
   onChange,
   placeholder,
+  error,
+  errorMessage,
 }: {
   label?: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  error?: boolean;
+  errorMessage?: string;
 }) {
   return (
     <label className="block">
@@ -103,8 +107,12 @@ export function TextField({
         value={value}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded-lg border border-input bg-card px-3.5 py-2.5 text-[15px] text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary focus:ring-2 focus:ring-ring/25"
+        aria-invalid={error}
+        className={`w-full rounded-lg border bg-card px-3.5 py-2.5 text-[15px] text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:ring-2 focus:ring-ring/25 ${error ? "border-destructive focus:border-destructive" : "border-input focus:border-primary"}`}
       />
+      {error && errorMessage && (
+        <span className="mt-1.5 block text-sm text-destructive">{errorMessage}</span>
+      )}
     </label>
   );
 }
