@@ -431,8 +431,10 @@ export const PROMPT_STEPS = [
  * reveals a free-text field in the UI.
  */
 export const OTHER_MEASUREMENT = "Other Measurement";
+export const SAME_AS_OUTPUT_MEASUREMENT = "Same as Maximum Output / Units Sold";
 
 export const CAPACITY_MEASUREMENTS = [
+  SAME_AS_OUTPUT_MEASUREMENT,
   "Units",
   "Hectares",
   "Installed Capacity (MW)",
