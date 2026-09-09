@@ -13,7 +13,13 @@ import {
   SelectField,
   TextField,
 } from "@/components/form";
-import { COGS_CATEGORIES, CURRENCIES, PUT_PRICE_MECHANISMS, SECTORS } from "@/lib/data";
+import {
+  COGS_CATEGORIES,
+  CURRENCIES,
+  defaultCurrencyForCountry,
+  PUT_PRICE_MECHANISMS,
+  SECTORS,
+} from "@/lib/data";
 import { useApp } from "@/lib/store";
 
 export const WORKFLOW_A_STEPS = [
@@ -50,6 +56,7 @@ function CompanyInformation() {
     a.companyName.trim() &&
     a.sector &&
     a.mainCountry.trim() &&
+    a.mainCountryCurrency &&
     a.reportingCurrency &&
     a.segmentBasis &&
     a.segmentCount &&
@@ -110,24 +117,60 @@ function CompanyInformation() {
                   label="Enter the name of the main countries in which the company operates (list up to 3 names)."
                   required
                 >
-                  <TextField
-                    label="Main country"
-                    value={a.mainCountry}
-                    onChange={(value) => setAnswer("mainCountry", value)}
-                    placeholder="Enter country name"
-                  />
-                  <TextField
-                    label="Second country (optional)"
-                    value={a.secondCountry}
-                    onChange={(value) => setAnswer("secondCountry", value)}
-                    placeholder="Enter country name"
-                  />
-                  <TextField
-                    label="Third country (optional)"
-                    value={a.thirdCountry}
-                    onChange={(value) => setAnswer("thirdCountry", value)}
-                    placeholder="Enter country name"
-                  />
+                  <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
+                    <TextField
+                      label="Main country"
+                      value={a.mainCountry}
+                      onChange={(value) => {
+                        setAnswer("mainCountry", value);
+                        setAnswer("mainCountryCurrency", defaultCurrencyForCountry(value) ?? "");
+                      }}
+                      placeholder="Enter country name"
+                    />
+                    <SelectField
+                      label="Currency"
+                      value={a.mainCountryCurrency}
+                      onChange={(value) => setAnswer("mainCountryCurrency", value)}
+                      options={CURRENCIES}
+                      placeholder="Select currency"
+                    />
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
+                    <TextField
+                      label="Second country (optional)"
+                      value={a.secondCountry}
+                      onChange={(value) => {
+                        setAnswer("secondCountry", value);
+                        setAnswer("secondCountryCurrency", defaultCurrencyForCountry(value) ?? "");
+                      }}
+                      placeholder="Enter country name"
+                    />
+                    <SelectField
+                      label="Currency (optional)"
+                      value={a.secondCountryCurrency}
+                      onChange={(value) => setAnswer("secondCountryCurrency", value)}
+                      options={CURRENCIES}
+                      placeholder="Select currency"
+                    />
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
+                    <TextField
+                      label="Third country (optional)"
+                      value={a.thirdCountry}
+                      onChange={(value) => {
+                        setAnswer("thirdCountry", value);
+                        setAnswer("thirdCountryCurrency", defaultCurrencyForCountry(value) ?? "");
+                      }}
+                      placeholder="Enter country name"
+                    />
+                    <SelectField
+                      label="Currency (optional)"
+                      value={a.thirdCountryCurrency}
+                      onChange={(value) => setAnswer("thirdCountryCurrency", value)}
+                      options={CURRENCIES}
+                      placeholder="Select currency"
+                    />
+                  </div>
                 </Question>
 
                 <Question

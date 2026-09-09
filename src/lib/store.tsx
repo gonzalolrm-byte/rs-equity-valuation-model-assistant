@@ -32,8 +32,11 @@ export type Answers = {
   sector: string;
   businessModel: string;
   mainCountry: string;
+  mainCountryCurrency: string;
   secondCountry: string;
+  secondCountryCurrency: string;
   thirdCountry: string;
+  thirdCountryCurrency: string;
   hasForeignCurrency: "" | "yes" | "no";
   reportingCurrency: string;
   segmentBasis: "" | "business_line" | "revenue_stream";
@@ -54,8 +57,11 @@ export const EMPTY_ANSWERS: Answers = {
   sector: "",
   businessModel: "",
   mainCountry: "",
+  mainCountryCurrency: "",
   secondCountry: "",
+  secondCountryCurrency: "",
   thirdCountry: "",
+  thirdCountryCurrency: "",
   hasForeignCurrency: "",
   reportingCurrency: "",
   segmentBasis: "",

@@ -44,6 +44,46 @@ export const CURRENCIES = [
   "VND – Vietnamese Dong",
 ] as const;
 
+const COUNTRY_DEFAULT_CURRENCY: Record<string, string> = {
+  "united states": "USD – US Dollar",
+  usa: "USD – US Dollar",
+  us: "USD – US Dollar",
+  "united kingdom": "GBP – Pound Sterling",
+  uk: "GBP – Pound Sterling",
+  "great britain": "GBP – Pound Sterling",
+  brazil: "BRL – Brazilian Real",
+  mexico: "MXN – Mexican Peso",
+  colombia: "COP – Colombian Peso",
+  peru: "PEN – Peruvian Sol",
+  india: "INR – Indian Rupee",
+  indonesia: "IDR – Indonesian Rupiah",
+  nigeria: "NGN – Nigerian Naira",
+  kenya: "KES – Kenyan Shilling",
+  egypt: "EGP – Egyptian Pound",
+  "south africa": "ZAR – South African Rand",
+  turkey: "TRY – Turkish Lira",
+  vietnam: "VND – Vietnamese Dong",
+  japan: "JPY – Japanese Yen",
+  china: "CNY – Chinese Yuan",
+  "european union": "EUR – Euro",
+  germany: "EUR – Euro",
+  france: "EUR – Euro",
+  italy: "EUR – Euro",
+  spain: "EUR – Euro",
+  netherlands: "EUR – Euro",
+  belgium: "EUR – Euro",
+  austria: "EUR – Euro",
+  portugal: "EUR – Euro",
+  greece: "EUR – Euro",
+  ireland: "EUR – Euro",
+  finland: "EUR – Euro",
+};
+
+export function defaultCurrencyForCountry(country: string): string | undefined {
+  const key = country.trim().toLowerCase();
+  return COUNTRY_DEFAULT_CURRENCY[key];
+}
+
 export const COGS_CATEGORIES = [
   "Materials & Consumables",
   "Direct Labor",
