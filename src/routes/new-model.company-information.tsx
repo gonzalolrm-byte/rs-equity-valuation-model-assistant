@@ -127,13 +127,7 @@ function CompanyInformation() {
                       }}
                       placeholder="Enter country name"
                     />
-                    <SelectField
-                      label="Currency"
-                      value={a.mainCountryCurrency}
-                      onChange={(value) => setAnswer("mainCountryCurrency", value)}
-                      options={CURRENCIES}
-                      placeholder="Select currency"
-                    />
+                    <CurrencyDisplay label="Currency" value={a.mainCountryCurrency} />
                   </div>
                   <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
                     <TextField
@@ -145,13 +139,7 @@ function CompanyInformation() {
                       }}
                       placeholder="Enter country name"
                     />
-                    <SelectField
-                      label="Currency (optional)"
-                      value={a.secondCountryCurrency}
-                      onChange={(value) => setAnswer("secondCountryCurrency", value)}
-                      options={CURRENCIES}
-                      placeholder="Select currency"
-                    />
+                    <CurrencyDisplay label="Currency (optional)" value={a.secondCountryCurrency} />
                   </div>
                   <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
                     <TextField
@@ -163,13 +151,7 @@ function CompanyInformation() {
                       }}
                       placeholder="Enter country name"
                     />
-                    <SelectField
-                      label="Currency (optional)"
-                      value={a.thirdCountryCurrency}
-                      onChange={(value) => setAnswer("thirdCountryCurrency", value)}
-                      options={CURRENCIES}
-                      placeholder="Select currency"
-                    />
+                    <CurrencyDisplay label="Currency (optional)" value={a.thirdCountryCurrency} />
                   </div>
                 </Question>
 
@@ -405,6 +387,21 @@ function CompanyInformation() {
           />
         </div>
       </main>
+    </div>
+  );
+}
+
+function CurrencyDisplay({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-[13px] font-medium text-navy/80">{label}</label>
+      <div className="flex h-11 items-center rounded-lg border border-panel-border bg-panel/40 px-3 text-[15px] text-navy">
+        {value ? (
+          <span>{value}</span>
+        ) : (
+          <span className="text-muted-foreground">Currency will appear here</span>
+        )}
+      </div>
     </div>
   );
 }
