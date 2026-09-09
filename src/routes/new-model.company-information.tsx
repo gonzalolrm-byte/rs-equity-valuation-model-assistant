@@ -52,6 +52,12 @@ function CompanyInformation() {
   const a = state.answers;
   const navigate = useNavigate();
 
+  const customYearsNum = a.projectionYears === "custom" ? Number(a.customYears) : NaN;
+  const customYearsError =
+    a.projectionYears === "custom" && !Number.isNaN(customYearsNum) && customYearsNum < 10
+      ? "When selecting More than 10 years, please enter a value of 10 or greater."
+      : undefined;
+
   const canContinue =
     a.companyName.trim() &&
     a.sector &&
@@ -64,6 +70,7 @@ function CompanyInformation() {
     a.capexBasis &&
     a.projectionYears &&
     (a.projectionYears !== "custom" || a.customYears.trim()) &&
+    !customYearsError &&
     a.shareClasses &&
     a.liquidityPut &&
     (a.liquidityPut !== "yes" || a.putMechanisms.length > 0);
