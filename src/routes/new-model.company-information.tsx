@@ -103,17 +103,6 @@ function CompanyInformation() {
 
                 <Question
                   number={3}
-                  label="Provide a brief description of the company's business model and how it generates revenue."
-                >
-                  <TextField
-                    value={a.businessModel}
-                    onChange={(value) => setAnswer("businessModel", value)}
-                    placeholder="Describe the business model and revenue drivers"
-                  />
-                </Question>
-
-                <Question
-                  number={4}
                   label="Enter the name of the main countries in which the company operates (list up to 3 names)."
                   required
                 >
@@ -156,7 +145,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={5}
+                  number={4}
                   label="If the company operates in a single country, does it have material revenues, costs, or investments denominated in a currency other than the local currency?"
                 >
                   <OptionRow
@@ -171,7 +160,7 @@ function CompanyInformation() {
                   />
                 </Question>
 
-                <Question number={6} label="What is the company's reporting currency?" required>
+                <Question number={5} label="What is the company's reporting currency?" required>
                   <SelectField
                     value={a.reportingCurrency}
                     onChange={(value) => setAnswer("reportingCurrency", value)}
@@ -184,6 +173,17 @@ function CompanyInformation() {
               <Collapsible title="B. Segmentation and Categorization">
                 <Question
                   number={1}
+                  label="Provide a brief description of the company's business model and how it generates revenue."
+                >
+                  <TextField
+                    value={a.businessModel}
+                    onChange={(value) => setAnswer("businessModel", value)}
+                    placeholder="Describe the business model and revenue drivers"
+                  />
+                </Question>
+
+                <Question
+                  number={2}
                   label="Do you want to segment operations by business line or by revenue stream?"
                   required
                   hint="A business line reflects how a company's operations are divided into distinct operating segments based on differences in operating models and market dynamics, while a revenue stream is a specific way the company generates revenue within a business line. A business line may include multiple revenue streams. Different business lines typically have different measures of Units Sold and operating capacity."
@@ -199,7 +199,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={2}
+                  number={3}
                   label="Which segments should be included in the model?"
                   required
                   hint='Select the segments that apply. "Other" can be used for any additional segment that is not one of the primary three.'
@@ -222,7 +222,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={3}
+                  number={4}
                   label="Do you want COGS to be segmented or modeled on an aggregate basis?"
                   required
                   hint="If operations and revenues are segmented by business line, it is recommended that COGS also be segmented by business line to maintain consistency across the model."
@@ -238,7 +238,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={4}
+                  number={5}
                   label="Do you want CapEx to be segmented or modeled on an aggregate basis?"
                   required
                   hint="If operations and revenues are segmented by business line, it is recommended that CapEx also be segmented by business line to maintain consistency across the model."
@@ -254,7 +254,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={5}
+                  number={6}
                   label='Which standard COGS categories should be combined under "Other Direct Costs"? Select all that apply.'
                   hint="Categories should be aggregated only when data is unavailable or a category is not relevant. Otherwise, keep these categories separate, as this breakdown supports more robust analysis and forecasting."
                 >
