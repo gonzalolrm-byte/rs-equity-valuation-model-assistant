@@ -64,8 +64,6 @@ function CompanyInformation() {
     a.mainCountry.trim() &&
     a.mainCountryCurrency &&
     a.reportingCurrency &&
-    a.segmentBasis &&
-    a.selectedSegments.length > 0 &&
     a.cogsBasis &&
     a.capexBasis &&
     a.projectionYears &&
@@ -192,7 +190,6 @@ function CompanyInformation() {
                 <Question
                   number={2}
                   label="Based on the company's business model, do you want to segment operations by business line or by revenue stream?"
-                  required
                   hint="A business line reflects how a company's operations are divided into distinct operating segments based on differences in operating models and market dynamics, while a revenue stream is a specific way the company generates revenue within a business line. A business line may include multiple revenue streams. Different business lines typically have different measures of Units Sold and operating capacity."
                 >
                   <OptionRow
@@ -207,8 +204,7 @@ function CompanyInformation() {
 
                 <Question
                   number={3}
-                 label="Select the number of segments to include in the model:"
-                  required
+                  label="Select the number of segments to include in the model:"
                   hint='Select the segments that apply. "Other" can be used for any additional segment that is not one of the primary three.'
                 >
                   <div className="grid gap-3 sm:grid-cols-2">
