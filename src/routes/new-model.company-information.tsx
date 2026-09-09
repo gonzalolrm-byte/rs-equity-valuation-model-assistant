@@ -91,6 +91,9 @@ function CompanyInformation() {
     a.mainCountry.trim() &&
     a.mainCountryCurrency &&
     a.reportingCurrency &&
+    a.revenueModeling &&
+    a.cogsModeling &&
+    a.capexModeling &&
     a.cogsBasis &&
     a.capexBasis &&
     a.projectionYears &&
@@ -202,7 +205,63 @@ function CompanyInformation() {
                 </Question>
               </Collapsible>
 
-              <Collapsible title="B. Segmentation and Categorization">
+              <Collapsible title="B. Modeling Approach">
+                <Question
+                  number={1}
+                  label="How should revenue be modeled?"
+                  hint="Percentage-based modeling derives revenue from a revenue driver (e.g., % growth or price × volume assumptions). Unit economics models revenue per unit sold or per transaction."
+                  required
+                >
+                  <OptionRow
+                    value={a.revenueModeling}
+                    onChange={(value) =>
+                      setAnswer("revenueModeling", value as typeof a.revenueModeling)
+                    }
+                    options={[
+                      { value: "pct_revenue", label: "Percentage-based (simplified)" },
+                      { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
+                    ]}
+                  />
+                </Question>
+
+                <Question
+                  number={2}
+                  label="How should COGS be modeled?"
+                  hint="Select whether COGS should scale as a percentage of revenue or be built from per-unit cost assumptions."
+                  required
+                >
+                  <OptionRow
+                    value={a.cogsModeling}
+                    onChange={(value) =>
+                      setAnswer("cogsModeling", value as typeof a.cogsModeling)
+                    }
+                    options={[
+                      { value: "pct_revenue", label: "Percentage-based (simplified)" },
+                      { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
+                    ]}
+                  />
+                </Question>
+
+                <Question
+                  number={3}
+                  label="How should CapEx be modeled?"
+                  hint="Select whether CapEx should be modeled as a percentage of revenue or driven by per-unit capacity/expansion assumptions."
+                  required
+                >
+                  <OptionRow
+                    value={a.capexModeling}
+                    onChange={(value) =>
+                      setAnswer("capexModeling", value as typeof a.capexModeling)
+                    }
+                    options={[
+                      { value: "pct_revenue", label: "Percentage-based (simplified)" },
+                      { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
+                    ]}
+                  />
+                </Question>
+              </Collapsible>
+
+              <Collapsible title="C. Segmentation and Categorization">
                 <Question
                   number={1}
                   label="Based on the company's business model, do you want to segment operations by business line or by revenue stream?"
@@ -256,21 +315,6 @@ function CompanyInformation() {
                       { value: "aggregate", label: "Aggregate (company level)" },
                     ]}
                   />
-                  <div>
-                    <p className="text-sm text-muted-foreground">How should COGS be modeled?</p>
-                    <div className="mt-2">
-                      <OptionRow
-                        value={a.cogsModeling}
-                        onChange={(value) =>
-                          setAnswer("cogsModeling", value as typeof a.cogsModeling)
-                        }
-                        options={[
-                          { value: "pct_revenue", label: "% of revenues" },
-                          { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
-                        ]}
-                      />
-                    </div>
-                  </div>
                 </Question>
 
                 <Question
@@ -287,21 +331,6 @@ function CompanyInformation() {
                       { value: "aggregate", label: "Aggregate (company level)" },
                     ]}
                   />
-                  <div>
-                    <p className="text-sm text-muted-foreground">How should CapEx be modeled?</p>
-                    <div className="mt-2">
-                      <OptionRow
-                        value={a.capexModeling}
-                        onChange={(value) =>
-                          setAnswer("capexModeling", value as typeof a.capexModeling)
-                        }
-                        options={[
-                          { value: "pct_revenue", label: "% of revenues" },
-                          { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
-                        ]}
-                      />
-                    </div>
-                  </div>
                 </Question>
 
                 <Question
@@ -322,7 +351,7 @@ function CompanyInformation() {
                 </Question>
               </Collapsible>
 
-              <Collapsible title="C. Other Modeling Considerations">
+              <Collapsible title="D. Other Modeling Considerations">
                 <Question number={1} label="How many years of projections do you need?" required>
                   <OptionRow
                     columns={3}
