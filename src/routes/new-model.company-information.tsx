@@ -200,7 +200,7 @@ function CompanyInformation() {
 
                 <Question
                   number={3}
-                  label="How many segments should be included in the model?"
+                 label="Select the number of segments to include in the model:"
                   required
                   hint='Select the segments that apply. "Other" can be used for any additional segment that is not one of the primary three.'
                 >
