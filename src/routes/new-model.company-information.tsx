@@ -56,6 +56,20 @@ function CompanyInformation() {
   const a = state.answers;
   const navigate = useNavigate();
 
+  const segmentNoun =
+    a.segmentBasis === "revenue_stream"
+      ? "Revenue Stream"
+      : a.segmentBasis === "business_line"
+        ? "Business Line"
+        : "Segment";
+  const segmentOptions = [
+    { value: "segment1", label: `${segmentNoun} 1` },
+    { value: "segment2", label: `${segmentNoun} 2` },
+    { value: "segment3", label: `${segmentNoun} 3` },
+    { value: "other", label: "Other" },
+  ];
+
+
   const customYearsNum = a.projectionYears === "custom" ? Number(a.customYears) : NaN;
   const customYearsError =
     a.projectionYears === "custom" && !Number.isNaN(customYearsNum) && customYearsNum < 10
