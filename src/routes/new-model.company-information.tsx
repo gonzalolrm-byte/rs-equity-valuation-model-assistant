@@ -130,7 +130,23 @@ function CompanyInformation() {
                   />
                 </Question>
 
-                <Question number={5} label="What is the company's reporting currency?" required>
+                <Question
+                  number={5}
+                  label="Does the company have material revenues, costs, or investments denominated in a currency other than the local currency?"
+                >
+                  <OptionRow
+                    value={a.hasForeignCurrency}
+                    onChange={(value) =>
+                      setAnswer("hasForeignCurrency", value as typeof a.hasForeignCurrency)
+                    }
+                    options={[
+                      { value: "yes", label: "Yes" },
+                      { value: "no", label: "No" },
+                    ]}
+                  />
+                </Question>
+
+                <Question number={6} label="What is the company's reporting currency?" required>
                   <SelectField
                     value={a.reportingCurrency}
                     onChange={(value) => setAnswer("reportingCurrency", value)}
