@@ -208,6 +208,14 @@ export type PromptAction = {
   lastUpdated: string;
   promptText: string;
   requiredResources: string[];
+  /**
+   * Questionnaire variables this instruction block consumes (e.g.
+   * "{{company_name}}"). Step 1 instructions are instruction blocks that the
+   * future generation service combines with the user's answers, the extracted
+   * document data and the selected template - they are not separate Claude
+   * executions.
+   */
+  variables?: string[];
 };
 
 const NO_GUESSING =
