@@ -473,9 +473,14 @@ function SegmentMeasurements({
     segmentDescription: saved?.description ?? "",
   });
 
+  const defaultCapacity =
+    !saved?.capacity && recommended.capacity === recommended.output
+      ? SAME_AS_OUTPUT_MEASUREMENT
+      : recommended.capacity;
+
   const current: SegmentMeasurement = {
     description: saved?.description ?? "",
-    capacity: saved?.capacity || recommended.capacity,
+    capacity: saved?.capacity || defaultCapacity,
     capacityOther: saved?.capacityOther ?? "",
     output: saved?.output || recommended.output,
     outputOther: saved?.outputOther ?? "",
