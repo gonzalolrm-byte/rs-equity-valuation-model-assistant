@@ -222,7 +222,7 @@ function CompanyInformation() {
                     value={a.cogsBasis}
                     onChange={(value) => setAnswer("cogsBasis", value as typeof a.cogsBasis)}
                     options={[
-                      { value: "segmented", label: "Segmented by business line" },
+                      { value: "segmented", label: "Segmented" },
                       { value: "aggregate", label: "Aggregate (company level)" },
                     ]}
                   />
@@ -238,7 +238,7 @@ function CompanyInformation() {
                     value={a.capexBasis}
                     onChange={(value) => setAnswer("capexBasis", value as typeof a.capexBasis)}
                     options={[
-                      { value: "segmented", label: "Segmented by business line" },
+                      { value: "segmented", label: "Segmented" },
                       { value: "aggregate", label: "Aggregate (company level)" },
                     ]}
                   />
