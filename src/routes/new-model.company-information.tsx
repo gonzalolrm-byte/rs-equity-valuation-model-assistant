@@ -157,7 +157,7 @@ function CompanyInformation() {
 
                 <Question
                   number={5}
-                  label="Does the company have material revenues, costs, or investments denominated in a currency other than the local currency?"
+                  label="If the company operates in a single country, does it have material revenues, costs, or investments denominated in a currency other than the local currency?"
                 >
                   <OptionRow
                     value={a.hasForeignCurrency}
