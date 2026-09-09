@@ -167,9 +167,21 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const saved = JSON.parse(raw) as Partial<AppState>;
+        // Reconcile the action registry: keep developer edits for actions that
+        // still exist, adopt any newly shipped actions, and drop actions that
+        // were removed from the registry (while keeping developer-created ones).
+        const savedPrompts = saved.prompts ?? [];
+        const registryIds = new Set(INITIAL_PROMPTS.map((prompt) => prompt.id));
+        const prompts: PromptAction[] = [
+          ...INITIAL_PROMPTS.map(
+            (prompt) => savedPrompts.find((item) => item.id === prompt.id) ?? prompt,
+          ),
+          ...savedPrompts.filter((item) => !registryIds.has(item.id)),
+        ];
         setState({
           ...INITIAL_STATE,
           ...saved,
+          prompts,
           // merge answers field-by-field so saved state from an older question
           // set never leaves newly added fields undefined
           answers: { ...EMPTY_ANSWERS, ...(saved.answers ?? {}) },

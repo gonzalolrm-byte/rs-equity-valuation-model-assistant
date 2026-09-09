@@ -15,7 +15,7 @@ const WORKFLOWS = [
     prefix: "A",
     title: "Use Standardized Model for the First Time",
     description:
-      "Prompts executed during Workflow A: company information, document extraction and first-time model generation.",
+      "AI instructions used during Workflow A. Step 1 instructions correspond directly to the questions and decisions collected in the Company Information questionnaire and are used to configure the standardized DCF model.",
   },
   {
     key: "Workflow B",
@@ -144,11 +144,15 @@ function WorkflowSection({
   const current = Math.min(page, pages);
   const rows = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
 
+  let digits = 2;
   const maxNumber = state.prompts.reduce((max, prompt) => {
     const match = prompt.id.match(new RegExp(`^${workflow.prefix}-(\\d+)$`));
-    return match ? Math.max(max, Number(match[1])) : max;
+    if (!match) return max;
+    const number = match[1] ?? "";
+    digits = Math.max(digits, number.length);
+    return Math.max(max, Number(number));
   }, 0);
-  const nextId = `${workflow.prefix}-${String(maxNumber + 1).padStart(2, "0")}`;
+  const nextId = `${workflow.prefix}-${String(maxNumber + 1).padStart(digits, "0")}`;
 
   const workflowSteps = PROMPT_STEPS.filter((step) => step.startsWith(workflow.key));
 
@@ -338,11 +342,20 @@ function PromptEditor({
 
         <div className="space-y-5 px-5 py-6">
           <div className="grid gap-4 sm:grid-cols-2">
-            <TextField
-              label="ID"
-              value={draft.id}
-              onChange={(value) => setDraft({ ...draft, id: value })}
-            />
+            {isNew ? (
+              <TextField
+                label="ID"
+                value={draft.id}
+                onChange={(value) => setDraft({ ...draft, id: value })}
+              />
+            ) : (
+              <label className="block">
+                <span className="mb-1.5 block text-sm text-muted-foreground">ID</span>
+                <p className="rounded-lg border border-input bg-secondary/40 px-3.5 py-2.5 font-mono text-[13px] font-semibold text-primary">
+                  {draft.id}
+                </p>
+              </label>
+            )}
             <SelectField
               label="Status"
               value={draft.status}
@@ -376,16 +389,37 @@ function PromptEditor({
             />
           </div>
 
+          <TextField
+            label="Questionnaire Variable(s)"
+            value={(draft.variables ?? []).join(", ")}
+            onChange={(value) =>
+              setDraft({
+                ...draft,
+                variables: value
+                  .split(",")
+                  .map((item) => item.trim())
+                  .filter(Boolean),
+              })
+            }
+            placeholder="e.g. {{company_name}}, {{primary_sector}}"
+          />
+
           <label className="block">
-            <span className="mb-1.5 block text-sm text-muted-foreground">Claude Prompt</span>
+            <span className="mb-1.5 block text-sm text-muted-foreground">
+              AI Prompt / Instruction
+            </span>
             <textarea
               value={draft.promptText}
               onChange={(event) => setDraft({ ...draft, promptText: event.target.value })}
               rows={14}
               className="w-full rounded-lg border border-input bg-secondary/40 px-3.5 py-3 font-mono text-[13px] leading-relaxed text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/25"
-              placeholder="Exact instructions Claude must execute for this action…"
+              placeholder="Exact instruction this action contributes to model generation…"
             />
           </label>
+
+          <p className="text-[12px] text-muted-foreground">
+            Last updated: <span className="font-semibold text-navy">{draft.lastUpdated}</span>
+          </p>
 
           <div className="rounded-xl border border-panel-border bg-panel/60 p-4">
             <p className="font-heading text-[14px] font-bold">Test Prompt</p>
@@ -426,7 +460,7 @@ function PromptEditor({
               onClose();
             }}
           >
-            Save Changes
+            {isNew ? "Add Action" : "Save Prompt"}
           </Button>
         </div>
       </div>
