@@ -459,7 +459,7 @@ function PromptEditor({
               onClose();
             }}
           >
-            Save Changes
+            {isNew ? "Add Action" : "Save Prompt"}
           </Button>
         </div>
       </div>
