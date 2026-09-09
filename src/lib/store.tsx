@@ -38,6 +38,7 @@ export type SegmentMeasurement = {
   capacityOther: string;
   output: string;
   outputOther: string;
+  capacityBasis: "" | "revenue_stream" | "aggregate";
 };
 
 export type Answers = {
