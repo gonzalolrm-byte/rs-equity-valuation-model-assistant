@@ -30,6 +30,7 @@ export type FileSlots = Record<string, UploadedFile[]>;
 export type Answers = {
   companyName: string;
   sector: string;
+  businessModel: string;
   mainCountry: string;
   secondCountry: string;
   thirdCountry: string;
@@ -52,6 +53,7 @@ export type Answers = {
 export const EMPTY_ANSWERS: Answers = {
   companyName: "",
   sector: "",
+  businessModel: "",
   mainCountry: "",
   secondCountry: "",
   thirdCountry: "",
