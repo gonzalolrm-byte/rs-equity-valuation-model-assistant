@@ -10,13 +10,59 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DeveloperRouteImport } from './routes/developer'
+import { Route as GuidelinesRouteImport } from './routes/guidelines'
+import { Route as HelpRouteImport } from './routes/help'
+import { Route as DeveloperIndexRouteImport } from './routes/developer.index'
+import { Route as DeveloperPromptsRouteImport } from './routes/developer.prompts'
+import { Route as DeveloperResourcesRouteImport } from './routes/developer.resources'
 import { Route as NewModelCompanyInformationRouteImport } from './routes/new-model.company-information'
+import { Route as NewModelGenerateRouteImport } from './routes/new-model.generate'
 import { Route as NewModelUploadRouteImport } from './routes/new-model.upload'
+import { Route as UpdateModelReviewRouteImport } from './routes/update-model.review'
+import { Route as UpdateModelUpdatesRouteImport } from './routes/update-model.updates'
+import { Route as UpdateModelUploadRouteImport } from './routes/update-model.upload'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeveloperRoute = DeveloperRouteImport.update({
+  id: '/developer',
+  path: '/developer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidelinesRoute = GuidelinesRouteImport.update({
+  id: '/guidelines',
+  path: '/guidelines',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeveloperIndexRoute = DeveloperIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DeveloperRoute,
+} as any)
+const DeveloperPromptsRoute = DeveloperPromptsRouteImport.update({
+  id: '/prompts',
+  path: '/prompts',
+  getParentRoute: () => DeveloperRoute,
+} as any)
+const DeveloperResourcesRoute = DeveloperResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
+  getParentRoute: () => DeveloperRoute,
 } as any)
 const NewModelCompanyInformationRoute =
   NewModelCompanyInformationRouteImport.update({
@@ -24,40 +70,142 @@ const NewModelCompanyInformationRoute =
     path: '/new-model/company-information',
     getParentRoute: () => rootRouteImport,
   } as any)
+const NewModelGenerateRoute = NewModelGenerateRouteImport.update({
+  id: '/new-model/generate',
+  path: '/new-model/generate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NewModelUploadRoute = NewModelUploadRouteImport.update({
   id: '/new-model/upload',
   path: '/new-model/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UpdateModelReviewRoute = UpdateModelReviewRouteImport.update({
+  id: '/update-model/review',
+  path: '/update-model/review',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UpdateModelUpdatesRoute = UpdateModelUpdatesRouteImport.update({
+  id: '/update-model/updates',
+  path: '/update-model/updates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UpdateModelUploadRoute = UpdateModelUploadRouteImport.update({
+  id: '/update-model/upload',
+  path: '/update-model/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
+  '/developer': typeof DeveloperRouteWithChildren
+  '/guidelines': typeof GuidelinesRoute
+  '/help': typeof HelpRoute
+  '/developer/prompts': typeof DeveloperPromptsRoute
+  '/developer/resources': typeof DeveloperResourcesRoute
   '/new-model/company-information': typeof NewModelCompanyInformationRoute
+  '/new-model/generate': typeof NewModelGenerateRoute
   '/new-model/upload': typeof NewModelUploadRoute
+  '/update-model/review': typeof UpdateModelReviewRoute
+  '/update-model/updates': typeof UpdateModelUpdatesRoute
+  '/update-model/upload': typeof UpdateModelUploadRoute
+  '/developer/': typeof DeveloperIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
+  '/guidelines': typeof GuidelinesRoute
+  '/help': typeof HelpRoute
+  '/developer/prompts': typeof DeveloperPromptsRoute
+  '/developer/resources': typeof DeveloperResourcesRoute
   '/new-model/company-information': typeof NewModelCompanyInformationRoute
+  '/new-model/generate': typeof NewModelGenerateRoute
   '/new-model/upload': typeof NewModelUploadRoute
+  '/update-model/review': typeof UpdateModelReviewRoute
+  '/update-model/updates': typeof UpdateModelUpdatesRoute
+  '/update-model/upload': typeof UpdateModelUploadRoute
+  '/developer': typeof DeveloperIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
+  '/developer': typeof DeveloperRouteWithChildren
+  '/guidelines': typeof GuidelinesRoute
+  '/help': typeof HelpRoute
+  '/developer/prompts': typeof DeveloperPromptsRoute
+  '/developer/resources': typeof DeveloperResourcesRoute
   '/new-model/company-information': typeof NewModelCompanyInformationRoute
+  '/new-model/generate': typeof NewModelGenerateRoute
   '/new-model/upload': typeof NewModelUploadRoute
+  '/update-model/review': typeof UpdateModelReviewRoute
+  '/update-model/updates': typeof UpdateModelUpdatesRoute
+  '/update-model/upload': typeof UpdateModelUploadRoute
+  '/developer/': typeof DeveloperIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/new-model/company-information' | '/new-model/upload'
+  fullPaths:
+    | '/'
+    | '/contact'
+    | '/developer'
+    | '/guidelines'
+    | '/help'
+    | '/developer/prompts'
+    | '/developer/resources'
+    | '/new-model/company-information'
+    | '/new-model/generate'
+    | '/new-model/upload'
+    | '/update-model/review'
+    | '/update-model/updates'
+    | '/update-model/upload'
+    | '/developer/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/new-model/company-information' | '/new-model/upload'
-  id: '__root__' | '/' | '/new-model/company-information' | '/new-model/upload'
+  to:
+    | '/'
+    | '/contact'
+    | '/guidelines'
+    | '/help'
+    | '/developer/prompts'
+    | '/developer/resources'
+    | '/new-model/company-information'
+    | '/new-model/generate'
+    | '/new-model/upload'
+    | '/update-model/review'
+    | '/update-model/updates'
+    | '/update-model/upload'
+    | '/developer'
+  id:
+    | '__root__'
+    | '/'
+    | '/contact'
+    | '/developer'
+    | '/guidelines'
+    | '/help'
+    | '/developer/prompts'
+    | '/developer/resources'
+    | '/new-model/company-information'
+    | '/new-model/generate'
+    | '/new-model/upload'
+    | '/update-model/review'
+    | '/update-model/updates'
+    | '/update-model/upload'
+    | '/developer/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ContactRoute: typeof ContactRoute
+  DeveloperRoute: typeof DeveloperRouteWithChildren
+  GuidelinesRoute: typeof GuidelinesRoute
+  HelpRoute: typeof HelpRoute
   NewModelCompanyInformationRoute: typeof NewModelCompanyInformationRoute
+  NewModelGenerateRoute: typeof NewModelGenerateRoute
   NewModelUploadRoute: typeof NewModelUploadRoute
+  UpdateModelReviewRoute: typeof UpdateModelReviewRoute
+  UpdateModelUpdatesRoute: typeof UpdateModelUpdatesRoute
+  UpdateModelUploadRoute: typeof UpdateModelUploadRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -69,11 +217,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/developer': {
+      id: '/developer'
+      path: '/developer'
+      fullPath: '/developer'
+      preLoaderRoute: typeof DeveloperRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guidelines': {
+      id: '/guidelines'
+      path: '/guidelines'
+      fullPath: '/guidelines'
+      preLoaderRoute: typeof GuidelinesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/developer/': {
+      id: '/developer/'
+      path: '/'
+      fullPath: '/developer/'
+      preLoaderRoute: typeof DeveloperIndexRouteImport
+      parentRoute: typeof DeveloperRoute
+    }
+    '/developer/prompts': {
+      id: '/developer/prompts'
+      path: '/prompts'
+      fullPath: '/developer/prompts'
+      preLoaderRoute: typeof DeveloperPromptsRouteImport
+      parentRoute: typeof DeveloperRoute
+    }
+    '/developer/resources': {
+      id: '/developer/resources'
+      path: '/resources'
+      fullPath: '/developer/resources'
+      preLoaderRoute: typeof DeveloperResourcesRouteImport
+      parentRoute: typeof DeveloperRoute
+    }
     '/new-model/company-information': {
       id: '/new-model/company-information'
       path: '/new-model/company-information'
       fullPath: '/new-model/company-information'
       preLoaderRoute: typeof NewModelCompanyInformationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/new-model/generate': {
+      id: '/new-model/generate'
+      path: '/new-model/generate'
+      fullPath: '/new-model/generate'
+      preLoaderRoute: typeof NewModelGenerateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/new-model/upload': {
@@ -83,13 +287,58 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewModelUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/update-model/review': {
+      id: '/update-model/review'
+      path: '/update-model/review'
+      fullPath: '/update-model/review'
+      preLoaderRoute: typeof UpdateModelReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/update-model/updates': {
+      id: '/update-model/updates'
+      path: '/update-model/updates'
+      fullPath: '/update-model/updates'
+      preLoaderRoute: typeof UpdateModelUpdatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/update-model/upload': {
+      id: '/update-model/upload'
+      path: '/update-model/upload'
+      fullPath: '/update-model/upload'
+      preLoaderRoute: typeof UpdateModelUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface DeveloperRouteChildren {
+  DeveloperPromptsRoute: typeof DeveloperPromptsRoute
+  DeveloperResourcesRoute: typeof DeveloperResourcesRoute
+  DeveloperIndexRoute: typeof DeveloperIndexRoute
+}
+
+const DeveloperRouteChildren: DeveloperRouteChildren = {
+  DeveloperPromptsRoute: DeveloperPromptsRoute,
+  DeveloperResourcesRoute: DeveloperResourcesRoute,
+  DeveloperIndexRoute: DeveloperIndexRoute,
+}
+
+const DeveloperRouteWithChildren = DeveloperRoute._addFileChildren(
+  DeveloperRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ContactRoute: ContactRoute,
+  DeveloperRoute: DeveloperRouteWithChildren,
+  GuidelinesRoute: GuidelinesRoute,
+  HelpRoute: HelpRoute,
   NewModelCompanyInformationRoute: NewModelCompanyInformationRoute,
+  NewModelGenerateRoute: NewModelGenerateRoute,
   NewModelUploadRoute: NewModelUploadRoute,
+  UpdateModelReviewRoute: UpdateModelReviewRoute,
+  UpdateModelUpdatesRoute: UpdateModelUpdatesRoute,
+  UpdateModelUploadRoute: UpdateModelUploadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

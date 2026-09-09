@@ -1,0 +1,82 @@
+import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
+import { ArrowLeft, FolderOpen, MessageSquareCode, Settings } from "lucide-react";
+import { IfcLockup } from "@/components/AppHeader";
+
+export const Route = createFileRoute("/developer")({
+  component: DeveloperLayout,
+});
+
+function DeveloperLayout() {
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-3 px-5 py-3.5">
+          <span className="flex items-center gap-4">
+            <IfcLockup />
+            <span className="hidden h-10 w-px bg-border md:block" />
+            <span className="hidden md:block">
+              <span className="block font-heading text-lg font-bold leading-tight text-navy">
+                IFC Valuation Assistant
+              </span>
+              <span className="block text-sm text-muted-foreground">Developer Console</span>
+            </span>
+          </span>
+          <Link
+            to="/"
+            className="ml-auto inline-flex items-center gap-2 rounded-lg border border-input px-3 py-2 text-sm font-semibold text-navy transition-colors hover:bg-secondary"
+          >
+            <ArrowLeft className="size-4" />
+            Back to User Interface
+          </Link>
+        </div>
+      </header>
+
+      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 lg:grid-cols-[260px_minmax(0,1fr)]">
+        <aside className="space-y-4">
+          <div className="rounded-xl border border-panel-border bg-panel p-5">
+            <span className="flex size-10 items-center justify-center rounded-full bg-card">
+              <Settings className="size-5 text-primary" />
+            </span>
+            <p className="mt-3 font-heading text-[15px] font-bold">Developer</p>
+            <p className="mt-1 text-[13px] leading-relaxed text-navy-soft">
+              Access developer tools, manage prompts and templates.
+            </p>
+          </div>
+          <nav className="space-y-1.5">
+            <NavItem
+              to="/developer/resources"
+              icon={<FolderOpen className="size-4" />}
+              label="Resources & Templates"
+            />
+            <NavItem
+              to="/developer/prompts"
+              icon={<MessageSquareCode className="size-4" />}
+              label="Prompts & Actions"
+            />
+          </nav>
+          <p className="rounded-xl border border-border bg-card p-4 text-[12px] leading-relaxed text-muted-foreground">
+            Prototype access control: this console is unprotected in this build. Role-based
+            authorization is added with the backend in the next phase.
+          </p>
+        </aside>
+
+        <main>
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
+}
+
+function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
+  return (
+    <Link
+      to={to}
+      className="flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-sm font-semibold text-navy-soft transition-colors hover:bg-secondary hover:text-navy"
+      activeProps={{ className: "bg-panel text-navy border border-panel-border" }}
+    >
+      {icon}
+      {label}
+    </Link>
+  );
+}
