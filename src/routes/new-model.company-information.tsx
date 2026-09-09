@@ -97,6 +97,17 @@ function CompanyInformation() {
 
                 <Question
                   number={3}
+                  label="Provide a brief description of the company's business model and how it generates revenue."
+                >
+                  <TextField
+                    value={a.businessModel}
+                    onChange={(value) => setAnswer("businessModel", value)}
+                    placeholder="Describe the business model and revenue drivers"
+                  />
+                </Question>
+
+                <Question
+                  number={4}
                   label="Enter the name of the main countries in which the company operates (list up to 3 names)."
                   required
                 >
@@ -121,7 +132,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={4}
+                  number={5}
                   label="If the company operates in a single country but has material foreign-currency exposure from imports or exports, should the template account for FX movements?"
                   required
                 >
@@ -135,7 +146,7 @@ function CompanyInformation() {
                   />
                 </Question>
 
-                <Question number={5} label="What is the company's reporting currency?" required>
+                <Question number={6} label="What is the company's reporting currency?" required>
                   <SelectField
                     value={a.reportingCurrency}
                     onChange={(value) => setAnswer("reportingCurrency", value)}
@@ -145,7 +156,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={6}
+                  number={7}
                   label="What is the company's functional (operating) currency? (if different)"
                 >
                   <SelectField
