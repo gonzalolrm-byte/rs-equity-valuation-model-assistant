@@ -41,6 +41,8 @@ export type Answers = {
   reportingCurrency: string;
   segmentBasis: "" | "business_line" | "revenue_stream";
   selectedSegments: string[];
+  /** Per-segment operational driver measurement units, keyed by segment id. */
+  segmentMeasurements: Record<string, SegmentMeasurement>;
   cogsBasis: "" | "segmented" | "aggregate";
   capexBasis: "" | "segmented" | "aggregate";
   otherDirectCosts: string[];
