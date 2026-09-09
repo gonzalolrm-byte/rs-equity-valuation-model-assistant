@@ -473,6 +473,7 @@ function SegmentMeasurements({
     capacityOther: saved?.capacityOther ?? "",
     output: saved?.output || recommended.output,
     outputOther: saved?.outputOther ?? "",
+    capacityBasis: saved?.capacityBasis ?? "",
   };
 
   const update = (partial: Partial<SegmentMeasurement>) => {
@@ -538,6 +539,26 @@ function SegmentMeasurements({
           )}
         </div>
       </div>
+
+      {a.segmentBasis === "revenue_stream" && (
+        <div className="mt-3 rounded-lg border border-panel-border bg-background/60 p-3">
+          <p className="text-[13px] font-medium text-navy">
+            Should capacity be modeled by revenue stream or on an aggregate basis?
+          </p>
+          <div className="mt-2">
+            <OptionRow
+              value={current.capacityBasis}
+              onChange={(value) =>
+                update({ capacityBasis: value as SegmentMeasurement["capacityBasis"] })
+              }
+              options={[
+                { value: "revenue_stream", label: "By revenue stream" },
+                { value: "aggregate", label: "Aggregate (company level)" },
+              ]}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
