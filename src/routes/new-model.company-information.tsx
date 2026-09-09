@@ -14,13 +14,17 @@ import {
   TextField,
 } from "@/components/form";
 import {
+  CAPACITY_MEASUREMENTS,
   COGS_CATEGORIES,
   CURRENCIES,
   defaultCurrencyForCountry,
+  OTHER_MEASUREMENT,
+  OUTPUT_MEASUREMENTS,
   PUT_PRICE_MECHANISMS,
+  recommendedMeasurements,
   SECTORS,
 } from "@/lib/data";
-import { useApp } from "@/lib/store";
+import { useApp, type SegmentMeasurement } from "@/lib/store";
 
 export const WORKFLOW_A_STEPS = [
   "Company Information",
@@ -51,6 +55,20 @@ function CompanyInformation() {
   const { state, setAnswer, toggleAnswerItem, saveProgress } = useApp();
   const a = state.answers;
   const navigate = useNavigate();
+
+  const segmentNoun =
+    a.segmentBasis === "revenue_stream"
+      ? "Revenue Stream"
+      : a.segmentBasis === "business_line"
+        ? "Business Line"
+        : "Segment";
+  const segmentOptions = [
+    { value: "segment1", label: `${segmentNoun} 1` },
+    { value: "segment2", label: `${segmentNoun} 2` },
+    { value: "segment3", label: `${segmentNoun} 3` },
+    { value: "other", label: "Other" },
+  ];
+
 
   const customYearsNum = a.projectionYears === "custom" ? Number(a.customYears) : NaN;
   const customYearsError =
@@ -205,45 +223,23 @@ function CompanyInformation() {
                 <Question
                   number={3}
                   label="Select the number of segments to include in the model:"
-                  hint='Select the segments that apply. "Other" can be used for any additional segment that is not one of the primary three.'
+                  hint='Select the segments that apply, then confirm the measurement units for each segment. "Other" can be used for any additional segment that is not one of the primary three. Maximum Output and Units Sold always share the same measurement unit.'
                 >
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {[
-                      {
-                        value: "segment1",
-                        label:
-                          a.segmentBasis === "revenue_stream"
-                            ? "Revenue Stream 1"
-                            : a.segmentBasis === "business_line"
-                              ? "Business Line 1"
-                              : "Segment 1",
-                      },
-                      {
-                        value: "segment2",
-                        label:
-                          a.segmentBasis === "revenue_stream"
-                            ? "Revenue Stream 2"
-                            : a.segmentBasis === "business_line"
-                              ? "Business Line 2"
-                              : "Segment 2",
-                      },
-                      {
-                        value: "segment3",
-                        label:
-                          a.segmentBasis === "revenue_stream"
-                            ? "Revenue Stream 3"
-                            : a.segmentBasis === "business_line"
-                              ? "Business Line 3"
-                              : "Segment 3",
-                      },
-                      { value: "other", label: "Other" },
-                    ].map((option) => (
-                      <CheckItem
-                        key={option.value}
-                        label={option.label}
-                        checked={a.selectedSegments.includes(option.value)}
-                        onChange={() => toggleAnswerItem("selectedSegments", option.value)}
-                      />
+                  <div className="space-y-3">
+                    {segmentOptions.map((option) => (
+                      <div key={option.value}>
+                        <CheckItem
+                          label={option.label}
+                          checked={a.selectedSegments.includes(option.value)}
+                          onChange={() => toggleAnswerItem("selectedSegments", option.value)}
+                        />
+                        {a.selectedSegments.includes(option.value) && (
+                          <SegmentMeasurements
+                            segmentId={option.value}
+                            segmentLabel={option.label}
+                          />
+                        )}
+                      </div>
                     ))}
                   </div>
                 </Question>
@@ -448,6 +444,100 @@ function CurrencyDisplay({ label, value }: { label: string; value: string }) {
         ) : (
           <span className="text-muted-foreground">Currency will appear here</span>
         )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Measurement units for one segment's operational drivers. Defaults are
+ * recommended from the sector, business description and segment description
+ * (PROTOTYPE stand-in for the template lookup), and the user can override them
+ * or enter a custom unit.
+ */
+function SegmentMeasurements({
+  segmentId,
+  segmentLabel,
+}: {
+  segmentId: string;
+  segmentLabel: string;
+}) {
+  const { state, setAnswer } = useApp();
+  const a = state.answers;
+  const saved = a.segmentMeasurements[segmentId];
+
+  const recommended = recommendedMeasurements({
+    sector: a.sector,
+    businessModel: a.businessModel,
+    segmentDescription: saved?.description ?? "",
+  });
+
+  const current: SegmentMeasurement = {
+    description: saved?.description ?? "",
+    capacity: saved?.capacity || recommended.capacity,
+    capacityOther: saved?.capacityOther ?? "",
+    output: saved?.output || recommended.output,
+    outputOther: saved?.outputOther ?? "",
+  };
+
+  const update = (partial: Partial<SegmentMeasurement>) => {
+    setAnswer("segmentMeasurements", {
+      ...a.segmentMeasurements,
+      [segmentId]: { ...current, ...partial },
+    });
+  };
+
+  return (
+    <div className="mt-2 ml-1 rounded-xl border border-panel-border bg-panel/60 p-4">
+      <p className="text-[15px] font-semibold text-navy">{segmentLabel} — measurement units</p>
+      <p className="mt-1 text-[13px] text-muted-foreground">
+        Recommended units are pre-selected. Maximum Output and Units Sold always use the same unit.
+      </p>
+
+      <div className="mt-3">
+        <TextField
+          label="Segment description (optional — improves the recommended units)"
+          value={current.description}
+          onChange={(value) => update({ description: value })}
+          placeholder="e.g. Agriculture, Processing"
+        />
+      </div>
+
+      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        <div>
+          <SelectField
+            label="Capacity measurement"
+            value={current.capacity}
+            onChange={(value) => update({ capacity: value })}
+            options={CAPACITY_MEASUREMENTS}
+          />
+          {current.capacity === OTHER_MEASUREMENT && (
+            <div className="mt-2">
+              <TextField
+                value={current.capacityOther}
+                onChange={(value) => update({ capacityOther: value })}
+                placeholder="Enter capacity measurement"
+              />
+            </div>
+          )}
+        </div>
+        <div>
+          <SelectField
+            label="Maximum Output / Units Sold measurement"
+            value={current.output}
+            onChange={(value) => update({ output: value })}
+            options={OUTPUT_MEASUREMENTS}
+          />
+          {current.output === OTHER_MEASUREMENT && (
+            <div className="mt-2">
+              <TextField
+                value={current.outputOther}
+                onChange={(value) => update({ outputOther: value })}
+                placeholder="Enter output / units sold measurement"
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
