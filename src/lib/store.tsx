@@ -56,6 +56,7 @@ export const EMPTY_ANSWERS: Answers = {
   mainCountry: "",
   secondCountry: "",
   thirdCountry: "",
+  hasForeignCurrency: "",
   reportingCurrency: "",
   segmentBasis: "",
   segmentCount: "",
