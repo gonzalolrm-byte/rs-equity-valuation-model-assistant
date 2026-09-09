@@ -98,7 +98,7 @@ export function TextField({
   onChange: (value: string) => void;
   placeholder?: string;
   error?: boolean;
-  errorMessage?: string;
+  errorMessage?: string | undefined;
 }) {
   return (
     <label className="block">
