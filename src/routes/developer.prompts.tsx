@@ -216,8 +216,8 @@ function Prompts() {
             editing ?? {
               id: nextId,
               title: "",
-              category: PROMPT_CATEGORIES[0],
-              step: PROMPT_STEPS[0],
+              category: PROMPT_CATEGORIES[0] ?? "Company Information",
+              step: PROMPT_STEPS[0] ?? "Workflow A – Step 1",
               status: "Active",
               lastUpdated: new Date().toISOString().slice(0, 10),
               promptText: "",
