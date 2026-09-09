@@ -59,7 +59,7 @@ function CompanyInformation() {
     a.mainCountryCurrency &&
     a.reportingCurrency &&
     a.segmentBasis &&
-    a.segmentCount &&
+    a.selectedSegments.length > 0 &&
     a.cogsBasis &&
     a.capexBasis &&
     a.projectionYears &&
