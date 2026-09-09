@@ -148,8 +148,9 @@ function WorkflowSection({
   const maxNumber = state.prompts.reduce((max, prompt) => {
     const match = prompt.id.match(new RegExp(`^${workflow.prefix}-(\\d+)$`));
     if (!match) return max;
-    digits = Math.max(digits, match[1].length);
-    return Math.max(max, Number(match[1]));
+    const number = match[1] ?? "";
+    digits = Math.max(digits, number.length);
+    return Math.max(max, Number(number));
   }, 0);
   const nextId = `${workflow.prefix}-${String(maxNumber + 1).padStart(digits, "0")}`;
 
