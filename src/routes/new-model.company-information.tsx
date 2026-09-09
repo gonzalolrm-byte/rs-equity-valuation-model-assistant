@@ -25,6 +25,7 @@ import {
   SAME_AS_OUTPUT_MEASUREMENT,
   SECTORS,
   WORKING_CAPITAL_ASSETS,
+  MANUAL_WORKING_CAPITAL_BASIS,
   WORKING_CAPITAL_BASIS_OPTIONS,
   WORKING_CAPITAL_LIABILITIES,
 } from "@/lib/data";
@@ -609,13 +610,11 @@ function WorkingCapitalGroup({ title, items }: { title: string; items: string[] 
               <SelectField
                 label={item}
                 value={current.basis}
-                onChange={(value) =>
-                  update(item, { basis: value as WorkingCapitalDays["basis"] })
-                }
+                onChange={(value) => update(item, { basis: value })}
                 options={WORKING_CAPITAL_BASIS_OPTIONS}
                 placeholder="Select basis"
               />
-              {current.basis === "manual" && (
+              {current.basis === MANUAL_WORKING_CAPITAL_BASIS && (
                 <TextField
                   label="Days"
                   value={current.manualDays}

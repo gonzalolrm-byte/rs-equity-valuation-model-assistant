@@ -536,10 +536,12 @@ export const WORKING_CAPITAL_LIABILITIES = [
   "Accrued expenses and other operating payables",
 ];
 
+export const MANUAL_WORKING_CAPITAL_BASIS = "Manual input";
+
 export const WORKING_CAPITAL_BASIS_OPTIONS = [
-  { value: "last_year", label: "Last year" },
-  { value: "avg_2", label: "Average of last 2 years" },
-  { value: "avg_3", label: "Average of last 3 years" },
-  { value: "avg_5", label: "Average of last 5 years" },
-  { value: "manual", label: "Manual input" },
+  "Last year",
+  "Average of last 2 years",
+  "Average of last 3 years",
+  "Average of last 5 years",
+  MANUAL_WORKING_CAPITAL_BASIS,
 ];

@@ -42,7 +42,7 @@ export type SegmentMeasurement = {
 };
 
 export type WorkingCapitalDays = {
-  basis: "" | "last_year" | "avg_2" | "avg_3" | "avg_5" | "manual";
+  basis: string;
   manualDays: string;
 };
 
