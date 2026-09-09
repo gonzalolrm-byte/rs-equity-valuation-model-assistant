@@ -10,33 +10,54 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as NewModelCompanyInformationRouteImport } from './routes/new-model.company-information'
+import { Route as NewModelUploadRouteImport } from './routes/new-model.upload'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NewModelCompanyInformationRoute =
+  NewModelCompanyInformationRouteImport.update({
+    id: '/new-model/company-information',
+    path: '/new-model/company-information',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const NewModelUploadRoute = NewModelUploadRouteImport.update({
+  id: '/new-model/upload',
+  path: '/new-model/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/new-model/company-information': typeof NewModelCompanyInformationRoute
+  '/new-model/upload': typeof NewModelUploadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/new-model/company-information': typeof NewModelCompanyInformationRoute
+  '/new-model/upload': typeof NewModelUploadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/new-model/company-information': typeof NewModelCompanyInformationRoute
+  '/new-model/upload': typeof NewModelUploadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/new-model/company-information' | '/new-model/upload'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/new-model/company-information' | '/new-model/upload'
+  id: '__root__' | '/' | '/new-model/company-information' | '/new-model/upload'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  NewModelCompanyInformationRoute: typeof NewModelCompanyInformationRoute
+  NewModelUploadRoute: typeof NewModelUploadRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +69,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/new-model/company-information': {
+      id: '/new-model/company-information'
+      path: '/new-model/company-information'
+      fullPath: '/new-model/company-information'
+      preLoaderRoute: typeof NewModelCompanyInformationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/new-model/upload': {
+      id: '/new-model/upload'
+      path: '/new-model/upload'
+      fullPath: '/new-model/upload'
+      preLoaderRoute: typeof NewModelUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  NewModelCompanyInformationRoute: NewModelCompanyInformationRoute,
+  NewModelUploadRoute: NewModelUploadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

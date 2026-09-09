@@ -1,0 +1,386 @@
+/**
+ * Static reference data for the prototype.
+ *
+ * PROTOTYPE NOTE: this module is the single place where option lists,
+ * developer resources and prompt actions live today. In the next phase these
+ * lists are served by the backend (see src/lib/services/README.md); the UI
+ * reads them through the same shapes, so no screen needs redesigning.
+ */
+
+export const SECTORS = [
+  "Agribusiness & Forestry",
+  "Chemicals",
+  "Construction Materials",
+  "Consumer Goods & Retail",
+  "Education",
+  "Health Care",
+  "Hospitality & Tourism",
+  "Manufacturing",
+  "Metals & Mining",
+  "Oil, Gas & Refining",
+  "Power Generation",
+  "Real Estate",
+  "Telecommunications & Technology",
+  "Transport & Logistics",
+  "Water & Utilities",
+] as const;
+
+export const CURRENCIES = [
+  "USD – US Dollar",
+  "EUR – Euro",
+  "GBP – Pound Sterling",
+  "JPY – Japanese Yen",
+  "BRL – Brazilian Real",
+  "MXN – Mexican Peso",
+  "COP – Colombian Peso",
+  "PEN – Peruvian Sol",
+  "INR – Indian Rupee",
+  "IDR – Indonesian Rupiah",
+  "NGN – Nigerian Naira",
+  "KES – Kenyan Shilling",
+  "EGP – Egyptian Pound",
+  "ZAR – South African Rand",
+  "TRY – Turkish Lira",
+  "VND – Vietnamese Dong",
+] as const;
+
+export const COGS_CATEGORIES = [
+  "Materials & Consumables",
+  "Direct Labor",
+  "Utilities & Energy",
+  "O&M (Operations & Maintenance)",
+  "Third-Party Costs",
+  "Regulatory Fees & Payments",
+  "Purchased Goods",
+] as const;
+
+export const PUT_PRICE_MECHANISMS = [
+  "IRR-Based",
+  "Enterprise Value Multiple-Based",
+  "Equity Multiple-Based",
+  "Fixed Price-Based",
+  "Fair Value Determined by a Third Party",
+] as const;
+
+/** Model update actions – each maps to a developer-controlled prompt action ID. */
+export const UPDATE_ACTIONS = [
+  {
+    actionId: "Q-010",
+    label: "Add one year of historicals for roll-up purposes and update historical financials",
+    hint: "Rolls the model forward one year and refreshes the historical financial statements.",
+  },
+  {
+    actionId: "Q-011",
+    label: "Update Cost of Equity parameters",
+    hint: "Uses the latest Cost of Equity report held in developer resources.",
+  },
+  {
+    actionId: "Q-012",
+    label: "Update macro variables",
+    hint: "Inflation, FX and GDP assumptions from the latest macro tool.",
+  },
+  {
+    actionId: "Q-013",
+    label: "Update YTD financials",
+    hint: "Adds year-to-date actuals from the uploaded documents.",
+  },
+  {
+    actionId: "Q-014",
+    label:
+      "Update revenue, COGS and CapEx calibration factors so projections align with the client's latest projections / business plan",
+    hint: "Recalibrates projection drivers against the client's own financial model.",
+  },
+  {
+    actionId: "Q-015",
+    label: "Update debt inputs so outputs match the company's projections",
+    hint: "Aligns debt schedules, drawdowns and amortization with company projections.",
+  },
+] as const;
+
+export type ResourceKind = "template" | "reference";
+
+export type DeveloperResource = {
+  id: string;
+  name: string;
+  description: string;
+  kind: ResourceKind;
+  sector?: string;
+  lastUpdated: string;
+  files: string[];
+};
+
+export const INITIAL_RESOURCES: DeveloperResource[] = [
+  {
+    id: "res-dcf",
+    name: "DCF Templates",
+    description:
+      "Standardized DCF valuation templates, organized by sector and model type. Multiple files allowed.",
+    kind: "template",
+    lastUpdated: "2026-08-14",
+    files: [
+      "IFC_Standard_DCF_RealSector_v4.2.xlsx",
+      "IFC_Standard_DCF_Infrastructure_v3.8.xlsx",
+      "IFC_Standard_DCF_Manufacturing_v2.6.xlsx",
+    ],
+  },
+  {
+    id: "res-waterfall",
+    name: "Preferred Waterfall Template",
+    description: "Preferred / common share waterfall used when preferred instruments exist.",
+    kind: "template",
+    lastUpdated: "2026-07-02",
+    files: ["IFC_Preferred_Waterfall_v2.1.xlsx"],
+  },
+  {
+    id: "res-put",
+    name: "Liquidity Put Template",
+    description: "Put valuation template covering IRR, multiple and fixed-price mechanisms.",
+    kind: "template",
+    lastUpdated: "2026-06-19",
+    files: ["IFC_Liquidity_Put_v1.9.xlsx"],
+  },
+  {
+    id: "res-coe",
+    name: "Latest Cost of Equity Report",
+    description: "Quarterly cost of equity parameters by country and sector.",
+    kind: "reference",
+    lastUpdated: "2026-09-01",
+    files: ["CoE_Report_2026Q3.pdf"],
+  },
+  {
+    id: "res-macro",
+    name: "Latest Macro Tool",
+    description: "Macroeconomic assumptions: inflation, FX, GDP growth and interest rates.",
+    kind: "reference",
+    lastUpdated: "2026-09-01",
+    files: ["Macro_Tool_2026Q3.xlsx"],
+  },
+];
+
+export type PromptStatus = "Active" | "Inactive";
+
+export type PromptAction = {
+  id: string;
+  title: string;
+  category: string;
+  step: string;
+  status: PromptStatus;
+  lastUpdated: string;
+  promptText: string;
+  requiredResources: string[];
+};
+
+const NO_GUESSING =
+  "\n\nIf a required value cannot be located in the supplied documents, return exactly \"Data not found.\" for that field. Never estimate, interpolate or invent financial information.";
+
+export const INITIAL_PROMPTS: PromptAction[] = [
+  {
+    id: "Q-001",
+    title: "Identify the appropriate standardized DCF template",
+    category: "Company Information",
+    step: "Workflow A – Step 1",
+    status: "Active",
+    lastUpdated: "2026-08-21",
+    promptText:
+      "You are selecting an IFC standardized DCF template. Using the company sector, countries of operation, reporting currency and segmentation answers provided, identify which standardized DCF template in the developer resource library is the correct starting point. Return the template file name and a one-paragraph justification referencing the specific answers used." +
+      NO_GUESSING,
+    requiredResources: ["res-dcf"],
+  },
+  {
+    id: "Q-002",
+    title: "Number of business lines / revenue streams",
+    category: "Company Information",
+    step: "Workflow A – Step 1",
+    status: "Active",
+    lastUpdated: "2026-08-21",
+    promptText:
+      "Given the selected segmentation basis and the number of segments requested, list the segment sheets and input blocks that must exist in the adapted template. Do not alter formula logic; only report the structural changes required." +
+      NO_GUESSING,
+    requiredResources: ["res-dcf"],
+  },
+  {
+    id: "Q-003",
+    title: "Map COGS categories to 'Other Direct Costs'",
+    category: "Company Information",
+    step: "Workflow A – Step 1",
+    status: "Active",
+    lastUpdated: "2026-08-09",
+    promptText:
+      "The user selected a set of standard COGS categories to be combined under 'Other Direct Costs'. Return the mapping between the template's standard COGS line items and the aggregated line, flagging any selected category that does not exist in the template." +
+      NO_GUESSING,
+    requiredResources: ["res-dcf"],
+  },
+  {
+    id: "Q-004",
+    title: "Configure projection horizon",
+    category: "Valuation",
+    step: "Workflow A – Step 1",
+    status: "Active",
+    lastUpdated: "2026-07-28",
+    promptText:
+      "Given the requested number of projection years, report the projection columns that must be added or removed in each worksheet, and confirm which formulas must be extended. Application code performs the workbook edit; you only return the instruction set." +
+      NO_GUESSING,
+    requiredResources: ["res-dcf"],
+  },
+  {
+    id: "Q-005",
+    title: "Configure share classes and preferred waterfall",
+    category: "Valuation",
+    step: "Workflow A – Step 1",
+    status: "Active",
+    lastUpdated: "2026-07-28",
+    promptText:
+      "Based on the share class answer, state whether the preferred waterfall template must be appended and which inputs it requires from the uploaded documents." +
+      NO_GUESSING,
+    requiredResources: ["res-waterfall"],
+  },
+  {
+    id: "Q-006",
+    title: "Configure liquidity put mechanics",
+    category: "Valuation",
+    step: "Workflow A – Step 1",
+    status: "Active",
+    lastUpdated: "2026-07-28",
+    promptText:
+      "The user indicated a liquidity put and selected one or more pricing mechanisms. For each mechanism, list the inputs the liquidity put template requires and the source document where each input should be found." +
+      NO_GUESSING,
+    requiredResources: ["res-put"],
+  },
+  {
+    id: "Q-007",
+    title: "Extract historical financial statements",
+    category: "Extraction",
+    step: "Workflow A – Step 2",
+    status: "Active",
+    lastUpdated: "2026-08-30",
+    promptText:
+      "From the uploaded audited financial statements, extract the income statement, balance sheet and cash flow statement for every available historical year. Return a strict JSON object keyed by statement, then line item, then fiscal year. Preserve the reporting currency and units as stated in the source document." +
+      NO_GUESSING,
+    requiredResources: [],
+  },
+  {
+    id: "Q-008",
+    title: "Extract operational drivers by segment",
+    category: "Extraction",
+    step: "Workflow A – Step 2",
+    status: "Active",
+    lastUpdated: "2026-08-30",
+    promptText:
+      "From the uploaded operational reports, extract volume and price drivers, revenue, COGS and CapEx by segment for each historical year, plus the COGS breakdown by standard category. Return strict JSON and cite the page or sheet for each figure." +
+      NO_GUESSING,
+    requiredResources: [],
+  },
+  {
+    id: "Q-009",
+    title: "Populate standardized template and flag gaps",
+    category: "Generation",
+    step: "Workflow A – Step 3",
+    status: "Active",
+    lastUpdated: "2026-09-02",
+    promptText:
+      "Using the extracted data set, produce the cell-level population instructions for the adapted standardized template. Never write to formula cells. Produce a separate list of every required input that remains unresolved, using the status values 'Data not found', 'Missing information' or 'Requires user input'." +
+      NO_GUESSING,
+    requiredResources: ["res-dcf"],
+  },
+  {
+    id: "Q-010",
+    title: "Add one year of historicals",
+    category: "Model Update",
+    step: "Workflow B – Step 2",
+    status: "Active",
+    lastUpdated: "2026-09-03",
+    promptText:
+      "Roll the standardized model forward by one year. Identify the new historical year, extract its audited financials, and return the instructions to shift the historical/projection boundary while preserving all formulas and the model structure." +
+      NO_GUESSING,
+    requiredResources: [],
+  },
+  {
+    id: "Q-011",
+    title: "Update Cost of Equity Parameters",
+    category: "Model Update",
+    step: "Workflow B – Step 2",
+    status: "Active",
+    lastUpdated: "2026-09-03",
+    promptText:
+      "Using the latest Cost of Equity report, return the updated risk-free rate, equity risk premium, country risk premium, beta and any size or liquidity adjustments applicable to this company's countries and sector, together with the target cells in the standardized model." +
+      NO_GUESSING,
+    requiredResources: ["res-coe"],
+  },
+  {
+    id: "Q-012",
+    title: "Update macro variables",
+    category: "Model Update",
+    step: "Workflow B – Step 2",
+    status: "Active",
+    lastUpdated: "2026-09-03",
+    promptText:
+      "Using the latest macro tool, return updated inflation, FX, GDP growth and interest rate assumptions for every country used by the model, mapped to the macro input block." +
+      NO_GUESSING,
+    requiredResources: ["res-macro"],
+  },
+  {
+    id: "Q-013",
+    title: "Update YTD financials",
+    category: "Model Update",
+    step: "Workflow B – Step 2",
+    status: "Active",
+    lastUpdated: "2026-08-27",
+    promptText:
+      "Extract year-to-date actuals from the uploaded documents, state the period covered, and return the values mapped to the model's YTD input block." +
+      NO_GUESSING,
+    requiredResources: [],
+  },
+  {
+    id: "Q-014",
+    title: "Update calibration factors (revenue, COGS, CapEx)",
+    category: "Model Update",
+    step: "Workflow B – Step 2",
+    status: "Active",
+    lastUpdated: "2026-08-27",
+    promptText:
+      "Compare the standardized model's projections with the client's latest business plan and return the revenue, COGS and CapEx calibration factors required for alignment, by segment and year, with the arithmetic shown." +
+      NO_GUESSING,
+    requiredResources: [],
+  },
+  {
+    id: "Q-015",
+    title: "Update debt inputs",
+    category: "Model Update",
+    step: "Workflow B – Step 2",
+    status: "Active",
+    lastUpdated: "2026-08-27",
+    promptText:
+      "Extract the company's debt schedule: existing facilities, drawdowns, amortization, interest rates and covenants. Return the values mapped to the debt input block so model outputs reconcile with the company's projections." +
+      NO_GUESSING,
+    requiredResources: [],
+  },
+  {
+    id: "Q-016",
+    title: "Missing information report",
+    category: "Generation",
+    step: "Workflow B – Step 3",
+    status: "Inactive",
+    lastUpdated: "2026-06-30",
+    promptText:
+      "Produce a consolidated report of every unresolved required input across all executed actions, grouped by worksheet, with the status value and the document that was searched." +
+      NO_GUESSING,
+    requiredResources: [],
+  },
+];
+
+export const PROMPT_CATEGORIES = [
+  "Company Information",
+  "Valuation",
+  "Extraction",
+  "Generation",
+  "Model Update",
+];
+
+export const PROMPT_STEPS = [
+  "Workflow A – Step 1",
+  "Workflow A – Step 2",
+  "Workflow A – Step 3",
+  "Workflow B – Step 1",
+  "Workflow B – Step 2",
+  "Workflow B – Step 3",
+];
