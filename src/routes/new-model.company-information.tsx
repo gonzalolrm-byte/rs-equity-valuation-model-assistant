@@ -205,45 +205,23 @@ function CompanyInformation() {
                 <Question
                   number={3}
                   label="Select the number of segments to include in the model:"
-                  hint='Select the segments that apply. "Other" can be used for any additional segment that is not one of the primary three.'
+                  hint='Select the segments that apply, then confirm the measurement units for each segment. "Other" can be used for any additional segment that is not one of the primary three. Maximum Output and Units Sold always share the same measurement unit.'
                 >
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {[
-                      {
-                        value: "segment1",
-                        label:
-                          a.segmentBasis === "revenue_stream"
-                            ? "Revenue Stream 1"
-                            : a.segmentBasis === "business_line"
-                              ? "Business Line 1"
-                              : "Segment 1",
-                      },
-                      {
-                        value: "segment2",
-                        label:
-                          a.segmentBasis === "revenue_stream"
-                            ? "Revenue Stream 2"
-                            : a.segmentBasis === "business_line"
-                              ? "Business Line 2"
-                              : "Segment 2",
-                      },
-                      {
-                        value: "segment3",
-                        label:
-                          a.segmentBasis === "revenue_stream"
-                            ? "Revenue Stream 3"
-                            : a.segmentBasis === "business_line"
-                              ? "Business Line 3"
-                              : "Segment 3",
-                      },
-                      { value: "other", label: "Other" },
-                    ].map((option) => (
-                      <CheckItem
-                        key={option.value}
-                        label={option.label}
-                        checked={a.selectedSegments.includes(option.value)}
-                        onChange={() => toggleAnswerItem("selectedSegments", option.value)}
-                      />
+                  <div className="space-y-3">
+                    {segmentOptions.map((option) => (
+                      <div key={option.value}>
+                        <CheckItem
+                          label={option.label}
+                          checked={a.selectedSegments.includes(option.value)}
+                          onChange={() => toggleAnswerItem("selectedSegments", option.value)}
+                        />
+                        {a.selectedSegments.includes(option.value) && (
+                          <SegmentMeasurements
+                            segmentId={option.value}
+                            segmentLabel={option.label}
+                          />
+                        )}
+                      </div>
                     ))}
                   </div>
                 </Question>
