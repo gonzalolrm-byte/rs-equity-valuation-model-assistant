@@ -424,3 +424,98 @@ export const PROMPT_STEPS = [
   "Workflow B – Step 2",
   "Workflow B – Step 3",
 ];
+
+/**
+ * Measurement units for the per-segment operational drivers (Company
+ * Information, section B). "Other Measurement" is always the last option and
+ * reveals a free-text field in the UI.
+ */
+export const OTHER_MEASUREMENT = "Other Measurement";
+
+export const CAPACITY_MEASUREMENTS = [
+  "Units",
+  "Hectares",
+  "Installed Capacity (MW)",
+  "Processing Capacity (MT/year)",
+  "Production Capacity (Units/year)",
+  "Floor Area (sqm)",
+  "Rooms / Keys",
+  "Beds",
+  "Seats",
+  "Store Count",
+  "Fleet Size (Vehicles)",
+  "Storage Capacity (m³)",
+  "Subscriber Capacity (Lines)",
+  "Water Treatment Capacity (m³/day)",
+  "Head of Livestock",
+  OTHER_MEASUREMENT,
+] as const;
+
+export const OUTPUT_MEASUREMENTS = [
+  "Units",
+  "Metric Tons (MT)",
+  "Megawatt-hours (MWh)",
+  "Barrels (bbl)",
+  "Litres",
+  "Cubic Metres (m³)",
+  "Kilograms (kg)",
+  "Room Nights",
+  "Passengers",
+  "Patients Treated",
+  "Students Enrolled",
+  "Subscribers",
+  "Transactions",
+  "Cases / Packs",
+  "Square Metres Sold (sqm)",
+  OTHER_MEASUREMENT,
+] as const;
+
+/**
+ * PROTOTYPE: recommendation heuristic standing in for the backend/template
+ * lookup. Phase 2 replaces this with the measurement units defined by the
+ * applicable standardized template; when the template defines none, the
+ * default remains "Units".
+ */
+const SECTOR_MEASUREMENTS: Record<string, { capacity: string; output: string }> = {
+  "Agribusiness & Forestry": { capacity: "Hectares", output: "Metric Tons (MT)" },
+  Chemicals: { capacity: "Processing Capacity (MT/year)", output: "Metric Tons (MT)" },
+  "Construction Materials": { capacity: "Processing Capacity (MT/year)", output: "Metric Tons (MT)" },
+  "Consumer Goods & Retail": { capacity: "Store Count", output: "Units" },
+  Education: { capacity: "Seats", output: "Students Enrolled" },
+  "Health Care": { capacity: "Beds", output: "Patients Treated" },
+  "Hospitality & Tourism": { capacity: "Rooms / Keys", output: "Room Nights" },
+  Manufacturing: { capacity: "Production Capacity (Units/year)", output: "Units" },
+  "Metals & Mining": { capacity: "Processing Capacity (MT/year)", output: "Metric Tons (MT)" },
+  "Oil, Gas & Refining": { capacity: "Processing Capacity (MT/year)", output: "Barrels (bbl)" },
+  "Power Generation": { capacity: "Installed Capacity (MW)", output: "Megawatt-hours (MWh)" },
+  "Real Estate": { capacity: "Floor Area (sqm)", output: "Square Metres Sold (sqm)" },
+  "Telecommunications & Technology": { capacity: "Subscriber Capacity (Lines)", output: "Subscribers" },
+  "Transport & Logistics": { capacity: "Fleet Size (Vehicles)", output: "Metric Tons (MT)" },
+  "Water & Utilities": { capacity: "Water Treatment Capacity (m³/day)", output: "Cubic Metres (m³)" },
+};
+
+/** Keyword hints taken from the business / segment description. */
+const KEYWORD_MEASUREMENTS: { match: RegExp; capacity: string; output: string }[] = [
+  { match: /farm|agri|planta|crop|orchard|forest/i, capacity: "Hectares", output: "Metric Tons (MT)" },
+  { match: /process|mill|refin|packag/i, capacity: "Processing Capacity (MT/year)", output: "Metric Tons (MT)" },
+  { match: /hotel|resort|lodge/i, capacity: "Rooms / Keys", output: "Room Nights" },
+  { match: /hospital|clinic/i, capacity: "Beds", output: "Patients Treated" },
+  { match: /school|univers|campus/i, capacity: "Seats", output: "Students Enrolled" },
+  { match: /solar|wind|power|generation/i, capacity: "Installed Capacity (MW)", output: "Megawatt-hours (MWh)" },
+  { match: /retail|store|shop/i, capacity: "Store Count", output: "Units" },
+  { match: /logistic|transport|fleet|truck/i, capacity: "Fleet Size (Vehicles)", output: "Metric Tons (MT)" },
+  { match: /telecom|subscri|mobile|broadband/i, capacity: "Subscriber Capacity (Lines)", output: "Subscribers" },
+  { match: /water|utility|sanitation/i, capacity: "Water Treatment Capacity (m³/day)", output: "Cubic Metres (m³)" },
+];
+
+export function recommendedMeasurements(input: {
+  sector?: string;
+  businessModel?: string;
+  segmentDescription?: string;
+}): { capacity: string; output: string } {
+  const text = `${input.segmentDescription ?? ""} ${input.businessModel ?? ""}`;
+  const keyword = KEYWORD_MEASUREMENTS.find((entry) => entry.match.test(text));
+  if (keyword) return { capacity: keyword.capacity, output: keyword.output };
+  const bySector = input.sector ? SECTOR_MEASUREMENTS[input.sector] : undefined;
+  return bySector ?? { capacity: "Units", output: "Units" };
+}
