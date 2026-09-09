@@ -322,7 +322,7 @@ function CompanyInformation() {
                 </Question>
               </Collapsible>
 
-              <Collapsible title="C. Valuation">
+              <Collapsible title="C. Other Modeling Considerations">
                 <Question number={1} label="How many years of projections do you need?" required>
                   <OptionRow
                     columns={3}
