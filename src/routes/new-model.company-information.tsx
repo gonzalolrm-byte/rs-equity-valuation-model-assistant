@@ -50,7 +50,6 @@ function CompanyInformation() {
     a.companyName.trim() &&
     a.sector &&
     a.mainCountry.trim() &&
-    a.fxMovements &&
     a.reportingCurrency &&
     a.segmentBasis &&
     a.segmentCount &&
@@ -131,37 +130,10 @@ function CompanyInformation() {
                   />
                 </Question>
 
-                <Question
-                  number={5}
-                  label="If the company operates in a single country but has material foreign-currency exposure from imports or exports, should the template account for FX movements?"
-                  required
-                >
-                  <OptionRow
-                    value={a.fxMovements}
-                    onChange={(value) => setAnswer("fxMovements", value as typeof a.fxMovements)}
-                    options={[
-                      { value: "yes", label: "Yes" },
-                      { value: "no", label: "No" },
-                    ]}
-                  />
-                </Question>
-
-                <Question number={6} label="What is the company's reporting currency?" required>
+                <Question number={5} label="What is the company's reporting currency?" required>
                   <SelectField
                     value={a.reportingCurrency}
                     onChange={(value) => setAnswer("reportingCurrency", value)}
-                    options={CURRENCIES}
-                    placeholder="Select currency"
-                  />
-                </Question>
-
-                <Question
-                  number={7}
-                  label="What is the company's functional (operating) currency? (if different)"
-                >
-                  <SelectField
-                    value={a.functionalCurrency}
-                    onChange={(value) => setAnswer("functionalCurrency", value)}
                     options={CURRENCIES}
                     placeholder="Select currency"
                   />

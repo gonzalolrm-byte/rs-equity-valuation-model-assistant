@@ -34,9 +34,7 @@ export type Answers = {
   mainCountry: string;
   secondCountry: string;
   thirdCountry: string;
-  fxMovements: "" | "yes" | "no";
   reportingCurrency: string;
-  functionalCurrency: string;
   segmentBasis: "" | "business_line" | "revenue_stream";
   segmentCount: string;
   cogsBasis: "" | "segmented" | "aggregate";
@@ -57,9 +55,7 @@ export const EMPTY_ANSWERS: Answers = {
   mainCountry: "",
   secondCountry: "",
   thirdCountry: "",
-  fxMovements: "",
   reportingCurrency: "",
-  functionalCurrency: "",
   segmentBasis: "",
   segmentCount: "",
   cogsBasis: "",
