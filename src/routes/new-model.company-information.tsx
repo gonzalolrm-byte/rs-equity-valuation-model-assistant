@@ -448,3 +448,97 @@ function CurrencyDisplay({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
+/**
+ * Measurement units for one segment's operational drivers. Defaults are
+ * recommended from the sector, business description and segment description
+ * (PROTOTYPE stand-in for the template lookup), and the user can override them
+ * or enter a custom unit.
+ */
+function SegmentMeasurements({
+  segmentId,
+  segmentLabel,
+}: {
+  segmentId: string;
+  segmentLabel: string;
+}) {
+  const { state, setAnswer } = useApp();
+  const a = state.answers;
+  const saved = a.segmentMeasurements[segmentId];
+
+  const recommended = recommendedMeasurements({
+    sector: a.sector,
+    businessModel: a.businessModel,
+    segmentDescription: saved?.description ?? "",
+  });
+
+  const current: SegmentMeasurement = {
+    description: saved?.description ?? "",
+    capacity: saved?.capacity || recommended.capacity,
+    capacityOther: saved?.capacityOther ?? "",
+    output: saved?.output || recommended.output,
+    outputOther: saved?.outputOther ?? "",
+  };
+
+  const update = (partial: Partial<SegmentMeasurement>) => {
+    setAnswer("segmentMeasurements", {
+      ...a.segmentMeasurements,
+      [segmentId]: { ...current, ...partial },
+    });
+  };
+
+  return (
+    <div className="mt-2 ml-1 rounded-xl border border-panel-border bg-panel/60 p-4">
+      <p className="text-[15px] font-semibold text-navy">{segmentLabel} — measurement units</p>
+      <p className="mt-1 text-[13px] text-muted-foreground">
+        Recommended units are pre-selected. Maximum Output and Units Sold always use the same unit.
+      </p>
+
+      <div className="mt-3">
+        <TextField
+          label="Segment description (optional — improves the recommended units)"
+          value={current.description}
+          onChange={(value) => update({ description: value })}
+          placeholder="e.g. Agriculture, Processing"
+        />
+      </div>
+
+      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        <div>
+          <SelectField
+            label="Capacity measurement"
+            value={current.capacity}
+            onChange={(value) => update({ capacity: value })}
+            options={CAPACITY_MEASUREMENTS}
+          />
+          {current.capacity === OTHER_MEASUREMENT && (
+            <div className="mt-2">
+              <TextField
+                value={current.capacityOther}
+                onChange={(value) => update({ capacityOther: value })}
+                placeholder="Enter capacity measurement"
+              />
+            </div>
+          )}
+        </div>
+        <div>
+          <SelectField
+            label="Maximum Output / Units Sold measurement"
+            value={current.output}
+            onChange={(value) => update({ output: value })}
+            options={OUTPUT_MEASUREMENTS}
+          />
+          {current.output === OTHER_MEASUREMENT && (
+            <div className="mt-2">
+              <TextField
+                value={current.outputOther}
+                onChange={(value) => update({ outputOther: value })}
+                placeholder="Enter output / units sold measurement"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
