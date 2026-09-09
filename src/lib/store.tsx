@@ -48,6 +48,7 @@ export type Answers = {
   customYears: string;
   compsCount: string;
   shareClasses: "" | "common" | "preferred" | "both";
+  preferredShareRights: string;
   liquidityPut: "" | "yes" | "no";
   putMechanisms: string[];
 };
