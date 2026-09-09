@@ -134,7 +134,7 @@ function Prompts() {
             <tbody>
               {rows.map((prompt) => (
                 <tr key={prompt.id} className="border-t border-border">
-                  <td className="px-4 py-3 font-mono text-[12px] font-semibold text-primary">
+                  <td className="whitespace-nowrap px-4 py-3 font-mono text-[12px] font-semibold text-primary">
                     {prompt.id}
                   </td>
                   <td className="max-w-80 px-4 py-3 text-navy">{prompt.title}</td>
