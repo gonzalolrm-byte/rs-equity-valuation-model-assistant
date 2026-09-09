@@ -117,7 +117,12 @@ function WorkflowSection({
   const [creating, setCreating] = useState(false);
 
   const workflowPrompts = useMemo(
-    () => state.prompts.filter((prompt) => prompt.step.startsWith(workflow.key)),
+    () =>
+      state.prompts
+        .filter((prompt) => prompt.step.startsWith(workflow.key))
+        // Keep the table in strict ID sequence (A-01, A-02, ...).
+        .slice()
+        .sort((a, b) => a.id.localeCompare(b.id)),
     [state.prompts, workflow.key],
   );
 
@@ -263,7 +268,7 @@ function WorkflowSection({
             editing ?? {
               id: nextId,
               title: "",
-              category: PROMPT_CATEGORIES[0] ?? "Company Information",
+              category: PROMPT_CATEGORIES[0] ?? "General Information",
               step: workflowSteps[0] ?? `${workflow.key} – Step 1`,
               status: "Active",
               lastUpdated: new Date().toISOString().slice(0, 10),
