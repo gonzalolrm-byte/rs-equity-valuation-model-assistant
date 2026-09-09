@@ -127,13 +127,7 @@ function CompanyInformation() {
                       }}
                       placeholder="Enter country name"
                     />
-                    <SelectField
-                      label="Currency"
-                      value={a.mainCountryCurrency}
-                      onChange={(value) => setAnswer("mainCountryCurrency", value)}
-                      options={CURRENCIES}
-                      placeholder="Select currency"
-                    />
+                    <CurrencyDisplay label="Currency" value={a.mainCountryCurrency} />
                   </div>
                   <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
                     <TextField
@@ -145,13 +139,7 @@ function CompanyInformation() {
                       }}
                       placeholder="Enter country name"
                     />
-                    <SelectField
-                      label="Currency (optional)"
-                      value={a.secondCountryCurrency}
-                      onChange={(value) => setAnswer("secondCountryCurrency", value)}
-                      options={CURRENCIES}
-                      placeholder="Select currency"
-                    />
+                    <CurrencyDisplay label="Currency (optional)" value={a.secondCountryCurrency} />
                   </div>
                   <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
                     <TextField
@@ -163,13 +151,7 @@ function CompanyInformation() {
                       }}
                       placeholder="Enter country name"
                     />
-                    <SelectField
-                      label="Currency (optional)"
-                      value={a.thirdCountryCurrency}
-                      onChange={(value) => setAnswer("thirdCountryCurrency", value)}
-                      options={CURRENCIES}
-                      placeholder="Select currency"
-                    />
+                    <CurrencyDisplay label="Currency (optional)" value={a.thirdCountryCurrency} />
                   </div>
                 </Question>
 
