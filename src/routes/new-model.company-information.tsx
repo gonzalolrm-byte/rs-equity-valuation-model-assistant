@@ -491,7 +491,11 @@ function SegmentMeasurements({
     <div className="mt-2 ml-1 rounded-xl border border-panel-border bg-panel/60 p-4">
       <p className="text-[15px] font-semibold text-navy">{segmentLabel} — measurement units</p>
       <p className="mt-1 text-[13px] text-muted-foreground">
-        Recommended units are pre-selected. Maximum Output and Units Sold always use the same unit.
+        Recommended units are pre-selected. Maximum Output and Units Sold (or equivalent)
+        always use the same unit of measurement, while Capacity may be expressed in either
+        the same or a different unit. Maximum Output represents the maximum quantity of
+        products that can be sold, excluding sales from inventory, or the maximum volume of
+        services or operational activity that can be delivered in a particular year.
       </p>
 
       <div className="mt-3">
