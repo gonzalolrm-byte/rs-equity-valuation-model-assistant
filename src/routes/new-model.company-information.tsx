@@ -561,16 +561,32 @@ function SegmentMeasurements({
     });
   };
 
+  // Units are only relevant for drivers modeled with unit economics in Section B.
+  const needsOutputUnit =
+    a.revenueModeling === "unit_economics" || a.cogsModeling === "unit_economics";
+  const needsCapacityUnit = a.capexModeling === "unit_economics";
+  const needsAnyUnit = needsOutputUnit || needsCapacityUnit;
+
   return (
     <div className="mt-2 ml-1 rounded-xl border border-panel-border bg-panel/60 p-4">
-      <p className="text-[15px] font-semibold text-navy">{segmentLabel} — measurement units</p>
-      <p className="mt-1 text-[13px] text-muted-foreground">
-        Recommended units are pre-selected. Maximum Output and Units Sold (or equivalent)
-        always use the same unit of measurement, while Capacity may be expressed in either
-        the same or a different unit. Maximum Output represents the maximum quantity of
-        products that can be sold, excluding sales from inventory, or the maximum volume of
-        services or operational activity that can be delivered in a particular year.
+      <p className="text-[15px] font-semibold text-navy">
+        {segmentLabel}
+        {needsAnyUnit ? " — measurement units" : " — segment detail"}
       </p>
+      {needsAnyUnit ? (
+        <p className="mt-1 text-[13px] text-muted-foreground">
+          Recommended units are pre-selected. Maximum Output and Units Sold (or equivalent)
+          always use the same unit of measurement, while Capacity may be expressed in either
+          the same or a different unit. Maximum Output represents the maximum quantity of
+          products that can be sold, excluding sales from inventory, or the maximum volume of
+          services or operational activity that can be delivered in a particular year.
+        </p>
+      ) : (
+        <p className="mt-1 text-[13px] text-muted-foreground">
+          Based on Section B, revenue, COGS and CapEx are all modeled on a percentage basis,
+          so no measurement units are required for this segment.
+        </p>
+      )}
 
       <div className="mt-3">
         <TextField
@@ -581,42 +597,53 @@ function SegmentMeasurements({
         />
       </div>
 
-      <div className="mt-3 grid gap-3 sm:grid-cols-2">
-        <div>
-          <SelectField
-            label="Maximum Output / Units Sold measurement"
-            value={current.output}
-            onChange={(value) => update({ output: value })}
-            options={OUTPUT_MEASUREMENTS}
-          />
-          {current.output === OTHER_MEASUREMENT && (
-            <div className="mt-2">
-              <TextField
-                value={current.outputOther}
-                onChange={(value) => update({ outputOther: value })}
-                placeholder="Enter output / units sold measurement"
+      {needsAnyUnit && (
+        <div
+          className={`mt-3 grid gap-3 ${
+            needsOutputUnit && needsCapacityUnit ? "sm:grid-cols-2" : ""
+          }`}
+        >
+          {needsOutputUnit && (
+            <div>
+              <SelectField
+                label="Maximum Output / Units Sold measurement"
+                value={current.output}
+                onChange={(value) => update({ output: value })}
+                options={OUTPUT_MEASUREMENTS}
               />
+              {current.output === OTHER_MEASUREMENT && (
+                <div className="mt-2">
+                  <TextField
+                    value={current.outputOther}
+                    onChange={(value) => update({ outputOther: value })}
+                    placeholder="Enter output / units sold measurement"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+          {needsCapacityUnit && (
+            <div>
+              <SelectField
+                label="Capacity measurement"
+                value={current.capacity}
+                onChange={(value) => update({ capacity: value })}
+                options={CAPACITY_MEASUREMENTS}
+              />
+              {current.capacity === OTHER_MEASUREMENT && (
+                <div className="mt-2">
+                  <TextField
+                    value={current.capacityOther}
+                    onChange={(value) => update({ capacityOther: value })}
+                    placeholder="Enter capacity measurement"
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>
-        <div>
-          <SelectField
-            label="Capacity measurement"
-            value={current.capacity}
-            onChange={(value) => update({ capacity: value })}
-            options={CAPACITY_MEASUREMENTS}
-          />
-          {current.capacity === OTHER_MEASUREMENT && (
-            <div className="mt-2">
-              <TextField
-                value={current.capacityOther}
-                onChange={(value) => update({ capacityOther: value })}
-                placeholder="Enter capacity measurement"
-              />
-            </div>
-          )}
-        </div>
-      </div>
+      )}
+
 
       {a.segmentBasis === "revenue_stream" && (
         <div className="mt-3 rounded-lg border border-panel-border bg-background/60 p-3">
