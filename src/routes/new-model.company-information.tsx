@@ -241,7 +241,7 @@ function CompanyInformation() {
                   number={4}
                   label="Do you want CapEx to be segmented or modeled on an aggregate basis?"
                   required
-                  hint="Choose the level of detail based on data availability and whether investment needs differ materially across segments."
+                  hint="If operations and revenues are segmented by business line, it is recommended that CapEx also be segmented by business line to maintain consistency across the model."
                 >
                   <OptionRow
                     value={a.capexBasis}
