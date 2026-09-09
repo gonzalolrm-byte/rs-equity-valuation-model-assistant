@@ -22,6 +22,7 @@ import {
   OUTPUT_MEASUREMENTS,
   PUT_PRICE_MECHANISMS,
   recommendedMeasurements,
+  SAME_AS_OUTPUT_MEASUREMENT,
   SECTORS,
 } from "@/lib/data";
 import { useApp, type SegmentMeasurement } from "@/lib/store";
