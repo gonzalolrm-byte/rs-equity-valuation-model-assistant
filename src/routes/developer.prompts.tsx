@@ -9,6 +9,23 @@ import { useApp } from "@/lib/store";
 
 const PAGE_SIZE = 8;
 
+const WORKFLOWS = [
+  {
+    key: "Workflow A",
+    prefix: "A",
+    title: "Use Standardized Model for the First Time",
+    description:
+      "Prompts executed during Workflow A: company information, document extraction and first-time model generation.",
+  },
+  {
+    key: "Workflow B",
+    prefix: "B",
+    title: "Update Standardized Model",
+    description:
+      "Prompts executed during Workflow B: quarterly and event-driven updates to an existing standardized model.",
+  },
+] as const;
+
 export const Route = createFileRoute("/developer/prompts")({
   head: () => ({
     meta: [
@@ -16,7 +33,7 @@ export const Route = createFileRoute("/developer/prompts")({
       {
         name: "description",
         content:
-          "Manage the action registry: every user question or model update has a unique ID and a developer-editable Claude prompt, searchable, filterable and testable.",
+          "Manage the action registry per workflow: every user question or model update has a unique ID and a developer-editable Claude prompt, searchable, filterable and testable.",
       },
       { property: "og:title", content: "Prompts & Actions — Developer Console" },
       {
@@ -29,20 +46,85 @@ export const Route = createFileRoute("/developer/prompts")({
 });
 
 function Prompts() {
-  const { state, togglePromptStatus } = useApp();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
-  const [step, setStep] = useState("");
   const [status, setStatus] = useState("");
+
+  return (
+    <div>
+      <div>
+        <h1 className="font-heading text-2xl font-extrabold">2. Prompts &amp; Actions</h1>
+        <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">
+          Manage the list of actions / questions and their corresponding Claude prompts, organized
+          by workflow. Each item has a unique ID (A-## for the first-time standardized model,
+          B-## for model updates), title and prompt that guides Claude's response.
+        </p>
+      </div>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <label className="relative block">
+          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search by ID, title or keyword…"
+            className="w-full rounded-lg border border-input bg-card py-2.5 pl-9 pr-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-ring/25"
+          />
+        </label>
+        <SelectField
+          value={category}
+          onChange={setCategory}
+          options={PROMPT_CATEGORIES}
+          placeholder="All Categories"
+        />
+        <SelectField
+          value={status}
+          onChange={setStatus}
+          options={["Active", "Inactive"]}
+          placeholder="All Statuses"
+        />
+      </div>
+
+      <div className="mt-8 space-y-10">
+        {WORKFLOWS.map((workflow) => (
+          <WorkflowSection
+            key={workflow.key}
+            workflow={workflow}
+            search={search}
+            category={category}
+            status={status}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function WorkflowSection({
+  workflow,
+  search,
+  category,
+  status,
+}: {
+  workflow: (typeof WORKFLOWS)[number];
+  search: string;
+  category: string;
+  status: string;
+}) {
+  const { state, togglePromptStatus } = useApp();
   const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<PromptAction | null>(null);
   const [creating, setCreating] = useState(false);
 
+  const workflowPrompts = useMemo(
+    () => state.prompts.filter((prompt) => prompt.step.startsWith(workflow.key)),
+    [state.prompts, workflow.key],
+  );
+
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
-    return state.prompts.filter((prompt) => {
+    return workflowPrompts.filter((prompt) => {
       if (category && prompt.category !== category) return false;
-      if (step && prompt.step !== step) return false;
       if (status && prompt.status !== status) return false;
       if (!query) return true;
       return (
@@ -51,73 +133,38 @@ function Prompts() {
         prompt.promptText.toLowerCase().includes(query)
       );
     });
-  }, [state.prompts, search, category, step, status]);
+  }, [workflowPrompts, search, category, status]);
 
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const current = Math.min(page, pages);
   const rows = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
 
-  const nextId = `Q-${String(state.prompts.length + 1).padStart(3, "0")}`;
+  const maxNumber = state.prompts.reduce((max, prompt) => {
+    const match = prompt.id.match(new RegExp(`^${workflow.prefix}-(\\d+)$`));
+    return match ? Math.max(max, Number(match[1])) : max;
+  }, 0);
+  const nextId = `${workflow.prefix}-${String(maxNumber + 1).padStart(2, "0")}`;
+
+  const workflowSteps = PROMPT_STEPS.filter((step) => step.startsWith(workflow.key));
 
   return (
-    <div>
+    <section>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="font-heading text-2xl font-extrabold">2. Prompts &amp; Actions</h1>
-          <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">
-            Manage the list of actions / questions and their corresponding Claude prompts. Each item
-            has a unique ID, title and prompt that guides Claude's response.
+          <h2 className="font-heading text-lg font-extrabold text-navy">
+            {workflow.key} — {workflow.title}
+          </h2>
+          <p className="mt-1 max-w-3xl text-[13px] leading-relaxed text-muted-foreground">
+            {workflow.description}
           </p>
         </div>
-        <Button onClick={() => setCreating(true)}>
+        <Button variant="secondary" onClick={() => setCreating(true)}>
           <Plus className="size-4" />
-          Add New Action
+          Add {workflow.key} Action
         </Button>
       </div>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <label className="relative block">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            value={search}
-            onChange={(event) => {
-              setSearch(event.target.value);
-              setPage(1);
-            }}
-            placeholder="Search by ID, title or keyword…"
-            className="w-full rounded-lg border border-input bg-card py-2.5 pl-9 pr-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-ring/25"
-          />
-        </label>
-        <SelectField
-          value={category}
-          onChange={(value) => {
-            setCategory(value);
-            setPage(1);
-          }}
-          options={PROMPT_CATEGORIES}
-          placeholder="All Categories"
-        />
-        <SelectField
-          value={step}
-          onChange={(value) => {
-            setStep(value);
-            setPage(1);
-          }}
-          options={PROMPT_STEPS}
-          placeholder="All Steps"
-        />
-        <SelectField
-          value={status}
-          onChange={(value) => {
-            setStatus(value);
-            setPage(1);
-          }}
-          options={["Active", "Inactive"]}
-          placeholder="All Statuses"
-        />
-      </div>
-
-      <div className="mt-5 overflow-hidden rounded-xl border border-border bg-card shadow-card">
+      <div className="mt-4 overflow-hidden rounded-xl border border-border bg-card shadow-card">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[880px] text-left text-sm">
             <thead className="bg-secondary/70 text-[12px] uppercase tracking-wide text-navy-soft">
@@ -217,7 +264,7 @@ function Prompts() {
               id: nextId,
               title: "",
               category: PROMPT_CATEGORIES[0] ?? "Company Information",
-              step: PROMPT_STEPS[0] ?? "Workflow A – Step 1",
+              step: workflowSteps[0] ?? `${workflow.key} – Step 1`,
               status: "Active",
               lastUpdated: new Date().toISOString().slice(0, 10),
               promptText: "",
@@ -225,13 +272,14 @@ function Prompts() {
             }
           }
           isNew={creating}
+          steps={workflowSteps}
           onClose={() => {
             setEditing(null);
             setCreating(false);
           }}
         />
       )}
-    </div>
+    </section>
   );
 }
 
@@ -242,10 +290,12 @@ function Th({ children }: { children: React.ReactNode }) {
 function PromptEditor({
   prompt,
   isNew,
+  steps,
   onClose,
 }: {
   prompt: PromptAction;
   isNew: boolean;
+  steps: readonly string[];
   onClose: () => void;
 }) {
   const { state, savePrompt, addPrompt } = useApp();
@@ -316,7 +366,7 @@ function PromptEditor({
               label="Step / Workflow"
               value={draft.step}
               onChange={(value) => setDraft({ ...draft, step: value })}
-              options={PROMPT_STEPS}
+              options={steps}
               placeholder="Select step"
             />
           </div>

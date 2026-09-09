@@ -105,33 +105,33 @@ export const PUT_PRICE_MECHANISMS = [
 /** Model update actions – each maps to a developer-controlled prompt action ID. */
 export const UPDATE_ACTIONS = [
   {
-    actionId: "Q-010",
+    actionId: "B-01",
     label: "Add one year of historicals for roll-up purposes and update historical financials",
     hint: "Rolls the model forward one year and refreshes the historical financial statements.",
   },
   {
-    actionId: "Q-011",
+    actionId: "B-02",
     label: "Update Cost of Equity parameters",
     hint: "Uses the latest Cost of Equity report held in developer resources.",
   },
   {
-    actionId: "Q-012",
+    actionId: "B-03",
     label: "Update macro variables",
     hint: "Inflation, FX and GDP assumptions from the latest macro tool.",
   },
   {
-    actionId: "Q-013",
+    actionId: "B-04",
     label: "Update YTD financials",
     hint: "Adds year-to-date actuals from the uploaded documents.",
   },
   {
-    actionId: "Q-014",
+    actionId: "B-05",
     label:
       "Update revenue, COGS and CapEx calibration factors so projections align with the client's latest projections / business plan",
     hint: "Recalibrates projection drivers against the client's own financial model.",
   },
   {
-    actionId: "Q-015",
+    actionId: "B-06",
     label: "Update debt inputs so outputs match the company's projections",
     hint: "Aligns debt schedules, drawdowns and amortization with company projections.",
   },
@@ -215,7 +215,7 @@ const NO_GUESSING =
 
 export const INITIAL_PROMPTS: PromptAction[] = [
   {
-    id: "Q-001",
+    id: "A-01",
     title: "Identify the appropriate standardized DCF template",
     category: "Company Information",
     step: "Workflow A – Step 1",
@@ -227,7 +227,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: ["res-dcf"],
   },
   {
-    id: "Q-002",
+    id: "A-02",
     title: "Number of business lines / revenue streams",
     category: "Company Information",
     step: "Workflow A – Step 1",
@@ -239,7 +239,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: ["res-dcf"],
   },
   {
-    id: "Q-003",
+    id: "A-03",
     title: "Map COGS categories to 'Other Direct Costs'",
     category: "Company Information",
     step: "Workflow A – Step 1",
@@ -251,7 +251,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: ["res-dcf"],
   },
   {
-    id: "Q-004",
+    id: "A-04",
     title: "Configure projection horizon",
     category: "Valuation",
     step: "Workflow A – Step 1",
@@ -263,7 +263,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: ["res-dcf"],
   },
   {
-    id: "Q-005",
+    id: "A-05",
     title: "Configure share classes and preferred waterfall",
     category: "Valuation",
     step: "Workflow A – Step 1",
@@ -275,7 +275,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: ["res-waterfall"],
   },
   {
-    id: "Q-006",
+    id: "A-06",
     title: "Configure liquidity put mechanics",
     category: "Valuation",
     step: "Workflow A – Step 1",
@@ -287,7 +287,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: ["res-put"],
   },
   {
-    id: "Q-007",
+    id: "A-07",
     title: "Extract historical financial statements",
     category: "Extraction",
     step: "Workflow A – Step 2",
@@ -299,7 +299,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "Q-008",
+    id: "A-08",
     title: "Extract operational drivers by segment",
     category: "Extraction",
     step: "Workflow A – Step 2",
@@ -311,7 +311,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "Q-009",
+    id: "A-09",
     title: "Populate standardized template and flag gaps",
     category: "Generation",
     step: "Workflow A – Step 3",
@@ -323,7 +323,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: ["res-dcf"],
   },
   {
-    id: "Q-010",
+    id: "B-01",
     title: "Add one year of historicals",
     category: "Model Update",
     step: "Workflow B – Step 2",
@@ -335,7 +335,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "Q-011",
+    id: "B-02",
     title: "Update Cost of Equity Parameters",
     category: "Model Update",
     step: "Workflow B – Step 2",
@@ -347,7 +347,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: ["res-coe"],
   },
   {
-    id: "Q-012",
+    id: "B-03",
     title: "Update macro variables",
     category: "Model Update",
     step: "Workflow B – Step 2",
@@ -359,7 +359,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: ["res-macro"],
   },
   {
-    id: "Q-013",
+    id: "B-04",
     title: "Update YTD financials",
     category: "Model Update",
     step: "Workflow B – Step 2",
@@ -371,7 +371,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "Q-014",
+    id: "B-05",
     title: "Update calibration factors (revenue, COGS, CapEx)",
     category: "Model Update",
     step: "Workflow B – Step 2",
@@ -383,7 +383,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "Q-015",
+    id: "B-06",
     title: "Update debt inputs",
     category: "Model Update",
     step: "Workflow B – Step 2",
@@ -395,7 +395,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "Q-016",
+    id: "B-07",
     title: "Missing information report",
     category: "Generation",
     step: "Workflow B – Step 3",
