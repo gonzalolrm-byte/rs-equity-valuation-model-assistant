@@ -256,6 +256,21 @@ function CompanyInformation() {
                       { value: "aggregate", label: "Aggregate (company level)" },
                     ]}
                   />
+                  <div>
+                    <p className="text-sm text-muted-foreground">How should COGS be modeled?</p>
+                    <div className="mt-2">
+                      <OptionRow
+                        value={a.cogsModeling}
+                        onChange={(value) =>
+                          setAnswer("cogsModeling", value as typeof a.cogsModeling)
+                        }
+                        options={[
+                          { value: "pct_revenue", label: "% of revenues" },
+                          { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
+                        ]}
+                      />
+                    </div>
+                  </div>
                 </Question>
 
                 <Question
@@ -272,6 +287,21 @@ function CompanyInformation() {
                       { value: "aggregate", label: "Aggregate (company level)" },
                     ]}
                   />
+                  <div>
+                    <p className="text-sm text-muted-foreground">How should CapEx be modeled?</p>
+                    <div className="mt-2">
+                      <OptionRow
+                        value={a.capexModeling}
+                        onChange={(value) =>
+                          setAnswer("capexModeling", value as typeof a.capexModeling)
+                        }
+                        options={[
+                          { value: "pct_revenue", label: "% of revenues" },
+                          { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
+                        ]}
+                      />
+                    </div>
+                  </div>
                 </Question>
 
                 <Question

@@ -63,7 +63,9 @@ export type Answers = {
   /** Per-segment operational driver measurement units, keyed by segment id. */
   segmentMeasurements: Record<string, SegmentMeasurement>;
   cogsBasis: "" | "segmented" | "aggregate";
+  cogsModeling: "" | "pct_revenue" | "unit_economics";
   capexBasis: "" | "segmented" | "aggregate";
+  capexModeling: "" | "pct_revenue" | "unit_economics";
   otherDirectCosts: string[];
   projectionYears: "" | "5" | "10" | "custom";
   customYears: string;
@@ -91,7 +93,9 @@ export const EMPTY_ANSWERS: Answers = {
   selectedSegments: [],
   segmentMeasurements: {},
   cogsBasis: "",
+  cogsModeling: "",
   capexBasis: "",
+  capexModeling: "",
   otherDirectCosts: [],
   projectionYears: "",
   customYears: "",
