@@ -71,6 +71,7 @@ function CompanyInformation() {
       : a.segmentBasis === "business_line"
         ? "Business Line"
         : "Segment";
+  const segmentNounLower = segmentNoun.toLowerCase();
   const segmentOptions = [
     { value: "segment1", label: `${segmentNoun} 1` },
     { value: "segment2", label: `${segmentNoun} 2` },
