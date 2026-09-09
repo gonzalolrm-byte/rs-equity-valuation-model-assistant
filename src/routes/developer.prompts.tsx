@@ -341,11 +341,20 @@ function PromptEditor({
 
         <div className="space-y-5 px-5 py-6">
           <div className="grid gap-4 sm:grid-cols-2">
-            <TextField
-              label="ID"
-              value={draft.id}
-              onChange={(value) => setDraft({ ...draft, id: value })}
-            />
+            {isNew ? (
+              <TextField
+                label="ID"
+                value={draft.id}
+                onChange={(value) => setDraft({ ...draft, id: value })}
+              />
+            ) : (
+              <label className="block">
+                <span className="mb-1.5 block text-sm text-muted-foreground">ID</span>
+                <p className="rounded-lg border border-input bg-secondary/40 px-3.5 py-2.5 font-mono text-[13px] font-semibold text-primary">
+                  {draft.id}
+                </p>
+              </label>
+            )}
             <SelectField
               label="Status"
               value={draft.status}
