@@ -186,7 +186,7 @@ function CompanyInformation() {
                   number={1}
                   label="Do you want to segment operations by business line or by revenue stream?"
                   required
-                  hint="Select the approach that best reflects how the business is managed and reported internally."
+                  hint="A business line reflects how a company's operations are divided into distinct operating segments based on differences in operating models and market dynamics, while a revenue stream is a specific way the company generates revenue within a business line. A business line may include multiple revenue streams. Different business lines typically have different measures of Units Sold and operating capacity."
                 >
                   <OptionRow
                     value={a.segmentBasis}
