@@ -28,7 +28,7 @@ export const Route = createFileRoute("/update-model/updates")({
       },
     ],
   }),
-  component: UpdateSelections;
+  component: UpdateSelections,
 });
 
 function UpdateSelections() {
