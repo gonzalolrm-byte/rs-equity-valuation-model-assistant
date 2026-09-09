@@ -606,24 +606,30 @@ function WorkingCapitalGroup({ title, items }: { title: string; items: string[] 
         {items.map((item) => {
           const current = a.workingCapitalDays[item] ?? { basis: "", manualDays: "" };
           return (
-            <div key={item} className="grid gap-3 sm:grid-cols-2 sm:items-end">
-              <SelectField
-                label={item}
-                value={current.basis}
-                onChange={(value) => update(item, { basis: value })}
-                options={WORKING_CAPITAL_BASIS_OPTIONS}
-                placeholder="Select basis"
-              />
-              {current.basis === MANUAL_WORKING_CAPITAL_BASIS && (
-                <TextField
-                  label="Days"
-                  value={current.manualDays}
-                  onChange={(value) =>
-                    update(item, { manualDays: value.replace(/\D/g, "") })
-                  }
-                  placeholder="Enter number of days"
+            <div
+              key={item}
+              className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
+            >
+              <p className="w-full pt-2 text-[15px] font-medium text-navy sm:w-1/2 lg:w-5/12">
+                {item}
+              </p>
+              <div className="flex w-full flex-col gap-2 sm:w-1/2 lg:w-7/12">
+                <SelectField
+                  value={current.basis}
+                  onChange={(value) => update(item, { basis: value })}
+                  options={WORKING_CAPITAL_BASIS_OPTIONS}
+                  placeholder="Select basis"
                 />
-              )}
+                {current.basis === MANUAL_WORKING_CAPITAL_BASIS && (
+                  <TextField
+                    value={current.manualDays}
+                    onChange={(value) =>
+                      update(item, { manualDays: value.replace(/\D/g, "") })
+                    }
+                    placeholder="Enter number of days"
+                  />
+                )}
+              </div>
             </div>
           );
         })}
