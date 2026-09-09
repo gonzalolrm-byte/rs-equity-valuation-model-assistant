@@ -214,45 +214,170 @@ const NO_GUESSING =
   "\n\nIf a required value cannot be located in the supplied documents, return exactly \"Data not found.\" for that field. Never estimate, interpolate or invent financial information.";
 
 export const INITIAL_PROMPTS: PromptAction[] = [
+  // --- Workflow A, Step 1: Company Information ---------------------------
+  // A.1-A.5 mirror section "A. General Information"
   {
     id: "A-01",
-    title: "Identify the appropriate standardized DCF template",
+    title: "A.1 Company name",
     category: "General Information",
     step: "Workflow A – Step 1: Company Information",
     status: "Active",
     lastUpdated: "2026-08-21",
     promptText:
-      "You are selecting an IFC standardized DCF template. Using the company sector, countries of operation, reporting currency and segmentation answers provided, identify which standardized DCF template in the developer resource library is the correct starting point. Return the template file name and a one-paragraph justification referencing the specific answers used." +
+      "Confirm the legal and commercial name of the company from the uploaded documents and compare it with the company name entered by the user. Report the name used in the source documents and flag any mismatch." +
       NO_GUESSING,
-    requiredResources: ["res-dcf"],
+    requiredResources: [],
   },
   {
     id: "A-02",
-    title: "Number of business lines / revenue streams",
-    category: "Segmentation and Categorization",
+    title: "A.2 Primary sector",
+    category: "General Information",
     step: "Workflow A – Step 1: Company Information",
     status: "Active",
     lastUpdated: "2026-08-21",
     promptText:
-      "Given the selected segmentation basis and the number of segments requested, list the segment sheets and input blocks that must exist in the adapted template. Do not alter formula logic; only report the structural changes required." +
+      "Using the company description in the uploaded documents, confirm whether the sector selected by the user is the primary sector. State the sector evidenced by the documents and identify which standardized DCF template that sector maps to." +
       NO_GUESSING,
     requiredResources: ["res-dcf"],
   },
   {
     id: "A-03",
-    title: "Map COGS categories to 'Other Direct Costs'",
+    title: "A.3 Main countries of operation (up to 3) and local currencies",
+    category: "General Information",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-08-21",
+    promptText:
+      "Identify the main countries in which the company operates (maximum three, ranked by contribution to revenue) and the local currency of each. Return the country, its local currency and the evidence used for the ranking." +
+      NO_GUESSING,
+    requiredResources: ["res-macro"],
+  },
+  {
+    id: "A-04",
+    title: "A.4 Material foreign-currency revenues, costs or investments",
+    category: "General Information",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-08-21",
+    promptText:
+      "Determine whether the company has material revenues, costs or investments denominated in a currency other than the local currency. Quote the disclosures relied upon and list the currencies involved with their approximate share of revenue and costs." +
+      NO_GUESSING,
+    requiredResources: [],
+  },
+  {
+    id: "A-05",
+    title: "A.5 Reporting currency",
+    category: "General Information",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-08-21",
+    promptText:
+      "State the reporting (presentation) currency and the units of the audited financial statements, and confirm whether it matches the reporting currency selected by the user." +
+      NO_GUESSING,
+    requiredResources: [],
+  },
+  // B.1-B.3 mirror section "B. Modeling Approach"
+  {
+    id: "A-06",
+    title: "B.1 Revenue modeling approach",
+    category: "Modeling Approach",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-08-21",
+    promptText:
+      "Given the sector, business description and data available in the uploaded documents, recommend whether revenue should be modeled on a percentage-based (simplified) basis or using unit economics (price x volume). Justify the recommendation with the specific historical data available." +
+      NO_GUESSING,
+    requiredResources: ["res-dcf"],
+  },
+  {
+    id: "A-07",
+    title: "B.2 COGS modeling approach",
+    category: "Modeling Approach",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-08-21",
+    promptText:
+      "Recommend whether COGS should be modeled as a percentage of revenue or from per-unit cost assumptions, based on the cost disclosures available. State which historical inputs support the recommended approach." +
+      NO_GUESSING,
+    requiredResources: ["res-dcf"],
+  },
+  {
+    id: "A-08",
+    title: "B.3 CapEx modeling approach",
+    category: "Modeling Approach",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-08-21",
+    promptText:
+      "Recommend whether CapEx should be modeled as a percentage of revenue or driven by per-unit capacity and expansion assumptions, based on the capital expenditure and capacity data disclosed." +
+      NO_GUESSING,
+    requiredResources: ["res-dcf"],
+  },
+  // C.1-C.5 mirror section "C. Segmentation and Categorization"
+  {
+    id: "A-09",
+    title: "C.1 Segmentation basis: business line or revenue stream",
+    category: "Segmentation and Categorization",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-08-21",
+    promptText:
+      "Using the company's business model and internal reporting, recommend whether operations should be segmented by business line or by revenue stream. Explain the operating-model and market-dynamic differences that justify the recommendation." +
+      NO_GUESSING,
+    requiredResources: ["res-dcf"],
+  },
+  {
+    id: "A-10",
+    title: "C.2 Segments to include and measurement units per segment",
+    category: "Segmentation and Categorization",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-08-21",
+    promptText:
+      "List the segments that should be included in the model and, for each segment, recommend the measurement unit for Maximum Output / Units Sold and for Capacity. Maximum Output and Units Sold must share the same unit; Capacity may differ. If the applicable template defines units, use those; otherwise default to 'Units'. Also report the segment sheets and input blocks that must exist in the adapted template, without altering formula logic." +
+      NO_GUESSING,
+    requiredResources: ["res-dcf"],
+  },
+  {
+    id: "A-11",
+    title: "C.3 COGS segmented or aggregate",
+    category: "Segmentation and Categorization",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-08-21",
+    promptText:
+      "State whether historical COGS can be reliably split by the selected segmentation basis. Recommend a segmented or aggregate COGS build and list the structural changes required in the template." +
+      NO_GUESSING,
+    requiredResources: ["res-dcf"],
+  },
+  {
+    id: "A-12",
+    title: "C.4 CapEx segmented or aggregate",
+    category: "Segmentation and Categorization",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-08-21",
+    promptText:
+      "State whether historical CapEx can be reliably split by the selected segmentation basis. Recommend a segmented or aggregate CapEx build and list the structural changes required in the template." +
+      NO_GUESSING,
+    requiredResources: ["res-dcf"],
+  },
+  {
+    id: "A-13",
+    title: 'C.5 Map COGS categories to "Other Direct Costs"',
     category: "Segmentation and Categorization",
     step: "Workflow A – Step 1: Company Information",
     status: "Active",
     lastUpdated: "2026-08-09",
     promptText:
-      "The user selected a set of standard COGS categories to be combined under 'Other Direct Costs'. Return the mapping between the template's standard COGS line items and the aggregated line, flagging any selected category that does not exist in the template." +
+      "The user selected a set of standard COGS categories to be combined under 'Other Direct Costs'. Return the mapping between the template's standard COGS line items and the aggregated line, flagging any selected category that does not exist in the template or that is disclosed separately in the financial statements." +
       NO_GUESSING,
     requiredResources: ["res-dcf"],
   },
+  // D.1-D.5 mirror section "D. Other Modeling Considerations"
   {
-    id: "A-04",
-    title: "Configure projection horizon",
+    id: "A-14",
+    title: "D.1 Projection horizon",
     category: "Other Modeling Considerations",
     step: "Workflow A – Step 1: Company Information",
     status: "Active",
@@ -263,20 +388,44 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: ["res-dcf"],
   },
   {
-    id: "A-05",
-    title: "Configure share classes and preferred waterfall",
+    id: "A-15",
+    title: "D.2 Working capital days by line item",
+    category: "Other Modeling Considerations",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-08-21",
+    promptText:
+      "For each working capital line item (trade receivables, contract assets, inventories, prepayments and other current assets, trade payables, contract liabilities / deferred revenue, accrued expenses and other operating payables), extract the historical balances and compute the implied days for the last 1, 2, 3 and 5 years. Return the values for the basis the user selected, with the arithmetic shown." +
+      NO_GUESSING,
+    requiredResources: [],
+  },
+  {
+    id: "A-16",
+    title: "D.3 Comparable companies (comps)",
+    category: "Other Modeling Considerations",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-08-21",
+    promptText:
+      "Given the number of comparable companies requested, list the comps input rows the template requires and the data points needed for each comp. Do not propose comparable companies or multiples that are not present in the supplied documents." +
+      NO_GUESSING,
+    requiredResources: ["res-dcf"],
+  },
+  {
+    id: "A-17",
+    title: "D.4 Share classes and preferred rights",
     category: "Other Modeling Considerations",
     step: "Workflow A – Step 1: Company Information",
     status: "Active",
     lastUpdated: "2026-07-28",
     promptText:
-      "Based on the share class answer, state whether the preferred waterfall template must be appended and which inputs it requires from the uploaded documents." +
+      "Based on the share class answer and the preferred share rights described, state whether the preferred waterfall template must be appended and which inputs it requires from the uploaded documents (liquidation preference, dividend rights, conversion terms)." +
       NO_GUESSING,
     requiredResources: ["res-waterfall"],
   },
   {
-    id: "A-06",
-    title: "Configure liquidity put mechanics",
+    id: "A-18",
+    title: "D.5 Liquidity put mechanics",
     category: "Other Modeling Considerations",
     step: "Workflow A – Step 1: Company Information",
     status: "Active",
@@ -286,8 +435,9 @@ export const INITIAL_PROMPTS: PromptAction[] = [
       NO_GUESSING,
     requiredResources: ["res-put"],
   },
+  // --- Workflow A, Step 2 and Step 3 -------------------------------------
   {
-    id: "A-07",
+    id: "A-19",
     title: "Extract historical financial statements",
     category: "Document Upload",
     step: "Workflow A – Step 2: Document Upload",
@@ -299,7 +449,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-08",
+    id: "A-20",
     title: "Extract operational drivers by segment",
     category: "Document Upload",
     step: "Workflow A – Step 2: Document Upload",
@@ -311,7 +461,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-09",
+    id: "A-21",
     title: "Populate standardized template and flag gaps",
     category: "Model Generation",
     step: "Workflow A – Step 3: Model Generation",
