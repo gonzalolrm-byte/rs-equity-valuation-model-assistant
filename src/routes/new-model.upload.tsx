@@ -28,7 +28,6 @@ export const NEW_MODEL_SLOTS: UploadSlot[] = [
       "Any report that includes operational drivers, operational drivers by segment, revenue / COGS / CapEx by segment, and a breakdown of COGS.",
     formats: "PDF, Excel (XLS/XLSX)",
     accept: ".pdf,.xls,.xlsx",
-    required: true,
   },
   {
     key: "latest_valuation_model",
@@ -37,7 +36,6 @@ export const NEW_MODEL_SLOTS: UploadSlot[] = [
     description: "The Excel model used in the most recent quarterly valuation.",
     formats: "Excel (XLS/XLSX)",
     accept: ".xls,.xlsx",
-    required: true,
     multiple: false,
   },
   {
@@ -114,7 +112,7 @@ function UploadStep() {
             </div>
             {!ready && (
               <p className="mt-2 text-right text-sm text-muted-foreground">
-                Upload the three required document sets to continue.
+                Upload the required Historical Audited Financial Statements to continue.
               </p>
             )}
           </div>
