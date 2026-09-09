@@ -96,9 +96,9 @@ function GenerateStep() {
                   label="Segmentation"
                   value={
                     answers.segmentBasis === "business_line"
-                      ? `Business line · ${answers.segmentCount || "?"} segments`
+                      ? `Business line · ${answers.selectedSegments.length || "?"} segments`
                       : answers.segmentBasis === "revenue_stream"
-                        ? `Revenue stream · ${answers.segmentCount || "?"} segments`
+                        ? `Revenue stream · ${answers.selectedSegments.length || "?"} segments`
                         : "—"
                   }
                 />

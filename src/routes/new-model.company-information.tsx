@@ -59,7 +59,7 @@ function CompanyInformation() {
     a.mainCountryCurrency &&
     a.reportingCurrency &&
     a.segmentBasis &&
-    a.segmentCount &&
+    a.selectedSegments.length > 0 &&
     a.cogsBasis &&
     a.capexBasis &&
     a.projectionYears &&
@@ -200,16 +200,25 @@ function CompanyInformation() {
 
                 <Question
                   number={2}
-                  label="How many segments do you need?"
+                  label="Which segments should be included in the model?"
                   required
-                  hint='You can select up to 4 segments, including "Other", due to standardized-template limitations.'
+                  hint='Select the segments that apply. "Other" can be used for any additional segment that is not one of the primary three.'
                 >
-                  <SelectField
-                    value={a.segmentCount}
-                    onChange={(value) => setAnswer("segmentCount", value)}
-                    options={["1", "2", "3", "4"]}
-                    placeholder="Select number of segments"
-                  />
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {[
+                      { value: "segment1", label: "Segment 1" },
+                      { value: "segment2", label: "Segment 2" },
+                      { value: "segment3", label: "Segment 3" },
+                      { value: "other", label: "Other" },
+                    ].map((option) => (
+                      <CheckItem
+                        key={option.value}
+                        label={option.label}
+                        checked={a.selectedSegments.includes(option.value)}
+                        onChange={() => toggleAnswerItem("selectedSegments", option.value)}
+                      />
+                    ))}
+                  </div>
                 </Question>
 
                 <Question
