@@ -299,11 +299,10 @@ function CompanyInformation() {
                   number={2}
                   label="How many comparable companies (comps) do you want to enter?"
                 >
-                  <SelectField
+                  <TextField
                     value={a.compsCount}
-                    onChange={(value) => setAnswer("compsCount", value)}
-                    options={["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]}
-                    placeholder="Select number of comps"
+                    onChange={(value) => setAnswer("compsCount", value.replace(/\D/g, ""))}
+                    placeholder="Enter number of comps"
                   />
                 </Question>
 
