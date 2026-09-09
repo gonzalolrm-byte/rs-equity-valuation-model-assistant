@@ -74,6 +74,7 @@ export const EMPTY_ANSWERS: Answers = {
   customYears: "",
   compsCount: "",
   shareClasses: "",
+  preferredShareRights: "",
   liquidityPut: "",
   putMechanisms: [],
 };
