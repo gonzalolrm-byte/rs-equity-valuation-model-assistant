@@ -40,7 +40,7 @@ export type Answers = {
   hasForeignCurrency: "" | "yes" | "no";
   reportingCurrency: string;
   segmentBasis: "" | "business_line" | "revenue_stream";
-  segmentCount: string;
+  selectedSegments: string[];
   cogsBasis: "" | "segmented" | "aggregate";
   capexBasis: "" | "segmented" | "aggregate";
   otherDirectCosts: string[];
