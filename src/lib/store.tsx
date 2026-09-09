@@ -66,6 +66,7 @@ export type Answers = {
   cogsModeling: "" | "pct_revenue" | "unit_economics";
   capexBasis: "" | "segmented" | "aggregate";
   capexModeling: "" | "pct_revenue" | "unit_economics";
+  revenueModeling: "" | "pct_revenue" | "unit_economics";
   otherDirectCosts: string[];
   projectionYears: "" | "5" | "10" | "custom";
   customYears: string;
