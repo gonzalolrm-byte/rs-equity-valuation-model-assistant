@@ -97,6 +97,7 @@ export const EMPTY_ANSWERS: Answers = {
   cogsModeling: "",
   capexBasis: "",
   capexModeling: "",
+  revenueModeling: "",
   otherDirectCosts: [],
   projectionYears: "",
   customYears: "",
