@@ -284,7 +284,7 @@ function CompanyInformation() {
                     onChange={(value) => setAnswer("capexBasis", value as typeof a.capexBasis)}
                     options={[
                       { value: "segmented", label: "Segmented" },
-                      { value: "aggregate (company level)" },
+                      { value: "aggregate", label: "Aggregate (company level)" },
                     ]}
                   />
                   <div>
