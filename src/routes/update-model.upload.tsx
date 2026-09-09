@@ -117,7 +117,7 @@ function UpdateUpload() {
             </div>
             {!ready && (
               <p className="mt-2 text-right text-sm text-muted-foreground">
-                Upload the three required documents to continue.
+                Upload the Last Quarter Standardized Valuation Model to continue.
               </p>
             )}
           </div>
