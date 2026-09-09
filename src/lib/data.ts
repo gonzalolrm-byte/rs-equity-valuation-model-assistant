@@ -521,3 +521,27 @@ export function recommendedMeasurements(input: {
   const bySector = input.sector ? SECTOR_MEASUREMENTS[input.sector] : undefined;
   return bySector ?? { capacity: "Units", output: "Units" };
 }
+
+/** Working capital line items modeled on a days basis (assets vs. liabilities). */
+export const WORKING_CAPITAL_ASSETS = [
+  "Trade receivables",
+  "Contract assets",
+  "Inventories",
+  "Prepayments and other current assets",
+];
+
+export const WORKING_CAPITAL_LIABILITIES = [
+  "Trade payables",
+  "Contract liabilities / deferred revenue",
+  "Accrued expenses and other operating payables",
+];
+
+export const MANUAL_WORKING_CAPITAL_BASIS = "Manual input";
+
+export const WORKING_CAPITAL_BASIS_OPTIONS = [
+  "Last year",
+  "Average of last 2 years",
+  "Average of last 3 years",
+  "Average of last 5 years",
+  MANUAL_WORKING_CAPITAL_BASIS,
+];

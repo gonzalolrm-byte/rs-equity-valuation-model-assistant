@@ -41,6 +41,11 @@ export type SegmentMeasurement = {
   capacityBasis: "" | "revenue_stream" | "aggregate";
 };
 
+export type WorkingCapitalDays = {
+  basis: string;
+  manualDays: string;
+};
+
 export type Answers = {
   companyName: string;
   sector: string;
@@ -67,6 +72,7 @@ export type Answers = {
   preferredShareRights: string;
   liquidityPut: "" | "yes" | "no";
   putMechanisms: string[];
+  workingCapitalDays: Record<string, WorkingCapitalDays>;
 };
 
 export const EMPTY_ANSWERS: Answers = {
@@ -94,6 +100,7 @@ export const EMPTY_ANSWERS: Answers = {
   preferredShareRights: "",
   liquidityPut: "",
   putMechanisms: [],
+  workingCapitalDays: {},
 };
 
 export type AppState = {

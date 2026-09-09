@@ -24,8 +24,16 @@ import {
   recommendedMeasurements,
   SAME_AS_OUTPUT_MEASUREMENT,
   SECTORS,
+  WORKING_CAPITAL_ASSETS,
+  MANUAL_WORKING_CAPITAL_BASIS,
+  WORKING_CAPITAL_BASIS_OPTIONS,
+  WORKING_CAPITAL_LIABILITIES,
 } from "@/lib/data";
-import { useApp, type SegmentMeasurement } from "@/lib/store";
+import {
+  useApp,
+  type SegmentMeasurement,
+  type WorkingCapitalDays,
+} from "@/lib/store";
 
 export const WORKFLOW_A_STEPS = [
   "Company Information",
@@ -378,6 +386,17 @@ function CompanyInformation() {
                     </div>
                   )}
                 </Question>
+
+                <Question
+                  number={5}
+                  label="Working capital — how should days be modeled for each line item?"
+                  hint="Select the historical basis used to derive days for each working capital item, or choose Manual input to enter the number of days directly."
+                >
+                  <div className="space-y-4">
+                    <WorkingCapitalGroup title="Assets" items={WORKING_CAPITAL_ASSETS} />
+                    <WorkingCapitalGroup title="Liabilities" items={WORKING_CAPITAL_LIABILITIES} />
+                  </div>
+                </Question>
               </Collapsible>
             </div>
 
@@ -559,6 +578,56 @@ function SegmentMeasurements({
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * Days basis selection for a group of working capital line items (assets or
+ * liabilities). Each item can use a historical average or a manual day count.
+ */
+function WorkingCapitalGroup({ title, items }: { title: string; items: string[] }) {
+  const { state, setAnswer } = useApp();
+  const a = state.answers;
+
+  const update = (item: string, partial: Partial<WorkingCapitalDays>) => {
+    const current: WorkingCapitalDays =
+      a.workingCapitalDays[item] ?? { basis: "", manualDays: "" };
+    setAnswer("workingCapitalDays", {
+      ...a.workingCapitalDays,
+      [item]: { ...current, ...partial },
+    });
+  };
+
+  return (
+    <div className="rounded-xl border border-panel-border bg-panel/60 p-4">
+      <p className="text-[15px] font-semibold text-navy">{title}</p>
+      <div className="mt-3 space-y-3">
+        {items.map((item) => {
+          const current = a.workingCapitalDays[item] ?? { basis: "", manualDays: "" };
+          return (
+            <div key={item} className="grid gap-3 sm:grid-cols-2 sm:items-end">
+              <SelectField
+                label={item}
+                value={current.basis}
+                onChange={(value) => update(item, { basis: value })}
+                options={WORKING_CAPITAL_BASIS_OPTIONS}
+                placeholder="Select basis"
+              />
+              {current.basis === MANUAL_WORKING_CAPITAL_BASIS && (
+                <TextField
+                  label="Days"
+                  value={current.manualDays}
+                  onChange={(value) =>
+                    update(item, { manualDays: value.replace(/\D/g, "") })
+                  }
+                  placeholder="Enter number of days"
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
