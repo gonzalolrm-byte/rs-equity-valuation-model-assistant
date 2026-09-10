@@ -136,7 +136,7 @@ function CompanyInformation() {
 
               </Collapsible>
 
-              <Collapsible title="B. Segmentation and Categorization">
+              <Collapsible title="B. Revenue, COGS, and CapEx Adaptations">
                 <Question
                   number={1}
                   label="Based on the company's business model, do you want to segment operations by business line or by revenue stream?"
