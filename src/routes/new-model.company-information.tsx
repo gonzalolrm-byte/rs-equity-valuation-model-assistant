@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Info } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button, ButtonLink } from "@/components/Button";
 import { SidePanel } from "@/components/SidePanel";
@@ -210,9 +210,14 @@ function CompanyInformation() {
                 <Question
                   number={1}
                   label="How should revenues, COGS and CapEx be modeled?"
-                  hint="Revenues can be modeled with a growth rate. COGS and CapEx can be modeled as a percentage of revenues or with unit economics. Unit economics builds the line item from per-unit assumptions (price × volume, cost per unit, capex per unit of capacity). If revenues use a growth rate, COGS and CapEx must be % of revenues; if COGS is % of revenues, CapEx must also be % of revenues."
                   required
                 >
+                  <p className="flex gap-2 rounded-lg bg-panel px-3 py-2 text-[13px] leading-relaxed text-navy-soft">
+                    <Info className="mt-0.5 size-4 shrink-0 text-primary" />
+                    <span>
+                      Unit economics provides a more transparent and operationally grounded approach to forecasting. It builds revenues, COGS, and CapEx from underlying business drivers—such as price, volume, cost per unit, and CapEx per unit of capacity—making projections easier to understand, benchmark, calibrate, and stress-test.
+                    </span>
+                  </p>
                   <div className="space-y-4">
                     {(
                       [
