@@ -260,7 +260,7 @@ function CompanyInformation() {
                                 value: "pct_revenue",
                                 label:
                                   row.key === "revenueModeling"
-                                    ? "Simple growth rate"
+                                    ? "Growth rate"
                                     : "% of revenues",
                               },
                               { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
