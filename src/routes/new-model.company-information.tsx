@@ -210,7 +210,7 @@ function CompanyInformation() {
                 <Question
                   number={1}
                   label="How should revenues, COGS and CapEx be modeled?"
-                  hint="Revenues can be modeled with a simple growth rate. COGS and CapEx can be modeled as a percentage of revenues or with unit economics. Unit economics builds the line item from per-unit assumptions (price × volume, cost per unit, capex per unit of capacity). If revenues use a simple growth rate, COGS and CapEx must be % of revenues; if COGS is % of revenues, CapEx must also be % of revenues."
+                  hint="Revenues can be modeled with a growth rate. COGS and CapEx can be modeled as a percentage of revenues or with unit economics. Unit economics builds the line item from per-unit assumptions (price × volume, cost per unit, capex per unit of capacity). If revenues use a growth rate, COGS and CapEx must be % of revenues; if COGS is % of revenues, CapEx must also be % of revenues."
                   required
                 >
                   <div className="space-y-4">
