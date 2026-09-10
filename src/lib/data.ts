@@ -714,11 +714,15 @@ export function recommendedMeasurements(input: {
   businessModel?: string;
   segmentDescription?: string;
 }): { capacity: string; output: string } {
+  // The selected sector template defines the default measurement units.
+  const bySector = input.sector ? SECTOR_MEASUREMENTS[input.sector] : undefined;
+  if (bySector) return bySector;
+  // Keywords in the business / segment description are a fallback only, used
+  // when the selected template does not define its own units.
   const text = `${input.segmentDescription ?? ""} ${input.businessModel ?? ""}`;
   const keyword = KEYWORD_MEASUREMENTS.find((entry) => entry.match.test(text));
   if (keyword) return { capacity: keyword.capacity, output: keyword.output };
-  const bySector = input.sector ? SECTOR_MEASUREMENTS[input.sector] : undefined;
-  return bySector ?? { capacity: "Units", output: "Units" };
+  return { capacity: "Units", output: "Units" };
 }
 
 /** Working capital line items modeled on a days basis (assets vs. liabilities). */
