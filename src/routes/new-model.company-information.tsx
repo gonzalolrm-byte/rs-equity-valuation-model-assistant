@@ -48,7 +48,7 @@ export const Route = createFileRoute("/new-model/company-information")({
       {
         name: "description",
         content:
-          "Step 1 of 3: answer the company, segmentation and valuation questions used to identify and customize the standardized DCF template.",
+          "Step 1 of 3: answer the company, Revenue/COGS/CapEx adaptations and valuation questions used to identify and customize the standardized DCF template.",
       },
       { property: "og:title", content: "Company Information — IFC Valuation Assistant" },
       {
