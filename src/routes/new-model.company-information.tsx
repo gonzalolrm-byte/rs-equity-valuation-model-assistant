@@ -236,11 +236,7 @@ function CompanyInformation() {
                             <span className="text-[15px] font-medium text-navy">{row.title}</span>
                             {locked && (
                               <span className="text-xs text-navy-soft">
-                                {row.key === "revenueModeling"
-                                  ? ""
-                                  : row.key === "cogsModeling"
-                                    ? "Locked to % of revenues by the Revenues selection"
-                                    : "Locked to % of revenues by the selection above"}
+                                Locked to % of revenues by the selection above
                               </span>
                             )}
                           </div>
