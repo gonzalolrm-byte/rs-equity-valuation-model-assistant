@@ -503,10 +503,12 @@ function SegmentMeasurements({
     });
   };
 
-  // Units are only relevant for drivers modeled with unit economics in Section B.
-  const needsOutputUnit =
-    a.revenueModeling === "unit_economics" || a.cogsModeling === "unit_economics";
-  const needsCapacityUnit = a.capexModeling === "unit_economics";
+  // The selected sector/template determines whether the model uses unit economics
+  // or a percentage-based approach. Percentage-based templates do not need
+  // operational measurement units.
+  const isPercentageBased = a.sector === "Generic - Percentage Based";
+  const needsOutputUnit = !isPercentageBased;
+  const needsCapacityUnit = !isPercentageBased;
   const needsAnyUnit = needsOutputUnit || needsCapacityUnit;
 
   return (
@@ -525,8 +527,8 @@ function SegmentMeasurements({
         </p>
       ) : (
         <p className="mt-1 text-[13px] text-muted-foreground">
-          Based on Section B, revenue, COGS and CapEx are all modeled on a percentage basis,
-          so no measurement units are required for this segment.
+          Based on the selected template, revenue, COGS and CapEx are modeled on a percentage
+          basis, so no measurement units are required for this segment.
         </p>
       )}
 
