@@ -128,7 +128,7 @@ function CompanyInformation() {
                   />
                 </Question>
 
-                <Question number={2} label="What is the primary sector?" required>
+                <Question number={2} label="Select the Sector-based template that best fits the company:" required>
                   <SelectField
                     value={a.sector}
                     onChange={(value) => setAnswer("sector", value)}
