@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, Info } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button, ButtonLink } from "@/components/Button";
 import { SidePanel } from "@/components/SidePanel";
@@ -92,9 +92,6 @@ function CompanyInformation() {
     a.mainCountry.trim() &&
     a.mainCountryCurrency &&
     a.reportingCurrency &&
-    a.revenueModeling &&
-    a.cogsModeling &&
-    a.capexModeling &&
     a.cogsBasis &&
     a.capexBasis &&
     a.projectionYears &&
@@ -206,80 +203,7 @@ function CompanyInformation() {
                 </Question>
               </Collapsible>
 
-              <Collapsible title="B. Modeling Approach">
-                <Question
-                  number={1}
-                  label="How should revenues, COGS and CapEx be modeled?"
-                  required
-                >
-                  <p className="flex gap-2 rounded-lg bg-panel px-3 py-2 text-[13px] leading-relaxed text-navy-soft">
-                    <Info className="mt-0.5 size-4 shrink-0 text-primary" />
-                    <span>
-                      Unit economics provides a more transparent and operationally grounded approach to forecasting. It builds revenues, COGS, and CapEx from underlying business drivers—such as price, volume, cost per unit, and CapEx per unit of capacity—making projections easier to understand, benchmark, calibrate, and stress-test.
-                    </span>
-                  </p>
-                  <div className="space-y-4">
-                    {(
-                      [
-                        { key: "revenueModeling", title: "Revenues" },
-                        { key: "cogsModeling", title: "COGS" },
-                        { key: "capexModeling", title: "CapEx" },
-                      ] as const
-                    ).map((row) => {
-                      const revenuePct = a.revenueModeling === "pct_revenue";
-                      const cogsPct = a.cogsModeling === "pct_revenue";
-                      const locked =
-                        (row.key === "cogsModeling" && revenuePct) ||
-                        (row.key === "capexModeling" && (revenuePct || cogsPct));
-                      const value = locked ? "pct_revenue" : a[row.key];
-                      return (
-                        <div
-                          key={row.key}
-                          className="rounded-lg border border-border bg-card/60 p-4"
-                        >
-                          <div className="mb-3 flex items-center justify-between gap-3">
-                            <span className="text-[15px] font-medium text-navy">{row.title}</span>
-                            {locked && (
-                              <span className="text-xs text-navy-soft">
-                                Locked to % of revenues by the selection above
-                              </span>
-                            )}
-                          </div>
-                          <OptionRow
-                            value={value}
-                            disabled={locked}
-                            onChange={(next) => {
-                              const typed = next as typeof a.revenueModeling;
-                              setAnswer(row.key, typed);
-                              if (typed === "pct_revenue") {
-                                if (row.key === "revenueModeling") {
-                                  setAnswer("cogsModeling", "pct_revenue");
-                                  setAnswer("capexModeling", "pct_revenue");
-                                } else if (row.key === "cogsModeling") {
-                                  setAnswer("capexModeling", "pct_revenue");
-                                }
-                              }
-                            }}
-                            options={[
-                              {
-                                value: "pct_revenue",
-                                label:
-                                  row.key === "revenueModeling"
-                                    ? "Growth rate"
-                                    : "% of revenues",
-                              },
-                              { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
-                            ]}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </Question>
-              </Collapsible>
-
-
-              <Collapsible title="C. Segmentation and Categorization">
+              <Collapsible title="B. Segmentation and Categorization">
                 <Question
                   number={1}
                   label="Based on the company's business model, do you want to segment operations by business line or by revenue stream?"
@@ -369,7 +293,7 @@ function CompanyInformation() {
                 </Question>
               </Collapsible>
 
-              <Collapsible title="D. Other Modeling Considerations">
+              <Collapsible title="C. Other Modeling Considerations">
                 <Question number={1} label="How many years of projections do you need?" required>
                   <OptionRow
                     columns={3}
@@ -579,10 +503,12 @@ function SegmentMeasurements({
     });
   };
 
-  // Units are only relevant for drivers modeled with unit economics in Section B.
-  const needsOutputUnit =
-    a.revenueModeling === "unit_economics" || a.cogsModeling === "unit_economics";
-  const needsCapacityUnit = a.capexModeling === "unit_economics";
+  // The selected sector/template determines whether the model uses unit economics
+  // or a percentage-based approach. Percentage-based templates do not need
+  // operational measurement units.
+  const isPercentageBased = a.sector === "Generic - Percentage Based";
+  const needsOutputUnit = !isPercentageBased;
+  const needsCapacityUnit = !isPercentageBased;
   const needsAnyUnit = needsOutputUnit || needsCapacityUnit;
 
   return (
@@ -601,8 +527,8 @@ function SegmentMeasurements({
         </p>
       ) : (
         <p className="mt-1 text-[13px] text-muted-foreground">
-          Based on Section B, revenue, COGS and CapEx are all modeled on a percentage basis,
-          so no measurement units are required for this segment.
+          Based on the selected template, revenue, COGS and CapEx are modeled on a percentage
+          basis, so no measurement units are required for this segment.
         </p>
       )}
 
