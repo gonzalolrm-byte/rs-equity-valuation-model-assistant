@@ -136,7 +136,97 @@ function CompanyInformation() {
 
               </Collapsible>
 
-              <Collapsible title="B. Country, Currency and Segmentation">
+              <Collapsible title="B. Segmentation and Categorization">
+                <Question
+                  number={1}
+                  label="Based on the company's business model, do you want to segment operations by business line or by revenue stream?"
+                  hint="A business line reflects how a company's operations are divided into distinct operating segments based on differences in operating models and market dynamics, while a revenue stream is a specific way the company generates revenue within a business line. A business line may include multiple revenue streams. Different business lines typically have different measures of Units Sold and operating capacity."
+                >
+                  <OptionRow
+                    value={a.segmentBasis}
+                    onChange={(value) => setAnswer("segmentBasis", value as typeof a.segmentBasis)}
+                    options={[
+                      { value: "business_line", label: "Business line (e.g., Retail, Online, Wholesale)" },
+                      { value: "revenue_stream", label: "Revenue stream (e.g., Product categories, Service types)" },
+                    ]}
+                  />
+                </Question>
+
+                <Question
+                  number={2}
+                  label="Select the number of segments to include in the model:"
+                  hint='Select the segments that apply, then confirm the measurement units for each segment. "Other" can be used for any additional segment that is not one of the primary three. Maximum Output and Units Sold always share the same measurement unit.'
+                >
+                  <div className="space-y-3">
+                    {segmentOptions.map((option) => (
+                      <div key={option.value}>
+                        <CheckItem
+                          label={option.label}
+                          checked={a.selectedSegments.includes(option.value)}
+                          onChange={() => toggleAnswerItem("selectedSegments", option.value)}
+                        />
+                        {a.selectedSegments.includes(option.value) && (
+                          <SegmentMeasurements
+                            segmentId={option.value}
+                            segmentLabel={option.label}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </Question>
+
+                <Question
+                  number={3}
+                  label="Do you want COGS to be segmented or modeled on an aggregate basis?"
+                  required
+                  hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that COGS also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
+                >
+                  <OptionRow
+                    value={a.cogsBasis}
+                    onChange={(value) => setAnswer("cogsBasis", value as typeof a.cogsBasis)}
+                    options={[
+                      { value: "segmented", label: "Segmented" },
+                      { value: "aggregate", label: "Aggregate (company level)" },
+                    ]}
+                  />
+                </Question>
+
+                <Question
+                  number={4}
+                  label="Do you want CapEx to be segmented or modeled on an aggregate basis?"
+                  required
+                  hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that CapEx also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
+                >
+                  <OptionRow
+                    value={a.capexBasis}
+                    onChange={(value) => setAnswer("capexBasis", value as typeof a.capexBasis)}
+                    options={[
+                      { value: "segmented", label: "Segmented" },
+                      { value: "aggregate", label: "Aggregate (company level)" },
+                    ]}
+                  />
+                </Question>
+
+                <Question
+                  number={5}
+                  label='Which standard COGS categories should be combined under "Other Direct Costs"? Select all that apply.'
+                  hint="Categories should be aggregated only when data is unavailable or a category is not relevant. Otherwise, keep these categories separate, as this breakdown supports more robust analysis and forecasting."
+                >
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {COGS_CATEGORIES.map((category) => (
+                      <CheckItem
+                        key={category}
+                        label={category}
+                        checked={a.otherDirectCosts.includes(category)}
+                        onChange={() => toggleAnswerItem("otherDirectCosts", category)}
+                      />
+                    ))}
+                  </div>
+                </Question>
+              </Collapsible>
+
+              <Collapsible title="C. Country, Currency and Other Modeling Considerations">
                 <Question
                   number={1}
                   label="Enter the name of the main countries in which the company operates (list up to 3 names)."
@@ -205,97 +295,7 @@ function CompanyInformation() {
                   />
                 </Question>
 
-                <Question
-                  number={4}
-                  label="Based on the company's business model, do you want to segment operations by business line or by revenue stream?"
-                  hint="A business line reflects how a company's operations are divided into distinct operating segments based on differences in operating models and market dynamics, while a revenue stream is a specific way the company generates revenue within a business line. A business line may include multiple revenue streams. Different business lines typically have different measures of Units Sold and operating capacity."
-                >
-                  <OptionRow
-                    value={a.segmentBasis}
-                    onChange={(value) => setAnswer("segmentBasis", value as typeof a.segmentBasis)}
-                    options={[
-                      { value: "business_line", label: "Business line (e.g., Retail, Online, Wholesale)" },
-                      { value: "revenue_stream", label: "Revenue stream (e.g., Product categories, Service types)" },
-                    ]}
-                  />
-                </Question>
-
-                <Question
-                  number={5}
-                  label="Select the number of segments to include in the model:"
-                  hint='Select the segments that apply, then confirm the measurement units for each segment. "Other" can be used for any additional segment that is not one of the primary three. Maximum Output and Units Sold always share the same measurement unit.'
-                >
-                  <div className="space-y-3">
-                    {segmentOptions.map((option) => (
-                      <div key={option.value}>
-                        <CheckItem
-                          label={option.label}
-                          checked={a.selectedSegments.includes(option.value)}
-                          onChange={() => toggleAnswerItem("selectedSegments", option.value)}
-                        />
-                        {a.selectedSegments.includes(option.value) && (
-                          <SegmentMeasurements
-                            segmentId={option.value}
-                            segmentLabel={option.label}
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </Question>
-
-                <Question
-                  number={6}
-                  label="Do you want COGS to be segmented or modeled on an aggregate basis?"
-                  required
-                  hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that COGS also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
-                >
-                  <OptionRow
-                    value={a.cogsBasis}
-                    onChange={(value) => setAnswer("cogsBasis", value as typeof a.cogsBasis)}
-                    options={[
-                      { value: "segmented", label: "Segmented" },
-                      { value: "aggregate", label: "Aggregate (company level)" },
-                    ]}
-                  />
-                </Question>
-
-                <Question
-                  number={7}
-                  label="Do you want CapEx to be segmented or modeled on an aggregate basis?"
-                  required
-                  hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that CapEx also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
-                >
-                  <OptionRow
-                    value={a.capexBasis}
-                    onChange={(value) => setAnswer("capexBasis", value as typeof a.capexBasis)}
-                    options={[
-                      { value: "segmented", label: "Segmented" },
-                      { value: "aggregate", label: "Aggregate (company level)" },
-                    ]}
-                  />
-                </Question>
-
-                <Question
-                  number={8}
-                  label='Which standard COGS categories should be combined under "Other Direct Costs"? Select all that apply.'
-                  hint="Categories should be aggregated only when data is unavailable or a category is not relevant. Otherwise, keep these categories separate, as this breakdown supports more robust analysis and forecasting."
-                >
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {COGS_CATEGORIES.map((category) => (
-                      <CheckItem
-                        key={category}
-                        label={category}
-                        checked={a.otherDirectCosts.includes(category)}
-                        onChange={() => toggleAnswerItem("otherDirectCosts", category)}
-                      />
-                    ))}
-                  </div>
-                </Question>
-              </Collapsible>
-
-              <Collapsible title="C. Other Modeling Considerations">
-                <Question number={1} label="How many years of projections do you need?" required>
+                <Question number={4} label="How many years of projections do you need?" required>
                   <OptionRow
                     columns={3}
                     value={a.projectionYears}
@@ -321,7 +321,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={2}
+                  number={5}
                   label="Working capital — how should days be modeled for each line item?"
                   hint="Select the historical basis used to derive days for each working capital item, or choose Manual input to enter the number of days directly."
                 >
@@ -332,7 +332,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={3}
+                  number={6}
                   label="How many comparable companies (comps) do you want to enter?"
                 >
                   <TextField
@@ -343,7 +343,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={4}
+                  number={7}
                   label="Does IFC have common shares or preferred shares?"
                   required
                 >
@@ -369,7 +369,7 @@ function CompanyInformation() {
                   )}
                 </Question>
 
-                <Question number={5} label="Does the company have a liquidity put?" required>
+                <Question number={8} label="Does the company have a liquidity put?" required>
                   <OptionRow
                     value={a.liquidityPut}
                     onChange={(value) => setAnswer("liquidityPut", value as typeof a.liquidityPut)}
