@@ -224,11 +224,23 @@ const NO_GUESSING =
 export const INITIAL_PROMPTS: PromptAction[] = [
   // --- Workflow A, Step 1: Company Information ---------------------------
   // One instruction block per Company Information question. Grouped exactly
-  // like the questionnaire the user sees: A. General Information,
-  // B. Modeling Approach, C. Segmentation and Categorization,
-  // D. Other Modeling Considerations.
+  // like the questionnaire the user sees: A. Template Selection,
+  // B. General Information, C. Modeling Approach, D. Segmentation and Categorization,
+  // E. Other Modeling Considerations.
   {
     id: "A-001",
+    title: "Select Sector Template",
+    category: "Template Selection",
+    step: "Workflow A – Step 1: Company Information",
+    status: "Active",
+    lastUpdated: "2026-09-10",
+    variables: ["{{primary_sector}}"],
+    promptText:
+      "Select the standardized DCF template that corresponds to {{primary_sector}} from the IFC DCF template library. Use this template as the base workbook for all subsequent configuration and population steps. If no exact sector match exists, choose the closest available template and note the mapping. Do not alter the template's core structure unless required by another questionnaire response.",
+    requiredResources: ["res-dcf"],
+  },
+  {
+    id: "A-002",
     title: "Company Name",
     category: "General Information",
     step: "Workflow A – Step 1: Company Information",
@@ -240,7 +252,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-002",
+    id: "A-003",
     title: "Primary Sector",
     category: "General Information",
     step: "Workflow A – Step 1: Company Information",
@@ -248,11 +260,11 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     lastUpdated: "2026-09-09",
     variables: ["{{primary_sector}}"],
     promptText:
-      "Treat {{primary_sector}} as the company's primary sector. Use this sector classification when selecting the appropriate standardized DCF template and when determining sector-appropriate terminology, operating drivers, measurement units, assumptions, and model conventions. Do not change the standardized template structure unless required by another questionnaire response.",
-    requiredResources: ["res-dcf"],
+      "Treat {{primary_sector}} as the company's primary sector. Use this sector classification when determining sector-appropriate terminology, operating drivers, measurement units, assumptions, and model conventions within the already-selected standardized template. Do not change the standardized template structure unless required by another questionnaire response.",
+    requiredResources: [],
   },
   {
-    id: "A-003",
+    id: "A-004",
     title: "Countries of Operation",
     category: "General Information",
     step: "Workflow A – Step 1: Company Information",
@@ -264,7 +276,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: ["res-macro"],
   },
   {
-    id: "A-004",
+    id: "A-005",
     title: "Foreign Currency Exposure",
     category: "General Information",
     step: "Workflow A – Step 1: Company Information",
@@ -276,7 +288,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-005",
+    id: "A-006",
     title: "Reporting Currency",
     category: "General Information",
     step: "Workflow A – Step 1: Company Information",
@@ -288,7 +300,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-006",
+    id: "A-007",
     title: "Revenue Modeling Approach",
     category: "Modeling Approach",
     step: "Workflow A – Step 1: Company Information",
@@ -300,7 +312,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-007",
+    id: "A-008",
     title: "COGS Modeling Approach",
     category: "Modeling Approach",
     step: "Workflow A – Step 1: Company Information",
@@ -312,7 +324,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-008",
+    id: "A-009",
     title: "CapEx Modeling Approach",
     category: "Modeling Approach",
     step: "Workflow A – Step 1: Company Information",
@@ -324,7 +336,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-009",
+    id: "A-010",
     title: "Segmentation Type: Business Line vs. Revenue Stream",
     category: "Segmentation and Categorization",
     step: "Workflow A – Step 1: Company Information",
@@ -336,7 +348,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-010",
+    id: "A-011",
     title: "Segments & Measurement Units",
     category: "Segmentation and Categorization",
     step: "Workflow A – Step 1: Company Information",
@@ -358,7 +370,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-011",
+    id: "A-012",
     title: "COGS Segmentation",
     category: "Segmentation and Categorization",
     step: "Workflow A – Step 1: Company Information",
@@ -370,7 +382,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-012",
+    id: "A-013",
     title: "CapEx Segmentation",
     category: "Segmentation and Categorization",
     step: "Workflow A – Step 1: Company Information",
@@ -382,7 +394,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-013",
+    id: "A-014",
     title: "COGS Categories Combined under Other Direct Costs",
     category: "Segmentation and Categorization",
     step: "Workflow A – Step 1: Company Information",
@@ -394,7 +406,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-014",
+    id: "A-015",
     title: "Projection Horizon",
     category: "Other Modeling Considerations",
     step: "Workflow A – Step 1: Company Information",
@@ -406,7 +418,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: ["res-dcf"],
   },
   {
-    id: "A-015",
+    id: "A-016",
     title: "Working Capital Methodology",
     category: "Other Modeling Considerations",
     step: "Workflow A – Step 1: Company Information",
@@ -427,7 +439,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-016",
+    id: "A-017",
     title: "Number of Comparable Companies",
     category: "Other Modeling Considerations",
     step: "Workflow A – Step 1: Company Information",
@@ -439,7 +451,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-017",
+    id: "A-018",
     title: "IFC Share Classes & Preferred Share Rights",
     category: "Other Modeling Considerations",
     step: "Workflow A – Step 1: Company Information",
@@ -451,7 +463,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-018",
+    id: "A-019",
     title: "Liquidity Put",
     category: "Other Modeling Considerations",
     step: "Workflow A – Step 1: Company Information",
@@ -464,36 +476,39 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   },
   // --- Workflow A, Step 2 and Step 3 -------------------------------------
   {
-    id: "A-019",
+    id: "A-020",
     title: "Extract historical financial statements",
     category: "Document Upload",
     step: "Workflow A – Step 2: Document Upload",
     status: "Active",
     lastUpdated: "2026-08-30",
+    variables: [],
     promptText:
       "From the uploaded audited financial statements, extract the income statement, balance sheet and cash flow statement for every available historical year. Return a strict JSON object keyed by statement, then line item, then fiscal year. Preserve the reporting currency and units as stated in the source document." +
       NO_GUESSING,
     requiredResources: [],
   },
   {
-    id: "A-020",
+    id: "A-021",
     title: "Extract operational drivers by segment",
     category: "Document Upload",
     step: "Workflow A – Step 2: Document Upload",
     status: "Active",
     lastUpdated: "2026-08-30",
+    variables: [],
     promptText:
       "From the uploaded operational reports, extract volume and price drivers, revenue, COGS and CapEx by segment for each historical year, plus the COGS breakdown by standard category. Return strict JSON and cite the page or sheet for each figure." +
       NO_GUESSING,
     requiredResources: [],
   },
   {
-    id: "A-021",
+    id: "A-022",
     title: "Populate standardized template and flag gaps",
     category: "Model Generation",
     step: "Workflow A – Step 3: Model Generation",
     status: "Active",
     lastUpdated: "2026-09-02",
+    variables: [],
     promptText:
       "Using the extracted data set, produce the cell-level population instructions for the adapted standardized template. Never write to formula cells. Produce a separate list of every required input that remains unresolved, using the status values 'Data not found', 'Missing information' or 'Requires user input'." +
       NO_GUESSING,
@@ -587,6 +602,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
 
 export const PROMPT_CATEGORIES = [
   // Categories mirror the section / step names the end user sees in the app.
+  "Template Selection",
   "General Information",
   "Modeling Approach",
   "Segmentation and Categorization",
