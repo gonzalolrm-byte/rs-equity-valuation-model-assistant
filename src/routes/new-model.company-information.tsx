@@ -92,9 +92,6 @@ function CompanyInformation() {
     a.mainCountry.trim() &&
     a.mainCountryCurrency &&
     a.reportingCurrency &&
-    a.revenueModeling &&
-    a.cogsModeling &&
-    a.capexModeling &&
     a.cogsBasis &&
     a.capexBasis &&
     a.projectionYears &&
