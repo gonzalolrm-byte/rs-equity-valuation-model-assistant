@@ -134,8 +134,11 @@ function CompanyInformation() {
                   />
                 </Question>
 
+              </Collapsible>
+
+              <Collapsible title="B. Country, Currency and Segmentation">
                 <Question
-                  number={3}
+                  number={1}
                   label="Enter the name of the main countries in which the company operates (list up to 3 names)."
                   required
                 >
@@ -178,7 +181,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={4}
+                  number={2}
                   label="If the company operates in a single country, does it have material revenues, costs, or investments denominated in a currency other than the local currency?"
                 >
                   <OptionRow
@@ -193,7 +196,7 @@ function CompanyInformation() {
                   />
                 </Question>
 
-                <Question number={5} label="What is the company's reporting currency?" required>
+                <Question number={3} label="What is the company's reporting currency?" required>
                   <SelectField
                     value={a.reportingCurrency}
                     onChange={(value) => setAnswer("reportingCurrency", value)}
@@ -201,11 +204,9 @@ function CompanyInformation() {
                     placeholder="Select currency"
                   />
                 </Question>
-              </Collapsible>
 
-              <Collapsible title="B. Segmentation and Categorization">
                 <Question
-                  number={1}
+                  number={4}
                   label="Based on the company's business model, do you want to segment operations by business line or by revenue stream?"
                   hint="A business line reflects how a company's operations are divided into distinct operating segments based on differences in operating models and market dynamics, while a revenue stream is a specific way the company generates revenue within a business line. A business line may include multiple revenue streams. Different business lines typically have different measures of Units Sold and operating capacity."
                 >
@@ -220,7 +221,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={2}
+                  number={5}
                   label="Select the number of segments to include in the model:"
                   hint='Select the segments that apply, then confirm the measurement units for each segment. "Other" can be used for any additional segment that is not one of the primary three. Maximum Output and Units Sold always share the same measurement unit.'
                 >
@@ -244,7 +245,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={3}
+                  number={6}
                   label="Do you want COGS to be segmented or modeled on an aggregate basis?"
                   required
                   hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that COGS also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
@@ -260,7 +261,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={4}
+                  number={7}
                   label="Do you want CapEx to be segmented or modeled on an aggregate basis?"
                   required
                   hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that CapEx also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
@@ -276,7 +277,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={5}
+                  number={8}
                   label='Which standard COGS categories should be combined under "Other Direct Costs"? Select all that apply.'
                   hint="Categories should be aggregated only when data is unavailable or a category is not relevant. Otherwise, keep these categories separate, as this breakdown supports more robust analysis and forecasting."
                 >
