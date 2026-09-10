@@ -554,7 +554,13 @@ function SegmentMeasurements({
                 label="Maximum Output / Units Sold measurement"
                 value={current.output}
                 onChange={(value) => update({ output: value })}
-                options={OUTPUT_MEASUREMENTS}
+                // The sector/template defines the default unit; the user can
+                // keep it or pick "Other" to enter a custom measurement.
+                options={[
+                  ...new Set(
+                    [current.output, recommended.output, OTHER_MEASUREMENT].filter(Boolean),
+                  ),
+                ]}
               />
               {current.output === OTHER_MEASUREMENT && (
                 <div className="mt-2">
