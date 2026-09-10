@@ -210,30 +210,60 @@ function CompanyInformation() {
                 <Question
                   number={1}
                   label="How should revenues, COGS and CapEx be modeled?"
-                  hint="This selection applies to revenues, COGS and CapEx together. Sector-based templates use unit economics by default. Percentage-based modeling derives each line item from revenue or a growth assumption and is a simplified approach; choose it only when unit economics is not practical for this company."
+                  hint="Percentage-based modeling derives the line item from revenue or a growth assumption. Unit economics builds it from per-unit assumptions (price × volume, cost per unit, capex per unit of capacity). If revenues are percentage-based, COGS and CapEx must also be percentage-based; if COGS is percentage-based, CapEx must be percentage-based."
                   required
                 >
-                  <OptionRow
-                    value={a.revenueModeling}
-                    onChange={(next) => {
-                      const typed = next as typeof a.revenueModeling;
-                      setAnswer("revenueModeling", typed);
-                      setAnswer("cogsModeling", typed);
-                      setAnswer("capexModeling", typed);
-                    }}
-                    options={[
-                      { value: "unit_economics", label: "Unit economics (e.g. $/unit) — sector template default" },
-                      { value: "pct_revenue", label: "Percentage-based (simplified)" },
-                    ]}
-                  />
-                  {a.revenueModeling === "pct_revenue" && (
-                    <TextField
-                      label="Why is percentage-based modeling preferable for this company?"
-                      value={a.modelingJustification}
-                      onChange={(value) => setAnswer("modelingJustification", value)}
-                      placeholder="e.g. Limited operational data available; unit-level drivers are not tracked by the company."
-                    />
-                  )}
+                  <div className="space-y-4">
+                    {(
+                      [
+                        { key: "revenueModeling", title: "Revenues" },
+                        { key: "cogsModeling", title: "COGS" },
+                        { key: "capexModeling", title: "CapEx" },
+                      ] as const
+                    ).map((row) => {
+                      const revenuePct = a.revenueModeling === "pct_revenue";
+                      const cogsPct = a.cogsModeling === "pct_revenue";
+                      const locked =
+                        (row.key === "cogsModeling" && revenuePct) ||
+                        (row.key === "capexModeling" && (revenuePct || cogsPct));
+                      const value = locked ? "pct_revenue" : a[row.key];
+                      return (
+                        <div
+                          key={row.key}
+                          className="rounded-lg border border-border bg-card/60 p-4"
+                        >
+                          <div className="mb-3 flex items-center justify-between gap-3">
+                            <span className="text-[15px] font-medium text-navy">{row.title}</span>
+                            {locked && (
+                              <span className="text-xs text-navy-soft">
+                                Locked to percentage-based by the selection above
+                              </span>
+                            )}
+                          </div>
+                          <OptionRow
+                            value={value}
+                            disabled={locked}
+                            onChange={(next) => {
+                              const typed = next as typeof a.revenueModeling;
+                              setAnswer(row.key, typed);
+                              if (typed === "pct_revenue") {
+                                if (row.key === "revenueModeling") {
+                                  setAnswer("cogsModeling", "pct_revenue");
+                                  setAnswer("capexModeling", "pct_revenue");
+                                } else if (row.key === "cogsModeling") {
+                                  setAnswer("capexModeling", "pct_revenue");
+                                }
+                              }
+                            }}
+                            options={[
+                              { value: "pct_revenue", label: "Percentage-based (simplified)" },
+                              { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
+                            ]}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </Question>
               </Collapsible>
 
