@@ -462,9 +462,8 @@ function CurrencyDisplay({ label, value }: { label: string; value: string }) {
 
 /**
  * Measurement units for one segment's operational drivers. Defaults are
- * recommended from the sector, business description and segment description
- * (PROTOTYPE stand-in for the template lookup), and the user can override them
- * or enter a custom unit.
+ * recommended from the selected sector template, and the user can override
+ * them or enter a custom unit.
  */
 function SegmentMeasurements({
   segmentId,
@@ -480,7 +479,6 @@ function SegmentMeasurements({
   const recommended = recommendedMeasurements({
     sector: a.sector,
     businessModel: a.businessModel,
-    segmentDescription: saved?.description ?? "",
   });
 
   const defaultCapacity =
@@ -489,7 +487,6 @@ function SegmentMeasurements({
       : recommended.capacity;
 
   const current: SegmentMeasurement = {
-    description: saved?.description ?? "",
     capacity: saved?.capacity || defaultCapacity,
     capacityOther: saved?.capacityOther ?? "",
     output: saved?.output || recommended.output,
@@ -532,15 +529,6 @@ function SegmentMeasurements({
           basis, so no measurement units are required for this segment.
         </p>
       )}
-
-      <div className="mt-3">
-        <TextField
-          label="Segment description (optional — improves the recommended units)"
-          value={current.description}
-          onChange={(value) => update({ description: value })}
-          placeholder="e.g. Agriculture, Processing"
-        />
-      </div>
 
       {needsAnyUnit && (
         <div

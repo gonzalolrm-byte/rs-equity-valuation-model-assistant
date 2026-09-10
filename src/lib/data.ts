@@ -362,13 +362,12 @@ export const INITIAL_PROMPTS: PromptAction[] = [
       "{{segment_2}}",
       "{{segment_3}}",
       "{{other_segment}}",
-      "{{segment_descriptions}}",
       "{{units_sold_measurements}}",
       "{{capacity_measurements}}",
       "{{capacity_modeling_level}}",
     ],
     promptText:
-      "Configure the model using the selected {{segmentation_type}} segments: {{segment_1}}, {{segment_2}}, {{segment_3}}, and {{other_segment}}, where selected.\n\nUse the segment descriptions to confirm appropriate terminology and operating drivers.\n\nWhere Revenue or COGS uses Unit Economics, use the selected {{units_sold_measurements}} for Maximum Output and Units Sold (or equivalent) for each applicable segment. Maximum Output and Units Sold must always use the same measurement unit.\n\nWhere CapEx uses Unit Economics, use {{capacity_measurements}} as the applicable capacity measure. Capacity may use the same or a different measurement unit from Maximum Output / Units Sold.\n\nApply {{capacity_modeling_level}} when determining whether capacity should be modeled separately by revenue stream or at the aggregate company level.\n\nIf Revenues use Growth rate and COGS and CapEx are % of revenues, do not create operational measurement-unit schedules solely for forecasting purposes.\n\nDo not create segments that were not selected by the user.",
+      "Configure the model using the selected {{segmentation_type}} segments: {{segment_1}}, {{segment_2}}, {{segment_3}}, and {{other_segment}}, where selected.\n\nWhere Revenue or COGS uses Unit Economics, use the selected {{units_sold_measurements}} for Maximum Output and Units Sold (or equivalent) for each applicable segment. Maximum Output and Units Sold must always use the same measurement unit.\n\nWhere CapEx uses Unit Economics, use {{capacity_measurements}} as the applicable capacity measure. Capacity may use the same or a different measurement unit from Maximum Output / Units Sold.\n\nApply {{capacity_modeling_level}} when determining whether capacity should be modeled separately by revenue stream or at the aggregate company level.\n\nIf Revenues use Growth rate and COGS and CapEx are % of revenues, do not create operational measurement-unit schedules solely for forecasting purposes.\n\nDo not create segments that were not selected by the user.",
     requiredResources: [],
   },
   {
@@ -695,7 +694,7 @@ const SECTOR_MEASUREMENTS: Record<string, { capacity: string; output: string }> 
   "Water & Utilities": { capacity: "Water Treatment Capacity (m³/day)", output: "Cubic Metres (m³)" },
 };
 
-/** Keyword hints taken from the business / segment description. */
+/** Keyword hints taken from the business description. Used only as a fallback. */
 const KEYWORD_MEASUREMENTS: { match: RegExp; capacity: string; output: string }[] = [
   { match: /farm|agri|planta|crop|orchard|forest/i, capacity: "Hectares", output: "Metric Tons (MT)" },
   { match: /process|mill|refin|packag/i, capacity: "Processing Capacity (MT/year)", output: "Metric Tons (MT)" },
@@ -712,14 +711,13 @@ const KEYWORD_MEASUREMENTS: { match: RegExp; capacity: string; output: string }[
 export function recommendedMeasurements(input: {
   sector?: string;
   businessModel?: string;
-  segmentDescription?: string;
 }): { capacity: string; output: string } {
   // The selected sector template defines the default measurement units.
   const bySector = input.sector ? SECTOR_MEASUREMENTS[input.sector] : undefined;
   if (bySector) return bySector;
-  // Keywords in the business / segment description are a fallback only, used
-  // when the selected template does not define its own units.
-  const text = `${input.segmentDescription ?? ""} ${input.businessModel ?? ""}`;
+  // Keywords in the business description are a fallback only, used when the
+  // selected template does not define its own units.
+  const text = `${input.businessModel ?? ""}`;
   const keyword = KEYWORD_MEASUREMENTS.find((entry) => entry.match.test(text));
   if (keyword) return { capacity: keyword.capacity, output: keyword.output };
   return { capacity: "Units", output: "Units" };
