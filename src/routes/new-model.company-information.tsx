@@ -48,7 +48,7 @@ export const Route = createFileRoute("/new-model/company-information")({
       {
         name: "description",
         content:
-          "Step 1 of 3: answer the company, segmentation and valuation questions used to identify and customize the standardized DCF template.",
+          "Step 1 of 3: answer the company, Revenue/COGS/CapEx adaptations and valuation questions used to identify and customize the standardized DCF template.",
       },
       { property: "og:title", content: "Company Information — IFC Valuation Assistant" },
       {
@@ -136,7 +136,7 @@ function CompanyInformation() {
 
               </Collapsible>
 
-              <Collapsible title="B. Segmentation and Categorization">
+              <Collapsible title="B. Revenue, COGS, and CapEx Adaptations">
                 <Question
                   number={1}
                   label="Based on the company's business model, do you want to segment operations by business line or by revenue stream?"
