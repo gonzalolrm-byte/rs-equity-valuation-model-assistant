@@ -209,58 +209,64 @@ function CompanyInformation() {
               <Collapsible title="B. Modeling Approach">
                 <Question
                   number={1}
-                  label="How should revenue be modeled?"
-                  hint="Percentage-based modeling derives revenue from a revenue driver (e.g., % growth or price × volume assumptions). Unit economics models revenue per unit sold or per transaction."
+                  label="How should revenues, COGS and CapEx be modeled?"
+                  hint="Percentage-based modeling derives the line item from revenue or a growth assumption. Unit economics builds it from per-unit assumptions (price × volume, cost per unit, capex per unit of capacity). If revenues are percentage-based, COGS and CapEx must also be percentage-based; if COGS is percentage-based, CapEx must be percentage-based."
                   required
                 >
-                  <OptionRow
-                    value={a.revenueModeling}
-                    onChange={(value) =>
-                      setAnswer("revenueModeling", value as typeof a.revenueModeling)
-                    }
-                    options={[
-                      { value: "pct_revenue", label: "Percentage-based (simplified)" },
-                      { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
-                    ]}
-                  />
-                </Question>
-
-                <Question
-                  number={2}
-                  label="How should COGS be modeled?"
-                  hint="Select whether COGS should scale as a percentage of revenue or be built from per-unit cost assumptions."
-                  required
-                >
-                  <OptionRow
-                    value={a.cogsModeling}
-                    onChange={(value) =>
-                      setAnswer("cogsModeling", value as typeof a.cogsModeling)
-                    }
-                    options={[
-                      { value: "pct_revenue", label: "Percentage-based (simplified)" },
-                      { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
-                    ]}
-                  />
-                </Question>
-
-                <Question
-                  number={3}
-                  label="How should CapEx be modeled?"
-                  hint="Select whether CapEx should be modeled as a percentage of revenue or driven by per-unit capacity/expansion assumptions."
-                  required
-                >
-                  <OptionRow
-                    value={a.capexModeling}
-                    onChange={(value) =>
-                      setAnswer("capexModeling", value as typeof a.capexModeling)
-                    }
-                    options={[
-                      { value: "pct_revenue", label: "Percentage-based (simplified)" },
-                      { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
-                    ]}
-                  />
+                  <div className="space-y-4">
+                    {(
+                      [
+                        { key: "revenueModeling", title: "Revenues" },
+                        { key: "cogsModeling", title: "COGS" },
+                        { key: "capexModeling", title: "CapEx" },
+                      ] as const
+                    ).map((row) => {
+                      const revenuePct = a.revenueModeling === "pct_revenue";
+                      const cogsPct = a.cogsModeling === "pct_revenue";
+                      const locked =
+                        (row.key === "cogsModeling" && revenuePct) ||
+                        (row.key === "capexModeling" && (revenuePct || cogsPct));
+                      const value = locked ? "pct_revenue" : a[row.key];
+                      return (
+                        <div
+                          key={row.key}
+                          className="rounded-lg border border-border bg-card/60 p-4"
+                        >
+                          <div className="mb-3 flex items-center justify-between gap-3">
+                            <span className="text-[15px] font-medium text-navy">{row.title}</span>
+                            {locked && (
+                              <span className="text-xs text-navy-soft">
+                                Locked to percentage-based by the selection above
+                              </span>
+                            )}
+                          </div>
+                          <OptionRow
+                            value={value}
+                            disabled={locked}
+                            onChange={(next) => {
+                              const typed = next as typeof a.revenueModeling;
+                              setAnswer(row.key, typed);
+                              if (typed === "pct_revenue") {
+                                if (row.key === "revenueModeling") {
+                                  setAnswer("cogsModeling", "pct_revenue");
+                                  setAnswer("capexModeling", "pct_revenue");
+                                } else if (row.key === "cogsModeling") {
+                                  setAnswer("capexModeling", "pct_revenue");
+                                }
+                              }
+                            }}
+                            options={[
+                              { value: "pct_revenue", label: "Percentage-based (simplified)" },
+                              { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
+                            ]}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </Question>
               </Collapsible>
+
 
               <Collapsible title="C. Segmentation and Categorization">
                 <Question
