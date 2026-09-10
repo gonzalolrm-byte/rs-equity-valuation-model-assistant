@@ -210,7 +210,7 @@ function CompanyInformation() {
                 <Question
                   number={1}
                   label="How should revenues, COGS and CapEx be modeled?"
-                  hint="Percentage-based modeling derives the line item from revenue or a growth assumption. Unit economics builds it from per-unit assumptions (price × volume, cost per unit, capex per unit of capacity). If revenues are percentage-based, COGS and CapEx must also be percentage-based; if COGS is percentage-based, CapEx must be percentage-based."
+                  hint="Revenues can be modeled with a simple growth rate. COGS and CapEx can be modeled as a percentage of revenues or with unit economics. Unit economics builds the line item from per-unit assumptions (price × volume, cost per unit, capex per unit of capacity). If revenues use a simple growth rate, COGS and CapEx must be % of revenues; if COGS is % of revenues, CapEx must also be % of revenues."
                   required
                 >
                   <div className="space-y-4">
@@ -236,7 +236,7 @@ function CompanyInformation() {
                             <span className="text-[15px] font-medium text-navy">{row.title}</span>
                             {locked && (
                               <span className="text-xs text-navy-soft">
-                                Locked to percentage-based by the selection above
+                                Locked to % of revenues by the selection above
                               </span>
                             )}
                           </div>
@@ -256,7 +256,13 @@ function CompanyInformation() {
                               }
                             }}
                             options={[
-                              { value: "pct_revenue", label: "Percentage-based (simplified)" },
+                              {
+                                value: "pct_revenue",
+                                label:
+                                  row.key === "revenueModeling"
+                                    ? "Simple growth rate"
+                                    : "% of revenues",
+                              },
                               { value: "unit_economics", label: "Unit economics (e.g. $/unit)" },
                             ]}
                           />

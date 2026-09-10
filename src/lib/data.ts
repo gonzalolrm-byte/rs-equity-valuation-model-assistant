@@ -308,7 +308,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     lastUpdated: "2026-09-09",
     variables: ["{{revenue_modeling_approach}}"],
     promptText:
-      "Model revenue using {{revenue_modeling_approach}}. If Percentage-based is selected, use the template's simplified revenue forecasting methodology. If Unit Economics is selected, model revenue using Units Sold (or equivalent) x Price per Unit, together with the relevant operating and pricing drivers.",
+      "Model revenue using {{revenue_modeling_approach}}. If Simple growth rate is selected, use the template's simplified revenue forecasting methodology. If Unit Economics is selected, model revenue using Units Sold (or equivalent) x Price per Unit, together with the relevant operating and pricing drivers.",
     requiredResources: [],
   },
   {
@@ -320,7 +320,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     lastUpdated: "2026-09-09",
     variables: ["{{cogs_modeling_approach}}"],
     promptText:
-      "Model COGS using {{cogs_modeling_approach}}. If Percentage-based is selected, forecast COGS using the template's percentage-based methodology. If Unit Economics is selected, model applicable variable costs using cost per Unit Sold (or equivalent) and applicable fixed or semi-fixed costs using Maximum Output or capacity-related drivers where appropriate.",
+      "Model COGS using {{cogs_modeling_approach}}. If % of revenues is selected, forecast COGS using the template's percentage-based methodology. If Unit Economics is selected, model applicable variable costs using cost per Unit Sold (or equivalent) and applicable fixed or semi-fixed costs using Maximum Output or capacity-related drivers where appropriate.",
     requiredResources: [],
   },
   {
@@ -332,7 +332,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     lastUpdated: "2026-09-09",
     variables: ["{{capex_modeling_approach}}"],
     promptText:
-      "Model CapEx using {{capex_modeling_approach}}. If Percentage-based is selected, forecast CapEx as a percentage of revenue. If Unit Economics is selected, model maintenance and expansion CapEx using the applicable capacity-based methodology, distinguishing existing capacity from incremental capacity where required.",
+      "Model CapEx using {{capex_modeling_approach}}. If % of revenues is selected, forecast CapEx as a percentage of revenue. If Unit Economics is selected, model maintenance and expansion CapEx using the applicable capacity-based methodology, distinguishing existing capacity from incremental capacity where required.",
     requiredResources: [],
   },
   {
@@ -366,7 +366,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
       "{{capacity_modeling_level}}",
     ],
     promptText:
-      "Configure the model using the selected {{segmentation_type}} segments: {{segment_1}}, {{segment_2}}, {{segment_3}}, and {{other_segment}}, where selected.\n\nUse the segment descriptions to confirm appropriate terminology and operating drivers.\n\nWhere Revenue or COGS uses Unit Economics, use the selected {{units_sold_measurements}} for Maximum Output and Units Sold (or equivalent) for each applicable segment. Maximum Output and Units Sold must always use the same measurement unit.\n\nWhere CapEx uses Unit Economics, use {{capacity_measurements}} as the applicable capacity measure. Capacity may use the same or a different measurement unit from Maximum Output / Units Sold.\n\nApply {{capacity_modeling_level}} when determining whether capacity should be modeled separately by revenue stream or at the aggregate company level.\n\nIf Revenue, COGS and CapEx are all Percentage-based, do not create operational measurement-unit schedules solely for forecasting purposes.\n\nDo not create segments that were not selected by the user.",
+      "Configure the model using the selected {{segmentation_type}} segments: {{segment_1}}, {{segment_2}}, {{segment_3}}, and {{other_segment}}, where selected.\n\nUse the segment descriptions to confirm appropriate terminology and operating drivers.\n\nWhere Revenue or COGS uses Unit Economics, use the selected {{units_sold_measurements}} for Maximum Output and Units Sold (or equivalent) for each applicable segment. Maximum Output and Units Sold must always use the same measurement unit.\n\nWhere CapEx uses Unit Economics, use {{capacity_measurements}} as the applicable capacity measure. Capacity may use the same or a different measurement unit from Maximum Output / Units Sold.\n\nApply {{capacity_modeling_level}} when determining whether capacity should be modeled separately by revenue stream or at the aggregate company level.\n\nIf Revenues use Simple growth rate and COGS and CapEx are % of revenues, do not create operational measurement-unit schedules solely for forecasting purposes.\n\nDo not create segments that were not selected by the user.",
     requiredResources: [],
   },
   {
