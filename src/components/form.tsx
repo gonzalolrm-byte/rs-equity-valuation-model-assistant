@@ -157,15 +157,17 @@ export function OptionRow({
   value,
   onChange,
   columns = 2,
+  disabled = false,
 }: {
   options: { value: string; label: string }[];
   value: string;
   onChange: (value: string) => void;
   columns?: number;
+  disabled?: boolean;
 }) {
   return (
     <div
-      className="grid gap-3"
+      className={["grid gap-3", disabled ? "opacity-60" : ""].join(" ")}
       style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
     >
       {options.map((option) => {
@@ -174,14 +176,17 @@ export function OptionRow({
           <button
             key={option.value}
             type="button"
+            disabled={disabled}
             onClick={() => onChange(option.value)}
             className={[
               "flex items-center gap-3 rounded-lg border px-4 py-3 text-left text-[15px] transition-colors",
+              disabled ? "cursor-not-allowed" : "",
               selected
                 ? "border-primary bg-panel text-navy"
                 : "border-border bg-card text-navy-soft hover:border-primary/50 hover:bg-secondary/60",
             ].join(" ")}
           >
+
             <span
               className={[
                 "flex size-4.5 shrink-0 items-center justify-center rounded-full border-2",
