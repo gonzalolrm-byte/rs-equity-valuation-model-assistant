@@ -602,6 +602,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
 
 export const PROMPT_CATEGORIES = [
   // Categories mirror the section / step names the end user sees in the app.
+  "Template Selection",
   "General Information",
   "Modeling Approach",
   "Segmentation and Categorization",
