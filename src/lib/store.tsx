@@ -33,7 +33,6 @@ export type FileSlots = Record<string, UploadedFile[]>;
  * `*Other` holds the manual entry used when "Other Measurement" is selected.
  */
 export type SegmentMeasurement = {
-  description: string;
   capacity: string;
   capacityOther: string;
   output: string;
