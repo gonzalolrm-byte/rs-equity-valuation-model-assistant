@@ -23,6 +23,8 @@ export const SECTORS = [
   "Telecommunications & Technology",
   "Transport & Logistics",
   "Water & Utilities",
+  "Generic - Unit Economics",
+  "Generic - Percentage Based",
 ] as const;
 
 export const CURRENCIES = [
