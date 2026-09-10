@@ -173,9 +173,12 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         const savedPrompts = saved.prompts ?? [];
         const registryIds = new Set(INITIAL_PROMPTS.map((prompt) => prompt.id));
         const prompts: PromptAction[] = [
-          ...INITIAL_PROMPTS.map(
-            (prompt) => savedPrompts.find((item) => item.id === prompt.id) ?? prompt,
-          ),
+          ...INITIAL_PROMPTS.map((prompt) => {
+            const savedPrompt = savedPrompts.find((item) => item.id === prompt.id);
+            // Only keep developer edits when the shipped action at this ID is
+            // still the same action; otherwise the renumbered registry wins.
+            return savedPrompt && savedPrompt.title === prompt.title ? savedPrompt : prompt;
+          }),
           ...savedPrompts.filter((item) => !registryIds.has(item.id)),
         ];
         setState({
