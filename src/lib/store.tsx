@@ -63,6 +63,8 @@ export type Answers = {
   selectedSegments: string[];
   /** Revenue streams selected within each business line, keyed by segment id. */
   revenueStreams: Record<string, string[]>;
+  /** Whether each business line is modeled with a single revenue stream or multiple, keyed by segment id. */
+  lineStreamMode: Record<string, "single" | "multi">;
   /** Per-segment operational driver measurement units, keyed by segment id. */
   segmentMeasurements: Record<string, SegmentMeasurement>;
   cogsBasis: "" | "segmented" | "aggregate";
@@ -94,6 +96,7 @@ export const EMPTY_ANSWERS: Answers = {
   segmentBasis: "business_line",
   selectedSegments: ["segment1"],
   revenueStreams: { segment1: ["stream1"] },
+  lineStreamMode: { segment1: "multi" },
   segmentMeasurements: {},
   cogsBasis: "",
   capexBasis: "",
