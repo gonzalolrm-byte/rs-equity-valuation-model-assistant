@@ -19,6 +19,8 @@ import {
   INITIAL_RESOURCES,
   type DeveloperResource,
   type PromptAction,
+  type SectorSpecifics,
+  type SubsectorMeasurementSetting,
 } from "./data";
 import type { ExecutionLog } from "./services/claudeService";
 import type { GeneratedModel } from "./services/excelService";
@@ -154,6 +156,8 @@ export type AppState = {
   log: ExecutionLog | null;
   prompts: PromptAction[];
   resources: DeveloperResource[];
+  /** Developer overrides of the default measurement units per subsector template. */
+  sectorSpecifics: SectorSpecifics;
 };
 
 const INITIAL_STATE: AppState = {
@@ -169,6 +173,7 @@ const INITIAL_STATE: AppState = {
   log: null,
   prompts: INITIAL_PROMPTS,
   resources: INITIAL_RESOURCES,
+  sectorSpecifics: {},
 };
 
 
@@ -188,6 +193,8 @@ type Ctx = {
   deletePrompt: (id: string) => void;
   replaceResourceFiles: (id: string, files: File[]) => void;
   removeResourceFile: (id: string, fileName: string) => void;
+  setSubsectorMeasurements: (subsector: string, setting: SubsectorMeasurementSetting) => void;
+  resetSubsectorMeasurements: (subsector: string) => void;
   saveProgress: () => void;
   reset: () => void;
 };
@@ -345,6 +352,17 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
               : resource,
           ),
         })),
+      setSubsectorMeasurements: (subsector, setting) =>
+        setState((prev) => ({
+          ...prev,
+          sectorSpecifics: { ...prev.sectorSpecifics, [subsector]: setting },
+        })),
+      resetSubsectorMeasurements: (subsector) =>
+        setState((prev) => {
+          const next = { ...prev.sectorSpecifics };
+          delete next[subsector];
+          return { ...prev, sectorSpecifics: next };
+        }),
       saveProgress: () => setState((prev) => ({ ...prev, savedAt: new Date().toISOString() })),
       reset: () =>
         setState((prev) => ({
