@@ -385,6 +385,14 @@ export type DeveloperResource = {
 
 export const INITIAL_RESOURCES: DeveloperResource[] = [
   {
+    id: "res-dcf-generic",
+    name: "DCF Generic Templates",
+    description: "Generic standardized DCF valuation templates used when no sector-specific template is available.",
+    kind: "template",
+    lastUpdated: "2026-09-11",
+    files: [],
+  },
+  {
     id: "res-waterfall",
     name: "Preferred Waterfall Template",
     description: "Preferred / common share waterfall used when preferred instruments exist.",

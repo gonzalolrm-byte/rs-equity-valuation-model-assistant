@@ -248,10 +248,19 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           // registry are dropped from saved state.
           ...savedPrompts.filter((item) => !registryIds.has(item.id) && item.custom === true),
         ];
+        // Reconcile the developer resource registry: keep uploaded files for
+        // resources that still exist, adopt newly shipped resources, and drop
+        // resources removed from the registry.
+        const savedResources = saved.resources ?? [];
+        const resources: DeveloperResource[] = INITIAL_RESOURCES.map((resource) => {
+          const savedResource = savedResources.find((item) => item.id === resource.id);
+          return savedResource ? { ...resource, files: savedResource.files } : resource;
+        });
         setState({
           ...INITIAL_STATE,
           ...saved,
           prompts,
+          resources,
           // merge answers field-by-field so saved state from an older question
           // set never leaves newly added fields undefined
           answers: { ...EMPTY_ANSWERS, ...(saved.answers ?? {}) },
