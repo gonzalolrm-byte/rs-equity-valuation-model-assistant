@@ -749,8 +749,15 @@ function SegmentMatrix({
       const next = { ...a.revenueStreams };
       delete next[lineId];
       setAnswer("revenueStreams", next);
-    } else if ((a.revenueStreams[lineId] ?? []).length === 0 && lineId === "segment1") {
-      setAnswer("revenueStreams", { ...a.revenueStreams, [lineId]: ["stream1"] });
+    } else {
+      const current = a.revenueStreams[lineId] ?? [];
+      if (current.length === 0) {
+        // Multi-Stream defaults to Revenue Stream 1 and Revenue Stream 2.
+        setAnswer("revenueStreams", { ...a.revenueStreams, [lineId]: ["stream1", "stream2"] });
+      } else if (lineId === "segment1" && !current.includes("stream2")) {
+        // Business Line 1 always includes Revenue Stream 1 and 2 in Multi-Stream mode.
+        setAnswer("revenueStreams", { ...a.revenueStreams, [lineId]: [...current, "stream2"] });
+      }
     }
   };
 
