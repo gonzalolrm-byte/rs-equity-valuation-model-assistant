@@ -109,6 +109,33 @@ function CompanyInformation() {
     if (a.subsector2 && a.subsector2 === a.subsector3) setAnswer("subsector3", "");
   }, [a.subsector, a.subsector2, a.subsector3, setAnswer]);
 
+  // B.1 is linked to A.2: clearing an optional subsector removes its card from
+  // the model along with any per-segment configuration.
+  useEffect(() => {
+    const removed: string[] = [];
+    if (!a.subsector2 && a.selectedSegments.includes("segment2")) removed.push("segment2");
+    if (!a.subsector3 && a.selectedSegments.includes("segment3")) removed.push("segment3");
+    if (removed.length === 0) return;
+    setAnswer(
+      "selectedSegments",
+      a.selectedSegments.filter((id) => !removed.includes(id)),
+    );
+    const streams = { ...a.revenueStreams };
+    const modes = { ...a.lineStreamMode };
+    const cogs = { ...a.cogsBasis };
+    const capex = { ...a.capexBasis };
+    for (const id of removed) {
+      delete streams[id];
+      delete modes[id];
+      delete cogs[id];
+      delete capex[id];
+    }
+    setAnswer("revenueStreams", streams);
+    setAnswer("lineStreamMode", modes);
+    setAnswer("cogsBasis", cogs);
+    setAnswer("capexBasis", capex);
+  }, [a.subsector2, a.subsector3, a.selectedSegments, a.revenueStreams, a.lineStreamMode, a.cogsBasis, a.capexBasis, setAnswer]);
+
   // Clear country fields that are no longer relevant when the country count changes.
   useEffect(() => {
     if (!a.countryCount) return;
@@ -123,19 +150,19 @@ function CompanyInformation() {
     }
   }, [a.countryCount, a.secondCountry, a.thirdCountry, setAnswer]);
 
+  // Sub-sector 2 / 3 cards appear only when the matching subsector is chosen
+  // in A.2, so the number of sub-sector rows in B.1 mirrors the A.2 answers.
   const segmentOptions = [
     {
       value: "segment1",
       label: a.subsector ? `Sub-sector 1 — ${a.subsector}` : "Sub-sector 1",
     },
-    {
-      value: "segment2",
-      label: a.subsector2 ? `Sub-sector 2 — ${a.subsector2}` : "Sub-sector 2",
-    },
-    {
-      value: "segment3",
-      label: a.subsector3 ? `Sub-sector 3 — ${a.subsector3}` : "Sub-sector 3",
-    },
+    ...(a.subsector2
+      ? [{ value: "segment2", label: `Sub-sector 2 — ${a.subsector2}` }]
+      : []),
+    ...(a.subsector3
+      ? [{ value: "segment3", label: `Sub-sector 3 — ${a.subsector3}` }]
+      : []),
     { value: "other", label: "Other Sub-sector" },
   ];
   const revenueStreamOptions = [
