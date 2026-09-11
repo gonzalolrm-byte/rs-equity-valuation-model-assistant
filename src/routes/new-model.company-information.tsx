@@ -361,7 +361,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={5}
+                  number={2}
                   label="Working capital — how should days be modeled for each line item?"
                   hint="Select the historical basis used to derive days for each working capital item, or choose Manual input to enter the number of days directly."
                 >
@@ -372,7 +372,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={6}
+                  number={3}
                   label="How many comparable companies (comps) do you want to enter?"
                 >
                   <TextField
@@ -383,7 +383,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={7}
+                  number={4}
                   label="Does IFC have common shares or preferred shares?"
                   required
                 >
@@ -409,7 +409,7 @@ function CompanyInformation() {
                   )}
                 </Question>
 
-                <Question number={8} label="Does the company have a liquidity put?" required>
+                <Question number={5} label="Does the company have a liquidity put?" required>
                   <OptionRow
                     value={a.liquidityPut}
                     onChange={(value) => setAnswer("liquidityPut", value as typeof a.liquidityPut)}
