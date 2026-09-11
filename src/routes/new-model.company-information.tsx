@@ -227,18 +227,39 @@ function CompanyInformation() {
 
                 <Question
                   number={2}
-                  label='Which standard COGS categories should be combined under "Other Direct Costs"? Select all that apply.'
-                  hint="Categories should be aggregated only when data is unavailable or a category is not relevant. Otherwise, keep these categories separate, as this breakdown supports more robust analysis and forecasting."
+                  label="Which standard COGS categories should be included?"
+                  hint="Select all COGS categories that should appear in the model. Choosing Aggregate all categories will combine all standard categories into a single aggregate line."
                 >
                   <div className="grid gap-3 sm:grid-cols-2">
-                    {COGS_CATEGORIES.map((category) => (
-                      <CheckItem
-                        key={category}
-                        label={category}
-                        checked={a.otherDirectCosts.includes(category)}
-                        onChange={() => toggleAnswerItem("otherDirectCosts", category)}
-                      />
-                    ))}
+                    {[...COGS_CATEGORIES, "Other Costs", "Aggregate all categories"].map(
+                      (category) => {
+                        const aggregate = category === "Aggregate all categories";
+                        const disabled =
+                          a.otherDirectCosts.includes("Aggregate all categories") && !aggregate;
+                        return (
+                          <CheckItem
+                            key={category}
+                            label={category}
+                            description={
+                              aggregate
+                                ? "Combine all standard categories into a single line"
+                                : category === "Other Costs"
+                                  ? "Add a custom other-costs line"
+                                  : undefined
+                            }
+                            checked={a.otherDirectCosts.includes(category)}
+                            disabled={disabled}
+                            onChange={(checked) => {
+                              if (aggregate) {
+                                setAnswer("otherDirectCosts", checked ? [category] : []);
+                              } else if (!disabled) {
+                                toggleAnswerItem("otherDirectCosts", category);
+                              }
+                            }}
+                          />
+                        );
+                      },
+                    )}
                   </div>
                 </Question>
               </Collapsible>
