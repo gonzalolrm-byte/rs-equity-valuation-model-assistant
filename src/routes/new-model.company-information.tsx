@@ -300,7 +300,7 @@ function CompanyInformation() {
                     <div className="mt-6">
                       <Question
                         label="Does the company have material revenues, costs, or investments denominated in a currency other than the local currency?"
-                        hint="For simplicity, we assume the foreign currency is USD."
+                        hint="For simplicity, we assume the foreign currency is USD. This choice is disabled when the company operates in more than one country."
                       >
                         <OptionRow
                           value={a.hasForeignCurrency}
