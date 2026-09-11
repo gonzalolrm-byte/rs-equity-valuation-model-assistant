@@ -264,7 +264,7 @@ function CompanyInformation() {
                 </Question>
               </Collapsible>
 
-              <Collapsible title="FX Adaptations">
+              <Collapsible title="C. FX Adaptations">
                 <Question
                   number={1}
                   label="Enter the name of the main countries in which the company operates (list up to 3 names)."
@@ -334,7 +334,7 @@ function CompanyInformation() {
                 </Question>
               </Collapsible>
 
-              <Collapsible title="C. Other Modeling Considerations">
+              <Collapsible title="D. Other Modeling Considerations">
                 <Question number={1} label="How many years of projections do you need?" required>
                   <OptionRow
                     columns={3}
