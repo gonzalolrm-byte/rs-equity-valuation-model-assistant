@@ -37,7 +37,7 @@ import {
 } from "@/lib/store";
 
 export const WORKFLOW_A_STEPS = [
-  "Template Selection & Adaptation",
+  "Template Selection & Key Inputs",
   "Populate Template",
   "Generate Standardized Model",
 ];
@@ -45,13 +45,13 @@ export const WORKFLOW_A_STEPS = [
 export const Route = createFileRoute("/new-model/company-information")({
   head: () => ({
     meta: [
-      { title: "Template Selection & Adaptation — Real Sector – Equity Valuation Model Assistant" },
+      { title: "Template Selection & Key Inputs — Real Sector – Equity Valuation Model Assistant" },
       {
         name: "description",
         content:
           "Step 1 of 3: answer the company, Revenue/COGS/CapEx adaptations and valuation questions used to identify and customize the standardized DCF template.",
       },
-      { property: "og:title", content: "Template Selection & Adaptation — Real Sector – Equity Valuation Model Assistant" },
+      { property: "og:title", content: "Template Selection & Key Inputs — Real Sector – Equity Valuation Model Assistant" },
       {
         property: "og:description",
         content: "Step 1 of 3 of the standardized DCF template workflow.",
@@ -209,7 +209,7 @@ function CompanyInformation() {
           <div>
             <PageHeading
               step="Step 1 of 3"
-              title="Template Selection & Adaptation"
+              title="Template Selection & Key Inputs"
               intro="Please answer the following questions to help us identify and customize the most appropriate valuation template for your company."
             />
 
@@ -248,7 +248,7 @@ function CompanyInformation() {
                 )}
               </Collapsible>
 
-              <Collapsible title="B. Revenue, COGS, and CapEx Adaptations">
+              <Collapsible title="B. Revenue, COGS, and CapEx Key Inputs">
                 <Question
                   number={1}
                   label="Select the business lines and the revenue streams within each business line to include in the model:"
@@ -322,7 +322,7 @@ function CompanyInformation() {
                 </Question>
               </Collapsible>
 
-              <Collapsible title="C. Other Modeling Adaptations">
+              <Collapsible title="C. Other Modeling Key Inputs">
                 {(() => {
                   const showLineModeling = a.selectedSegments.length > 1;
                   const d = (n: number) => (showLineModeling ? n : n - 1);
@@ -612,7 +612,7 @@ function CompanyInformation() {
                 })()}
               </Collapsible>
 
-              <Collapsible title="D. FX Adaptations">
+              <Collapsible title="D. FX Key Inputs">
                 {isSotpFx ? (
                   <>
                     <Question
