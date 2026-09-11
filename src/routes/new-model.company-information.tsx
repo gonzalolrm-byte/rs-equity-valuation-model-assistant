@@ -131,6 +131,28 @@ function CompanyInformation() {
   ];
 
 
+  const isSotpFx = a.selectedSegments.length > 1 && a.businessLineModeling === "sotp";
+
+  const setLineCountryCount = (
+    lineId: string,
+    value: "" | "1" | "2" | "3" | "more",
+  ) => {
+    setAnswer("lineCountryCount", { ...a.lineCountryCount, [lineId]: value });
+    // Trim countries that exceed the new count.
+    const keep = value === "more" ? 3 : value ? Number(value) : 0;
+    const current = a.lineCountries[lineId] ?? [];
+    if (current.length > keep) {
+      setAnswer("lineCountries", { ...a.lineCountries, [lineId]: current.slice(0, keep) });
+    }
+  };
+
+  const setLineCountry = (lineId: string, index: number, country: string) => {
+    const current = [...(a.lineCountries[lineId] ?? [])];
+    while (current.length <= index) current.push({ country: "", currency: "" });
+    current[index] = { country, currency: defaultCurrencyForCountry(country) ?? "" };
+    setAnswer("lineCountries", { ...a.lineCountries, [lineId]: current });
+  };
+
   const customYearsNum = a.projectionYears === "custom" ? Number(a.customYears) : NaN;
   const customYearsError =
     a.projectionYears === "custom" && !Number.isNaN(customYearsNum) && customYearsNum < 10
@@ -140,11 +162,22 @@ function CompanyInformation() {
   const canContinue =
     a.sector &&
     a.subsector &&
-    a.countryCount &&
-    a.mainCountry.trim() &&
-    ((a.countryCount !== "2" && a.countryCount !== "3" && a.countryCount !== "more") ||
-      a.secondCountry.trim()) &&
-    ((a.countryCount !== "3" && a.countryCount !== "more") || a.thirdCountry.trim()) &&
+    (isSotpFx
+      ? a.selectedSegments.every((lineId) => {
+          const count = a.lineCountryCount[lineId];
+          if (!count) return false;
+          const rows = count === "more" ? 3 : Number(count);
+          const countries = a.lineCountries[lineId] ?? [];
+          return (
+            countries.length >= rows &&
+            countries.slice(0, rows).every((entry) => entry.country.trim())
+          );
+        })
+      : a.countryCount &&
+        a.mainCountry.trim() &&
+        ((a.countryCount !== "2" && a.countryCount !== "3" && a.countryCount !== "more") ||
+          a.secondCountry.trim()) &&
+        ((a.countryCount !== "3" && a.countryCount !== "more") || a.thirdCountry.trim())) &&
     a.reportingCurrency &&
     a.selectedSegments
       .filter((lineId) => a.lineStreamMode[lineId] === "multi")
@@ -576,6 +609,89 @@ function CompanyInformation() {
               </Collapsible>
 
               <Collapsible title="D. FX Adaptations">
+                {isSotpFx ? (
+                  <>
+                    <Question
+                      number={1}
+                      label="Select the main countries in which each business line operates."
+                      required
+                    >
+                      <div className="space-y-4">
+                        {a.selectedSegments.map((lineId) => {
+                          const lineLabel =
+                            segmentOptions.find((s) => s.value === lineId)?.label ?? lineId;
+                          const count = a.lineCountryCount[lineId] ?? "";
+                          const countries = a.lineCountries[lineId] ?? [];
+                          const rows = count === "more" ? 3 : count ? Number(count) : 0;
+                          const rowLabels = ["Main country", "Second country", "Third country"];
+                          return (
+                            <div
+                              key={lineId}
+                              className="space-y-4 rounded-lg border border-border p-4"
+                            >
+                              <p className="text-sm font-semibold text-foreground">{lineLabel}</p>
+                              <div className="space-y-2">
+                                <p className="text-[13px] font-medium text-foreground">
+                                  How many countries does this business line operate in?
+                                </p>
+                                <OptionRow
+                                  value={count}
+                                  onChange={(value) =>
+                                    setLineCountryCount(
+                                      lineId,
+                                      value as "" | "1" | "2" | "3" | "more",
+                                    )
+                                  }
+                                  options={[
+                                    { value: "1", label: "1" },
+                                    { value: "2", label: "2" },
+                                    { value: "3", label: "3" },
+                                    { value: "more", label: "More than 3" },
+                                  ]}
+                                />
+                              </div>
+                              {Array.from({ length: rows }, (_, index) => (
+                                <div
+                                  key={index}
+                                  className="grid gap-3 sm:grid-cols-[1fr_220px]"
+                                >
+                                  <SelectField
+                                    label={rowLabels[index] ?? `Country ${index + 1}`}
+                                    value={countries[index]?.country ?? ""}
+                                    onChange={(value) => setLineCountry(lineId, index, value)}
+                                    options={COUNTRIES}
+                                    placeholder="Select country"
+                                  />
+                                  <CurrencyDisplay
+                                    label="Currency"
+                                    value={countries[index]?.currency ?? ""}
+                                  />
+                                </div>
+                              ))}
+                              {count === "more" && (
+                                <p className="text-[13px] text-muted-foreground">
+                                  For simplicity, additional countries will be grouped into a single
+                                  category and will use the FX rate of the main country of
+                                  operations.
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </Question>
+
+                    <Question number={2} label="What is the company's reporting currency?" required>
+                      <SelectField
+                        value={a.reportingCurrency}
+                        onChange={(value) => setAnswer("reportingCurrency", value)}
+                        options={CURRENCIES}
+                        placeholder="Select currency"
+                      />
+                    </Question>
+                  </>
+                ) : (
+                  <>
                 <Question number={1} label="How many countries does the company operate in?" required>
                   <OptionRow
                     value={a.countryCount}
@@ -677,6 +793,8 @@ function CompanyInformation() {
                     placeholder="Select currency"
                   />
                 </Question>
+                  </>
+                )}
               </Collapsible>
             </div>
 

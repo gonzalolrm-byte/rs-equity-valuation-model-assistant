@@ -92,6 +92,10 @@ export type Answers = {
   compsCountByLine: Record<string, string>;
   /** Per-business-line valuation method (SOTP only). Business Line 1 is always DCF. */
   lineValuationMethod: Record<string, "dcf" | "comps">;
+  /** Per-business-line country count (SOTP only), keyed by segment id. */
+  lineCountryCount: Record<string, "" | "1" | "2" | "3" | "more">;
+  /** Per-business-line countries of operation (SOTP only), keyed by segment id (up to 3). */
+  lineCountries: Record<string, { country: string; currency: string }[]>;
 };
 
 export const EMPTY_ANSWERS: Answers = {
@@ -130,6 +134,8 @@ export const EMPTY_ANSWERS: Answers = {
   workingCapitalDaysByLine: {},
   compsCountByLine: {},
   lineValuationMethod: { segment1: "dcf" },
+  lineCountryCount: {},
+  lineCountries: {},
 };
 
 export type AppState = {
