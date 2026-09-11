@@ -102,6 +102,20 @@ function CompanyInformation() {
     normalize("capexBasis", a.capexBasis);
   }, [a.cogsBasis, a.capexBasis, a.selectedSegments, a.lineStreamMode, setAnswer]);
 
+  // Clear country fields that are no longer relevant when the country count changes.
+  useEffect(() => {
+    if (!a.countryCount) return;
+    if (a.countryCount === "1" && (a.secondCountry || a.thirdCountry)) {
+      setAnswer("secondCountry", "");
+      setAnswer("secondCountryCurrency", "");
+      setAnswer("thirdCountry", "");
+      setAnswer("thirdCountryCurrency", "");
+    } else if (a.countryCount === "2" && a.thirdCountry) {
+      setAnswer("thirdCountry", "");
+      setAnswer("thirdCountryCurrency", "");
+    }
+  }, [a.countryCount, a.secondCountry, a.thirdCountry, setAnswer]);
+
   const segmentOptions = [
     { value: "segment1", label: "Business Line 1" },
     { value: "segment2", label: "Business Line 2" },
@@ -125,8 +139,11 @@ function CompanyInformation() {
   const canContinue =
     a.sector &&
     a.subsector &&
+    a.countryCount &&
     a.mainCountry.trim() &&
-    a.mainCountryCurrency &&
+    ((a.countryCount !== "2" && a.countryCount !== "3" && a.countryCount !== "more") ||
+      a.secondCountry.trim()) &&
+    ((a.countryCount !== "3" && a.countryCount !== "more") || a.thirdCountry.trim()) &&
     a.reportingCurrency &&
     a.selectedSegments
       .filter((lineId) => a.lineStreamMode[lineId] === "multi")
@@ -265,52 +282,80 @@ function CompanyInformation() {
               </Collapsible>
 
               <Collapsible title="C. FX Adaptations">
-                <Question
-                  number={1}
-                  label="Enter the name of the main countries in which the company operates (list up to 3 names)."
-                  required
-                >
-                  <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
-                    <TextField
-                      label="Main country"
-                      value={a.mainCountry}
-                      onChange={(value) => {
-                        setAnswer("mainCountry", value);
-                        setAnswer("mainCountryCurrency", defaultCurrencyForCountry(value) ?? "");
-                      }}
-                      placeholder="Enter country name"
-                    />
-                    <CurrencyDisplay label="Currency" value={a.mainCountryCurrency} />
-                  </div>
-                  <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
-                    <TextField
-                      label="Second country (optional)"
-                      value={a.secondCountry}
-                      onChange={(value) => {
-                        setAnswer("secondCountry", value);
-                        setAnswer("secondCountryCurrency", defaultCurrencyForCountry(value) ?? "");
-                      }}
-                      placeholder="Enter country name"
-                    />
-                    <CurrencyDisplay label="Currency (optional)" value={a.secondCountryCurrency} />
-                  </div>
-                  <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
-                    <TextField
-                      label="Third country (optional)"
-                      value={a.thirdCountry}
-                      onChange={(value) => {
-                        setAnswer("thirdCountry", value);
-                        setAnswer("thirdCountryCurrency", defaultCurrencyForCountry(value) ?? "");
-                      }}
-                      placeholder="Enter country name"
-                    />
-                    <CurrencyDisplay label="Currency (optional)" value={a.thirdCountryCurrency} />
-                  </div>
+                <Question number={1} label="How many countries does the company operate in?" required>
+                  <OptionRow
+                    value={a.countryCount}
+                    onChange={(value) =>
+                      setAnswer("countryCount", value as typeof a.countryCount)
+                    }
+                    options={[
+                      { value: "1", label: "1" },
+                      { value: "2", label: "2" },
+                      { value: "3", label: "3" },
+                      { value: "more", label: "More than 3" },
+                    ]}
+                  />
                 </Question>
 
+                {a.countryCount && (
+                  <Question
+                    number={2}
+                    label={`Enter the name of the main countries in which the company operates (${
+                      a.countryCount === "more" ? "list the top 3" : `list up to ${a.countryCount} name${a.countryCount === "1" ? "" : "s"}`
+                    }).`}
+                    required
+                  >
+                    <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
+                      <TextField
+                        label="Main country"
+                        value={a.mainCountry}
+                        onChange={(value) => {
+                          setAnswer("mainCountry", value);
+                          setAnswer("mainCountryCurrency", defaultCurrencyForCountry(value) ?? "");
+                        }}
+                        placeholder="Enter country name"
+                      />
+                      <CurrencyDisplay label="Currency" value={a.mainCountryCurrency} />
+                    </div>
+                    {a.countryCount !== "1" && (
+                      <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
+                        <TextField
+                          label="Second country"
+                          value={a.secondCountry}
+                          onChange={(value) => {
+                            setAnswer("secondCountry", value);
+                            setAnswer("secondCountryCurrency", defaultCurrencyForCountry(value) ?? "");
+                          }}
+                          placeholder="Enter country name"
+                        />
+                        <CurrencyDisplay label="Currency" value={a.secondCountryCurrency} />
+                      </div>
+                    )}
+                    {(a.countryCount === "3" || a.countryCount === "more") && (
+                      <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
+                        <TextField
+                          label="Third country"
+                          value={a.thirdCountry}
+                          onChange={(value) => {
+                            setAnswer("thirdCountry", value);
+                            setAnswer("thirdCountryCurrency", defaultCurrencyForCountry(value) ?? "");
+                          }}
+                          placeholder="Enter country name"
+                        />
+                        <CurrencyDisplay label="Currency" value={a.thirdCountryCurrency} />
+                      </div>
+                    )}
+                    {a.countryCount === "more" && (
+                      <p className="text-[13px] text-muted-foreground">
+                        Additional countries can be detailed in the supporting documents uploaded in the next step.
+                      </p>
+                    )}
+                  </Question>
+                )}
+
                 <Question
-                  number={2}
-                  label="If the company operates in a single country, does it have material revenues, costs, or investments denominated in a currency other than the local currency?"
+                  number={3}
+                  label="Does the company have material revenues, costs, or investments denominated in a currency other than the local currency?"
                 >
                   <OptionRow
                     value={a.hasForeignCurrency}
@@ -324,7 +369,7 @@ function CompanyInformation() {
                   />
                 </Question>
 
-                <Question number={3} label="What is the company's reporting currency?" required>
+                <Question number={4} label="What is the company's reporting currency?" required>
                   <SelectField
                     value={a.reportingCurrency}
                     onChange={(value) => setAnswer("reportingCurrency", value)}
