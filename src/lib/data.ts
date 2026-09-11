@@ -460,7 +460,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   // One instruction block per Company Information question. Grouped exactly
   // like the questionnaire the user sees: A. Template Selection,
   // B. General Information, C. Modeling Approach, D. Segmentation and Categorization,
-  // E. Other Modeling Considerations.
+  // E. Other Modeling Adaptations.
   {
     id: "A-001",
     title: "Select Sector / Subsector Template",
@@ -641,7 +641,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-015",
     title: "Projection Horizon",
-    category: "Other Modeling Considerations",
+    category: "Other Modeling Adaptations",
     step: "Workflow A – Step 1: Template Selection & Adaptation",
     status: "Active",
     lastUpdated: "2026-09-09",
@@ -653,7 +653,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-016",
     title: "Working Capital Methodology",
-    category: "Other Modeling Considerations",
+    category: "Other Modeling Adaptations",
     step: "Workflow A – Step 1: Template Selection & Adaptation",
     status: "Active",
     lastUpdated: "2026-09-09",
@@ -674,7 +674,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-017",
     title: "Number of Comparable Companies",
-    category: "Other Modeling Considerations",
+    category: "Other Modeling Adaptations",
     step: "Workflow A – Step 1: Template Selection & Adaptation",
     status: "Active",
     lastUpdated: "2026-09-09",
@@ -686,7 +686,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-018",
     title: "IFC Share Classes & Preferred Share Rights",
-    category: "Other Modeling Considerations",
+    category: "Other Modeling Adaptations",
     step: "Workflow A – Step 1: Template Selection & Adaptation",
     status: "Active",
     lastUpdated: "2026-09-09",
@@ -698,7 +698,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-019",
     title: "Liquidity Put",
-    category: "Other Modeling Considerations",
+    category: "Other Modeling Adaptations",
     step: "Workflow A – Step 1: Template Selection & Adaptation",
     status: "Active",
     lastUpdated: "2026-09-09",
@@ -839,7 +839,7 @@ export const PROMPT_CATEGORIES = [
   "General Information",
   "Modeling Approach",
   "Segmentation and Categorization",
-  "Other Modeling Considerations",
+  "Other Modeling Adaptations",
   "Document Upload",
   "Model Generation",
   "Model Updates",
