@@ -793,6 +793,8 @@ function CompanyInformation() {
                     placeholder="Select currency"
                   />
                 </Question>
+                  </>
+                )}
               </Collapsible>
             </div>
 
