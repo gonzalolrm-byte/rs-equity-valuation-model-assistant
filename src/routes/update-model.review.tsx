@@ -155,15 +155,6 @@ function ReviewAndSave() {
             </div>
           </div>
 
-          <SidePanel
-            about="You can save your inputs for later or generate and download the updated standardized valuation model based on the selections made in Step 2."
-            tips={[
-              "Review the model before using it for valuation purposes.",
-              "If you want to make further changes, you can go back to Step 2.",
-              "The downloaded file is a standardized template with your selected updates applied.",
-              "For additional guidance, refer to the Valuation Guidelines.",
-            ]}
-          />
         </div>
       </main>
     </div>

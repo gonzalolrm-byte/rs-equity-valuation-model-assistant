@@ -124,15 +124,6 @@ function UpdateUpload() {
             )}
           </div>
 
-          <SidePanel
-            about="Upload the key documents listed on this page. These files will be used to extract relevant information and update your standardized valuation model."
-            tips={[
-              "Use the most recent and complete information available.",
-              "Ensure documents are in PDF, Excel or PowerPoint format.",
-              "If a document is very large, you may compress it or upload key sections.",
-              "You can upload multiple files for each category if needed.",
-            ]}
-          />
         </div>
       </main>
     </div>

@@ -197,15 +197,6 @@ function GenerateStep() {
             </div>
           </div>
 
-          <SidePanel
-            about="Save your information and generate the standardized valuation model. The model is based on your responses in Step 1, the documents uploaded in Step 2 and IFC's standard templates."
-            tips={[
-              "You can save your information and return later to make changes.",
-              "The generated model is a standardized template. You may need to review and refine certain inputs.",
-              "Unresolved inputs are flagged rather than estimated.",
-              "If you encounter any issues, check the Guidelines or contact the team.",
-            ]}
-          />
         </div>
       </main>
     </div>
