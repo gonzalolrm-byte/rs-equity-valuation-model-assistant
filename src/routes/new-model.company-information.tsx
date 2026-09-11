@@ -675,6 +675,20 @@ function SegmentMatrix({
       const next = { ...a.revenueStreams };
       delete next[lineId];
       setAnswer("revenueStreams", next);
+      const modes = { ...a.lineStreamMode };
+      delete modes[lineId];
+      setAnswer("lineStreamMode", modes);
+    }
+  };
+
+  const setMode = (lineId: string, mode: "single" | "multi") => {
+    setAnswer("lineStreamMode", { ...a.lineStreamMode, [lineId]: mode });
+    if (mode === "single") {
+      const next = { ...a.revenueStreams };
+      delete next[lineId];
+      setAnswer("revenueStreams", next);
+    } else if ((a.revenueStreams[lineId] ?? []).length === 0 && lineId === "segment1") {
+      setAnswer("revenueStreams", { ...a.revenueStreams, [lineId]: ["stream1"] });
     }
   };
 
