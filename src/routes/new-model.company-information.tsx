@@ -609,6 +609,89 @@ function CompanyInformation() {
               </Collapsible>
 
               <Collapsible title="D. FX Adaptations">
+                {isSotpFx ? (
+                  <>
+                    <Question
+                      number={1}
+                      label="Select the main countries in which each business line operates."
+                      required
+                    >
+                      <div className="space-y-4">
+                        {a.selectedSegments.map((lineId) => {
+                          const lineLabel =
+                            segmentOptions.find((s) => s.value === lineId)?.label ?? lineId;
+                          const count = a.lineCountryCount[lineId] ?? "";
+                          const countries = a.lineCountries[lineId] ?? [];
+                          const rows = count === "more" ? 3 : count ? Number(count) : 0;
+                          const rowLabels = ["Main country", "Second country", "Third country"];
+                          return (
+                            <div
+                              key={lineId}
+                              className="space-y-4 rounded-lg border border-border p-4"
+                            >
+                              <p className="text-sm font-semibold text-foreground">{lineLabel}</p>
+                              <div className="space-y-2">
+                                <p className="text-[13px] font-medium text-foreground">
+                                  How many countries does this business line operate in?
+                                </p>
+                                <OptionRow
+                                  value={count}
+                                  onChange={(value) =>
+                                    setLineCountryCount(
+                                      lineId,
+                                      value as "" | "1" | "2" | "3" | "more",
+                                    )
+                                  }
+                                  options={[
+                                    { value: "1", label: "1" },
+                                    { value: "2", label: "2" },
+                                    { value: "3", label: "3" },
+                                    { value: "more", label: "More than 3" },
+                                  ]}
+                                />
+                              </div>
+                              {Array.from({ length: rows }, (_, index) => (
+                                <div
+                                  key={index}
+                                  className="grid gap-3 sm:grid-cols-[1fr_220px]"
+                                >
+                                  <SelectField
+                                    label={rowLabels[index] ?? `Country ${index + 1}`}
+                                    value={countries[index]?.country ?? ""}
+                                    onChange={(value) => setLineCountry(lineId, index, value)}
+                                    options={COUNTRIES}
+                                    placeholder="Select country"
+                                  />
+                                  <CurrencyDisplay
+                                    label="Currency"
+                                    value={countries[index]?.currency ?? ""}
+                                  />
+                                </div>
+                              ))}
+                              {count === "more" && (
+                                <p className="text-[13px] text-muted-foreground">
+                                  For simplicity, additional countries will be grouped into a single
+                                  category and will use the FX rate of the main country of
+                                  operations.
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </Question>
+
+                    <Question number={2} label="What is the company's reporting currency?" required>
+                      <SelectField
+                        value={a.reportingCurrency}
+                        onChange={(value) => setAnswer("reportingCurrency", value)}
+                        options={CURRENCIES}
+                        placeholder="Select currency"
+                      />
+                    </Question>
+                  </>
+                ) : (
+                  <>
                 <Question number={1} label="How many countries does the company operate in?" required>
                   <OptionRow
                     value={a.countryCount}
