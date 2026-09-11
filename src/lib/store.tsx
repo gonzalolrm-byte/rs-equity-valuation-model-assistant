@@ -401,8 +401,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           prompts: prev.prompts,
           sectorSpecifics: prev.sectorSpecifics,
           subsectorTemplates: prev.subsectorTemplates,
-
           resources: prev.resources,
+
         })),
     }),
     [state, patch],
