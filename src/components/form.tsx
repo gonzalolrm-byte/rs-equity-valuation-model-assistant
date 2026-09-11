@@ -119,12 +119,14 @@ export function TextField({
 
 export function SelectField({
   label,
+  labelAction,
   value,
   onChange,
   options,
   placeholder = "Select an option",
 }: {
   label?: string;
+  labelAction?: ReactNode;
   value: string;
   onChange: (value: string) => void;
   options: readonly string[];
@@ -132,7 +134,12 @@ export function SelectField({
 }) {
   return (
     <label className="block">
-      {label && <span className="mb-1.5 block text-sm text-muted-foreground">{label}</span>}
+      {label && (
+        <span className="mb-1.5 flex items-center gap-2 text-sm text-muted-foreground">
+          {labelAction}
+          {label}
+        </span>
+      )}
       <div className="relative">
         <select
           value={value}
