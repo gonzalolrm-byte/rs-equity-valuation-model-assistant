@@ -68,7 +68,7 @@ export type Answers = {
   /** Per-segment operational driver measurement units, keyed by segment id. */
   segmentMeasurements: Record<string, SegmentMeasurement>;
   cogsBasis: "" | "business_line" | "revenue_stream";
-  capexBasis: "" | "segmented" | "aggregate";
+  capexBasis: "" | "business_line" | "revenue_stream";
   otherDirectCosts: string[];
   projectionYears: "" | "5" | "10" | "custom";
   customYears: string;
