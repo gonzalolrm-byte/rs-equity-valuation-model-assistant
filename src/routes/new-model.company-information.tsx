@@ -69,18 +69,31 @@ function CompanyInformation() {
 
   // Normalize stale saved answers after the segmentation values changed.
   useEffect(() => {
-    if (a.cogsBasis && !["business_line", "revenue_stream"].includes(a.cogsBasis)) {
-      setAnswer("cogsBasis", "");
-    }
-    if (a.selectedSegments.length > 1 && a.cogsBasis === "revenue_stream") {
-      setAnswer("cogsBasis", "business_line");
-    }
-    if (a.capexBasis && !["business_line", "revenue_stream"].includes(a.capexBasis)) {
-      setAnswer("capexBasis", "");
-    }
-    if (a.selectedSegments.length > 1 && a.capexBasis === "revenue_stream") {
-      setAnswer("capexBasis", "business_line");
-    }
+    const normalize = (
+      key: "cogsBasis" | "capexBasis",
+      value: Record<string, string>,
+    ) => {
+      let changed = false;
+      const next: Record<string, "business_line" | "revenue_stream"> = {};
+      for (const lineId of a.selectedSegments) {
+        const current = value[lineId];
+        if (current === "business_line" || current === "revenue_stream") {
+          // "By revenue stream" only applies to a single business line setup.
+          next[lineId] =
+            a.selectedSegments.length > 1 && current === "revenue_stream"
+              ? "business_line"
+              : current;
+          if (next[lineId] !== current) changed = true;
+        } else if (current !== undefined) {
+          changed = true;
+        }
+      }
+      if (changed || Object.keys(value).some((lineId) => !a.selectedSegments.includes(lineId))) {
+        setAnswer(key, next);
+      }
+    };
+    normalize("cogsBasis", a.cogsBasis);
+    normalize("capexBasis", a.capexBasis);
   }, [a.cogsBasis, a.capexBasis, a.selectedSegments, setAnswer]);
 
   const segmentNounLower = "business line";
