@@ -707,37 +707,24 @@ function SegmentMatrix({
 
   return (
     <div className="space-y-4">
-      <div className="overflow-x-auto rounded-xl border border-border bg-card p-4 shadow-card">
-        <div className="min-w-[640px]">
-          <div className="grid grid-cols-[minmax(150px,1.4fr)_repeat(4,minmax(0,1fr))] gap-2">
-            <span className="text-[13px] font-semibold uppercase tracking-wide text-navy-soft">
-              Business line
-            </span>
-            {revenueStreamOptions.map((stream) => (
-              <span
-                key={stream.value}
-                className="text-center text-[13px] font-semibold uppercase tracking-wide text-navy-soft"
+      <div className="rounded-xl border border-border bg-card p-4 shadow-card">
+        <div className="space-y-3">
+          {segmentOptions.map((line) => {
+            const lineSelected = a.selectedSegments.includes(line.value);
+            const mode = a.lineStreamMode[line.value] ?? "single";
+            const streams = a.revenueStreams[line.value] ?? [];
+            return (
+              <div
+                key={line.value}
+                className="rounded-lg border border-panel-border bg-panel/40 p-3"
               >
-                {stream.label}
-              </span>
-            ))}
-          </div>
-
-          <div className="mt-2 space-y-2">
-            {segmentOptions.map((line) => {
-              const lineSelected = a.selectedSegments.includes(line.value);
-              const streams = a.revenueStreams[line.value] ?? [];
-              return (
-                <div
-                  key={line.value}
-                  className="grid grid-cols-[minmax(150px,1.4fr)_repeat(4,minmax(0,1fr))] items-stretch gap-2"
-                >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <button
                     type="button"
                     onClick={() => toggleLine(line.value)}
                     aria-pressed={lineSelected}
                     className={[
-                      "flex items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-[15px] transition-colors",
+                      "flex items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-[15px] transition-colors sm:w-64",
                       lineSelected
                         ? "border-primary bg-panel text-navy"
                         : "border-border bg-card text-navy-soft hover:border-primary/50 hover:bg-secondary/60",
@@ -764,51 +751,84 @@ function SegmentMatrix({
                     {line.label}
                   </button>
 
-                  {revenueStreamOptions.map((stream) => {
-                    const active = streams.includes(stream.value);
-                    return (
-                      <button
-                        key={stream.value}
-                        type="button"
-                        onClick={() => toggleStream(line.value, stream.value)}
-                        aria-pressed={active}
-                        aria-label={`${line.label} — ${stream.label}`}
-                        className={[
-                          "flex items-center justify-center rounded-lg border py-2.5 transition-colors",
-                          active
-                            ? "border-primary bg-primary/10"
-                            : "border-border bg-card hover:border-primary/50 hover:bg-secondary/60",
-                        ].join(" ")}
-                      >
-                        <span
+                  <div className="flex gap-2">
+                    {(
+                      [
+                        { value: "single", label: "Single Revenue Stream" },
+                        { value: "multi", label: "Multi Stream" },
+                      ] as const
+                    ).map((option) => {
+                      const active = lineSelected && mode === option.value;
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          disabled={!lineSelected}
+                          onClick={() => setMode(line.value, option.value)}
+                          aria-pressed={active}
                           className={[
-                            "flex size-5 items-center justify-center rounded border-2 text-primary-foreground",
-                            active ? "border-primary bg-primary" : "border-input",
+                            "rounded-lg border px-3 py-2 text-[14px] font-medium transition-colors",
+                            active
+                              ? "border-primary bg-primary/10 text-navy"
+                              : "border-border bg-card text-navy-soft hover:border-primary/50 hover:bg-secondary/60",
+                            !lineSelected && "cursor-not-allowed opacity-50 hover:border-border hover:bg-card",
                           ].join(" ")}
                         >
-                          {active && (
-                            <svg
-                              viewBox="0 0 12 12"
-                              className="size-3"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2.2"
-                            >
-                              <path
-                                d="M2 6.5 4.6 9 10 3.4"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          )}
-                        </span>
-                      </button>
-                    );
-                  })}
+                          {option.label}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              );
-            })}
-          </div>
+
+                {lineSelected && mode === "multi" && (
+                  <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                    {revenueStreamOptions.map((stream) => {
+                      const active = streams.includes(stream.value);
+                      return (
+                        <button
+                          key={stream.value}
+                          type="button"
+                          onClick={() => toggleStream(line.value, stream.value)}
+                          aria-pressed={active}
+                          className={[
+                            "flex items-center gap-2 rounded-lg border px-3 py-2 text-left text-[14px] transition-colors",
+                            active
+                              ? "border-primary bg-primary/10 text-navy"
+                              : "border-border bg-card text-navy-soft hover:border-primary/50 hover:bg-secondary/60",
+                          ].join(" ")}
+                        >
+                          <span
+                            className={[
+                              "flex size-4.5 shrink-0 items-center justify-center rounded border-2 text-primary-foreground",
+                              active ? "border-primary bg-primary" : "border-input",
+                            ].join(" ")}
+                          >
+                            {active && (
+                              <svg
+                                viewBox="0 0 12 12"
+                                className="size-3"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.2"
+                              >
+                                <path
+                                  d="M2 6.5 4.6 9 10 3.4"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            )}
+                          </span>
+                          {stream.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
