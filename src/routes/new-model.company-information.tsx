@@ -65,17 +65,17 @@ function CompanyInformation() {
   const a = state.answers;
   const navigate = useNavigate();
 
-  const segmentNoun =
-    a.segmentBasis === "revenue_stream"
-      ? "Revenue Stream"
-      : a.segmentBasis === "business_line"
-        ? "Business Line"
-        : "Segment";
-  const segmentNounLower = segmentNoun.toLowerCase();
+  const segmentNounLower = "business line";
   const segmentOptions = [
-    { value: "segment1", label: `${segmentNoun} 1` },
-    { value: "segment2", label: `${segmentNoun} 2` },
-    { value: "segment3", label: `${segmentNoun} 3` },
+    { value: "segment1", label: "Business Line 1" },
+    { value: "segment2", label: "Business Line 2" },
+    { value: "segment3", label: "Business Line 3" },
+    { value: "other", label: "Other Business Line" },
+  ];
+  const revenueStreamOptions = [
+    { value: "stream1", label: "Revenue Stream 1" },
+    { value: "stream2", label: "Revenue Stream 2" },
+    { value: "stream3", label: "Revenue Stream 3" },
     { value: "other", label: "Other" },
   ];
 
@@ -148,45 +148,17 @@ function CompanyInformation() {
               <Collapsible title="B. Revenue, COGS, and CapEx Adaptations">
                 <Question
                   number={1}
-                  label="Do you want to segment the template by business line or revenue stream?"
-                  hint="A business line reflects how a company's operations are divided into distinct operating segments based on differences in operating models and market dynamics, while a revenue stream is a specific way the company generates revenue within a business line. A business line may include multiple revenue streams. Different business lines typically have different measures of Units Sold and operating capacity."
+                  label="Select the business lines and the revenue streams within each business line to include in the model:"
+                  hint="A business line reflects how a company's operations are divided into distinct operating segments based on differences in operating models and market dynamics, while a revenue stream is a specific way the company generates revenue within a business line. A business line may include multiple revenue streams (up to four, including Other). Different business lines typically have different measures of Units Sold and operating capacity."
                 >
-                  <OptionRow
-                    value={a.segmentBasis}
-                    onChange={(value) => setAnswer("segmentBasis", value as typeof a.segmentBasis)}
-                    options={[
-                      { value: "business_line", label: "Business line (e.g., Retail, Online, Wholesale)" },
-                      { value: "revenue_stream", label: "Revenue stream (e.g., Product categories, Service types)" },
-                    ]}
+                  <SegmentMatrix
+                    segmentOptions={segmentOptions}
+                    revenueStreamOptions={revenueStreamOptions}
                   />
                 </Question>
 
                 <Question
                   number={2}
-                  label="Select the number of segments to include in the model:"
-                  hint='Select the segments that apply, then confirm the measurement units for each segment. "Other" can be used for any additional segment that is not one of the primary three. Maximum Output and Units Sold always share the same measurement unit.'
-                >
-                  <div className="space-y-3">
-                    {segmentOptions.map((option) => (
-                      <div key={option.value}>
-                        <CheckItem
-                          label={option.label}
-                          checked={a.selectedSegments.includes(option.value)}
-                          onChange={() => toggleAnswerItem("selectedSegments", option.value)}
-                        />
-                        {a.selectedSegments.includes(option.value) && (
-                          <SegmentMeasurements
-                            segmentId={option.value}
-                            segmentLabel={option.label}
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </Question>
-
-                <Question
-                  number={3}
                   label="Do you want COGS to be segmented or modeled on an aggregate basis?"
                   required
                   hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that COGS also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
@@ -202,7 +174,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={4}
+                  number={3}
                   label="Do you want CapEx to be segmented or modeled on an aggregate basis?"
                   required
                   hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that CapEx also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
@@ -218,7 +190,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={5}
+                  number={4}
                   label='Which standard COGS categories should be combined under "Other Direct Costs"? Select all that apply.'
                   hint="Categories should be aggregated only when data is unavailable or a category is not relevant. Otherwise, keep these categories separate, as this breakdown supports more robust analysis and forecasting."
                 >
@@ -593,7 +565,7 @@ function SegmentMeasurements({
       )}
 
 
-      {needsCapacityUnit && a.segmentBasis === "revenue_stream" && (
+      {needsCapacityUnit && (a.revenueStreams[segmentId]?.length ?? 0) > 1 && (
         <div className="mt-3 rounded-lg border border-panel-border bg-background/60 p-3">
           <p className="text-[13px] font-medium text-navy">
             Should capacity be modeled by revenue stream or on an aggregate basis?
@@ -668,6 +640,169 @@ function WorkingCapitalGroup({ title, items }: { title: string; items: string[] 
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/**
+ * Business line / revenue stream selection matrix. Rows are business lines
+ * (up to four, including "Other") and columns are the revenue streams inside
+ * each business line (up to four, including "Other"). Selecting any revenue
+ * stream automatically activates its business line, and measurement units are
+ * collected for every activated business line.
+ */
+function SegmentMatrix({
+  segmentOptions,
+  revenueStreamOptions,
+}: {
+  segmentOptions: { value: string; label: string }[];
+  revenueStreamOptions: { value: string; label: string }[];
+}) {
+  const { state, setAnswer } = useApp();
+  const a = state.answers;
+
+  const toggleLine = (lineId: string) => {
+    const isSelected = a.selectedSegments.includes(lineId);
+    setAnswer(
+      "selectedSegments",
+      isSelected
+        ? a.selectedSegments.filter((item) => item !== lineId)
+        : [...a.selectedSegments, lineId],
+    );
+    if (isSelected) {
+      const next = { ...a.revenueStreams };
+      delete next[lineId];
+      setAnswer("revenueStreams", next);
+    }
+  };
+
+  const toggleStream = (lineId: string, streamId: string) => {
+    const current = a.revenueStreams[lineId] ?? [];
+    const next = current.includes(streamId)
+      ? current.filter((item) => item !== streamId)
+      : [...current, streamId];
+    setAnswer("revenueStreams", { ...a.revenueStreams, [lineId]: next });
+    if (next.length > 0 && !a.selectedSegments.includes(lineId)) {
+      setAnswer("selectedSegments", [...a.selectedSegments, lineId]);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="overflow-x-auto rounded-xl border border-border bg-card p-4 shadow-card">
+        <div className="min-w-[640px]">
+          <div className="grid grid-cols-[minmax(150px,1.4fr)_repeat(4,minmax(0,1fr))] gap-2">
+            <span className="text-[13px] font-semibold uppercase tracking-wide text-navy-soft">
+              Business line
+            </span>
+            {revenueStreamOptions.map((stream) => (
+              <span
+                key={stream.value}
+                className="text-center text-[13px] font-semibold uppercase tracking-wide text-navy-soft"
+              >
+                {stream.label}
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-2 space-y-2">
+            {segmentOptions.map((line) => {
+              const lineSelected = a.selectedSegments.includes(line.value);
+              const streams = a.revenueStreams[line.value] ?? [];
+              return (
+                <div
+                  key={line.value}
+                  className="grid grid-cols-[minmax(150px,1.4fr)_repeat(4,minmax(0,1fr))] items-stretch gap-2"
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggleLine(line.value)}
+                    aria-pressed={lineSelected}
+                    className={[
+                      "flex items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-[15px] transition-colors",
+                      lineSelected
+                        ? "border-primary bg-panel text-navy"
+                        : "border-border bg-card text-navy-soft hover:border-primary/50 hover:bg-secondary/60",
+                    ].join(" ")}
+                  >
+                    <span
+                      className={[
+                        "flex size-4.5 shrink-0 items-center justify-center rounded border-2 text-primary-foreground",
+                        lineSelected ? "border-primary bg-primary" : "border-input",
+                      ].join(" ")}
+                    >
+                      {lineSelected && (
+                        <svg
+                          viewBox="0 0 12 12"
+                          className="size-3"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.2"
+                        >
+                          <path d="M2 6.5 4.6 9 10 3.4" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                    </span>
+                    {line.label}
+                  </button>
+
+                  {revenueStreamOptions.map((stream) => {
+                    const active = streams.includes(stream.value);
+                    return (
+                      <button
+                        key={stream.value}
+                        type="button"
+                        onClick={() => toggleStream(line.value, stream.value)}
+                        aria-pressed={active}
+                        aria-label={`${line.label} — ${stream.label}`}
+                        className={[
+                          "flex items-center justify-center rounded-lg border py-2.5 transition-colors",
+                          active
+                            ? "border-primary bg-primary/10"
+                            : "border-border bg-card hover:border-primary/50 hover:bg-secondary/60",
+                        ].join(" ")}
+                      >
+                        <span
+                          className={[
+                            "flex size-5 items-center justify-center rounded border-2 text-primary-foreground",
+                            active ? "border-primary bg-primary" : "border-input",
+                          ].join(" ")}
+                        >
+                          {active && (
+                            <svg
+                              viewBox="0 0 12 12"
+                              className="size-3"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.2"
+                            >
+                              <path
+                                d="M2 6.5 4.6 9 10 3.4"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          )}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {segmentOptions
+        .filter((line) => a.selectedSegments.includes(line.value))
+        .map((line) => (
+          <SegmentMeasurements
+            key={line.value}
+            segmentId={line.value}
+            segmentLabel={line.label}
+          />
+        ))}
     </div>
   );
 }

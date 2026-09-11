@@ -59,7 +59,10 @@ export type Answers = {
   hasForeignCurrency: "" | "yes" | "no";
   reportingCurrency: string;
   segmentBasis: "" | "business_line" | "revenue_stream";
+  /** Selected business lines (segment ids). */
   selectedSegments: string[];
+  /** Revenue streams selected within each business line, keyed by segment id. */
+  revenueStreams: Record<string, string[]>;
   /** Per-segment operational driver measurement units, keyed by segment id. */
   segmentMeasurements: Record<string, SegmentMeasurement>;
   cogsBasis: "" | "segmented" | "aggregate";
@@ -88,8 +91,9 @@ export const EMPTY_ANSWERS: Answers = {
   thirdCountryCurrency: "",
   hasForeignCurrency: "",
   reportingCurrency: "",
-  segmentBasis: "",
+  segmentBasis: "business_line",
   selectedSegments: [],
+  revenueStreams: {},
   segmentMeasurements: {},
   cogsBasis: "",
   capexBasis: "",
