@@ -388,7 +388,12 @@ function CompanyInformation() {
               </Collapsible>
 
               <Collapsible title="D. Other Modeling Considerations">
-                {a.selectedSegments.length > 1 && (
+                {(() => {
+                  const showLineModeling = a.selectedSegments.length > 1;
+                  const d = (n: number) => (showLineModeling ? n : n - 1);
+                  return (
+                    <>
+                {showLineModeling && (
                   <Question
                     number={1}
                     label="How should the company's different business lines be modeled?"
@@ -407,7 +412,7 @@ function CompanyInformation() {
                   </Question>
                 )}
 
-                <Question number={2} label="How many years of projections do you need?" required>
+                <Question number={d(2)} label="How many years of projections do you need?" required>
                   <OptionRow
                     columns={3}
                     value={a.projectionYears}
@@ -433,7 +438,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={3}
+                  number={d(3)}
                   label="Working capital — how should days be modeled for each line item?"
                   hint="Select the historical basis used to derive days for each working capital item, or choose Manual input to enter the number of days directly."
                 >
@@ -444,7 +449,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={4}
+                  number={d(4)}
                   label="How many comparable companies (comps) does the company have?"
                 >
                   <TextField
@@ -455,7 +460,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={5}
+                  number={d(5)}
                   label="Does IFC have common shares or preferred shares?"
                   required
                 >
@@ -481,7 +486,7 @@ function CompanyInformation() {
                   )}
                 </Question>
 
-                <Question number={6} label="Does the company have a liquidity put?" required>
+                <Question number={d(6)} label="Does the company have a liquidity put?" required>
                   <OptionRow
                     value={a.liquidityPut}
                     onChange={(value) => setAnswer("liquidityPut", value as typeof a.liquidityPut)}
@@ -511,6 +516,9 @@ function CompanyInformation() {
                     </div>
                   )}
                 </Question>
+                    </>
+                  );
+                })()}
               </Collapsible>
             </div>
 
