@@ -15,7 +15,7 @@ const WORKFLOWS = [
     prefix: "A",
     title: "Use Standardized Model for the First Time",
     description:
-      "AI instructions used during Workflow A. Step 1 instructions correspond directly to the questions and decisions collected in the Company Information questionnaire and are used to configure the standardized DCF model.",
+      "AI instructions used during Workflow A. Step 1 instructions correspond directly to the questions and decisions collected in the Template Selection & Adaptation questionnaire and are used to configure the standardized DCF model.",
   },
   {
     key: "Workflow B",
