@@ -179,6 +179,7 @@ type Ctx = {
   savePrompt: (prompt: PromptAction) => void;
   addPrompt: (prompt: PromptAction) => void;
   togglePromptStatus: (id: string) => void;
+  deletePrompt: (id: string) => void;
   replaceResourceFiles: (id: string, files: File[]) => void;
   removeResourceFile: (id: string, fileName: string) => void;
   saveProgress: () => void;
@@ -309,6 +310,12 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
                 }
               : item,
           ),
+        })),
+      deletePrompt: (id) =>
+        setState((prev) => ({
+          ...prev,
+          prompts: prev.prompts.filter((item) => item.id !== id),
+          selectedActions: prev.selectedActions.filter((item) => item !== id),
         })),
       replaceResourceFiles: (id, files) =>
         setState((prev) => ({
