@@ -27,6 +27,106 @@ export const SECTORS = [
   "Generic - Percentage Based",
 ] as const;
 
+/**
+ * Subsector templates offered for each primary sector/template.
+ * PROTOTYPE: this is the single source of truth for the A.2 dropdown; Phase 2
+ * moves the list to the backend/template service.
+ */
+export const SUBSECTORS: Record<string, string[]> = {
+  "Agribusiness & Forestry": [
+    "Crop Production",
+    "Livestock & Animal Products",
+    "Forestry & Timber",
+    "Agri-Processing",
+  ],
+  Chemicals: [
+    "Specialty Chemicals",
+    "Fertilizers & Agrochemicals",
+    "Petrochemicals",
+    "Industrial Gases",
+  ],
+  "Construction Materials": [
+    "Cement & Aggregates",
+    "Ready-Mix Concrete",
+    "Construction Steel",
+    "Building Products",
+  ],
+  "Consumer Goods & Retail": [
+    "Food & Beverage",
+    "Apparel & Textiles",
+    "Consumer Electronics",
+    "Retail & Distribution",
+  ],
+  Education: [
+    "K-12 Education",
+    "Higher Education",
+    "Vocational Training",
+    "EdTech",
+  ],
+  "Health Care": [
+    "Hospitals & Clinics",
+    "Pharmaceuticals",
+    "Medical Devices",
+    "Health Insurance",
+  ],
+  "Hospitality & Tourism": [
+    "Hotels & Resorts",
+    "Restaurants & Food Service",
+    "Travel & Tour Operators",
+    "Entertainment",
+  ],
+  Manufacturing: [
+    "Automotive & Components",
+    "Industrial Machinery",
+    "Electronics Manufacturing",
+    "Textile Manufacturing",
+  ],
+  "Metals & Mining": [
+    "Precious Metals",
+    "Base Metals",
+    "Iron & Steel",
+    "Mining Services",
+  ],
+  "Oil, Gas & Refining": [
+    "Upstream Exploration & Production",
+    "Midstream & Pipelines",
+    "Downstream Refining",
+    "Oilfield Services",
+  ],
+  "Power Generation": [
+    "Thermal Power",
+    "Renewable Energy (Solar/Wind)",
+    "Hydroelectric",
+    "Gas-Fired Power",
+  ],
+  "Real Estate": [
+    "Residential Development",
+    "Commercial Office",
+    "Industrial & Logistics",
+    "Retail Real Estate",
+  ],
+  "Telecommunications & Technology": [
+    "Mobile Telecom",
+    "Fixed Broadband",
+    "Data Centers",
+    "Software & IT Services",
+  ],
+  "Transport & Logistics": [
+    "Freight & Trucking",
+    "Ports & Terminals",
+    "Aviation",
+    "Warehousing & Logistics",
+  ],
+  "Water & Utilities": [
+    "Water Supply & Sanitation",
+    "Wastewater Treatment",
+    "Solid Waste Management",
+    "Utilities Infrastructure",
+  ],
+  "Generic - Unit Economics": ["Default Unit Economics"],
+  "Generic - Percentage Based": ["Default Percentage Based"],
+};
+
 export const CURRENCIES = [
   "USD – US Dollar",
   "EUR – Euro",
