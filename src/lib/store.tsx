@@ -60,6 +60,7 @@ export type Answers = {
   hasForeignCurrency: "" | "yes" | "no";
   reportingCurrency: string;
   segmentBasis: "" | "business_line" | "revenue_stream";
+  businessLineModeling: "" | "consolidated" | "sotp";
   /** Selected business lines (segment ids). */
   selectedSegments: string[];
   /** Revenue streams selected within each business line, keyed by segment id. */
@@ -98,6 +99,7 @@ export const EMPTY_ANSWERS: Answers = {
   hasForeignCurrency: "",
   reportingCurrency: "",
   segmentBasis: "business_line",
+  businessLineModeling: "",
   selectedSegments: ["segment1"],
   revenueStreams: { segment1: ["stream1"] },
   lineStreamMode: { segment1: "multi" },
