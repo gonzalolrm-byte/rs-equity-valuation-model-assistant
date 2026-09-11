@@ -93,6 +93,50 @@ function DeveloperLayout() {
   );
 }
 
+function ModeOption({
+  value,
+  current,
+  onSelect,
+  label,
+  description,
+}: {
+  value: NavigationMode;
+  current: NavigationMode;
+  onSelect: (mode: NavigationMode) => void;
+  label: string;
+  description: string;
+}) {
+  const active = current === value;
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(value)}
+      className={`w-full rounded-lg border p-3 text-left transition-colors ${
+        active
+          ? "border-primary bg-panel"
+          : "border-input hover:bg-secondary"
+      }`}
+      aria-pressed={active}
+    >
+      <span className="flex items-start gap-2">
+        <span
+          className={`mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border ${
+            active ? "border-primary" : "border-input"
+          }`}
+        >
+          {active && <span className="size-2 rounded-full bg-primary" />}
+        </span>
+        <span>
+          <span className="block text-[13px] font-semibold text-navy">{label}</span>
+          <span className="mt-0.5 block text-[12px] leading-relaxed text-muted-foreground">
+            {description}
+          </span>
+        </span>
+      </span>
+    </button>
+  );
+}
+
 function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
   return (
     <Link
