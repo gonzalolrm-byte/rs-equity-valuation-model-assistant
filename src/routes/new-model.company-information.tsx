@@ -285,110 +285,6 @@ function CompanyInformation() {
                 </Question>
               </Collapsible>
 
-              <Collapsible title="D. FX Adaptations">
-                <Question number={1} label="How many countries does the company operate in?" required>
-                  <OptionRow
-                    value={a.countryCount}
-                    onChange={(value) =>
-                      setAnswer("countryCount", value as typeof a.countryCount)
-                    }
-                    options={[
-                      { value: "1", label: "1" },
-                      { value: "2", label: "2" },
-                      { value: "3", label: "3" },
-                      { value: "more", label: "More than 3" },
-                    ]}
-                  />
-                  {a.countryCount === "1" && (
-                    <div className="mt-6">
-                      <Question
-                        label="Does the company have material revenues, costs, or investments in foreign currencies due to import/export activities?"
-                        hint="For simplicity, we assume the foreign currency is USD. This choice is disabled when the company operates in more than one country."
-                      >
-                        <OptionRow
-                          value={a.hasForeignCurrency}
-                          onChange={(value) =>
-                            setAnswer("hasForeignCurrency", value as typeof a.hasForeignCurrency)
-                          }
-                          options={[
-                            { value: "yes", label: "Yes" },
-                            { value: "no", label: "No" },
-                          ]}
-                        />
-                      </Question>
-                    </div>
-                  )}
-                </Question>
-
-                {a.countryCount && (
-                  <Question
-                    number={2}
-                    label={`Select the main countries in which the company operates (${
-                      a.countryCount === "more" ? "list the top 3" : `list up to ${a.countryCount} name${a.countryCount === "1" ? "" : "s"}`
-                    }).`}
-                    required
-                  >
-                    <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
-                      <SelectField
-                        label="Main country"
-                        value={a.mainCountry}
-                        onChange={(value) => {
-                          setAnswer("mainCountry", value);
-                          setAnswer("mainCountryCurrency", defaultCurrencyForCountry(value) ?? "");
-                        }}
-                        options={COUNTRIES}
-                        placeholder="Select country"
-                      />
-                      <CurrencyDisplay label="Currency" value={a.mainCountryCurrency} />
-                    </div>
-                    {a.countryCount !== "1" && (
-                      <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
-                        <SelectField
-                          label="Second country"
-                          value={a.secondCountry}
-                          onChange={(value) => {
-                            setAnswer("secondCountry", value);
-                            setAnswer("secondCountryCurrency", defaultCurrencyForCountry(value) ?? "");
-                          }}
-                          options={COUNTRIES}
-                          placeholder="Select country"
-                        />
-                        <CurrencyDisplay label="Currency" value={a.secondCountryCurrency} />
-                      </div>
-                    )}
-                    {(a.countryCount === "3" || a.countryCount === "more") && (
-                      <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
-                        <SelectField
-                          label="Third country"
-                          value={a.thirdCountry}
-                          onChange={(value) => {
-                            setAnswer("thirdCountry", value);
-                            setAnswer("thirdCountryCurrency", defaultCurrencyForCountry(value) ?? "");
-                          }}
-                          options={COUNTRIES}
-                          placeholder="Select country"
-                        />
-                        <CurrencyDisplay label="Currency" value={a.thirdCountryCurrency} />
-                      </div>
-                    )}
-                    {a.countryCount === "more" && (
-                      <p className="text-[13px] text-muted-foreground">
-                        For simplicity, additional countries will be grouped into a single category and will use the FX rate of the main country of operations.
-                      </p>
-                    )}
-                  </Question>
-                )}
-
-                <Question number={3} label="What is the company's reporting currency?" required>
-                  <SelectField
-                    value={a.reportingCurrency}
-                    onChange={(value) => setAnswer("reportingCurrency", value)}
-                    options={CURRENCIES}
-                    placeholder="Select currency"
-                  />
-                </Question>
-              </Collapsible>
-
               <Collapsible title="C. Other Modeling Considerations">
                 {(() => {
                   const showLineModeling = a.selectedSegments.length > 1;
@@ -677,6 +573,110 @@ function CompanyInformation() {
                     </>
                   );
                 })()}
+              </Collapsible>
+
+              <Collapsible title="D. FX Adaptations">
+                <Question number={1} label="How many countries does the company operate in?" required>
+                  <OptionRow
+                    value={a.countryCount}
+                    onChange={(value) =>
+                      setAnswer("countryCount", value as typeof a.countryCount)
+                    }
+                    options={[
+                      { value: "1", label: "1" },
+                      { value: "2", label: "2" },
+                      { value: "3", label: "3" },
+                      { value: "more", label: "More than 3" },
+                    ]}
+                  />
+                  {a.countryCount === "1" && (
+                    <div className="mt-6">
+                      <Question
+                        label="Does the company have material revenues, costs, or investments in foreign currencies due to import/export activities?"
+                        hint="For simplicity, we assume the foreign currency is USD. This choice is disabled when the company operates in more than one country."
+                      >
+                        <OptionRow
+                          value={a.hasForeignCurrency}
+                          onChange={(value) =>
+                            setAnswer("hasForeignCurrency", value as typeof a.hasForeignCurrency)
+                          }
+                          options={[
+                            { value: "yes", label: "Yes" },
+                            { value: "no", label: "No" },
+                          ]}
+                        />
+                      </Question>
+                    </div>
+                  )}
+                </Question>
+
+                {a.countryCount && (
+                  <Question
+                    number={2}
+                    label={`Select the main countries in which the company operates (${
+                      a.countryCount === "more" ? "list the top 3" : `list up to ${a.countryCount} name${a.countryCount === "1" ? "" : "s"}`
+                    }).`}
+                    required
+                  >
+                    <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
+                      <SelectField
+                        label="Main country"
+                        value={a.mainCountry}
+                        onChange={(value) => {
+                          setAnswer("mainCountry", value);
+                          setAnswer("mainCountryCurrency", defaultCurrencyForCountry(value) ?? "");
+                        }}
+                        options={COUNTRIES}
+                        placeholder="Select country"
+                      />
+                      <CurrencyDisplay label="Currency" value={a.mainCountryCurrency} />
+                    </div>
+                    {a.countryCount !== "1" && (
+                      <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
+                        <SelectField
+                          label="Second country"
+                          value={a.secondCountry}
+                          onChange={(value) => {
+                            setAnswer("secondCountry", value);
+                            setAnswer("secondCountryCurrency", defaultCurrencyForCountry(value) ?? "");
+                          }}
+                          options={COUNTRIES}
+                          placeholder="Select country"
+                        />
+                        <CurrencyDisplay label="Currency" value={a.secondCountryCurrency} />
+                      </div>
+                    )}
+                    {(a.countryCount === "3" || a.countryCount === "more") && (
+                      <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
+                        <SelectField
+                          label="Third country"
+                          value={a.thirdCountry}
+                          onChange={(value) => {
+                            setAnswer("thirdCountry", value);
+                            setAnswer("thirdCountryCurrency", defaultCurrencyForCountry(value) ?? "");
+                          }}
+                          options={COUNTRIES}
+                          placeholder="Select country"
+                        />
+                        <CurrencyDisplay label="Currency" value={a.thirdCountryCurrency} />
+                      </div>
+                    )}
+                    {a.countryCount === "more" && (
+                      <p className="text-[13px] text-muted-foreground">
+                        For simplicity, additional countries will be grouped into a single category and will use the FX rate of the main country of operations.
+                      </p>
+                    )}
+                  </Question>
+                )}
+
+                <Question number={3} label="What is the company's reporting currency?" required>
+                  <SelectField
+                    value={a.reportingCurrency}
+                    onChange={(value) => setAnswer("reportingCurrency", value)}
+                    options={CURRENCIES}
+                    placeholder="Select currency"
+                  />
+                </Question>
               </Collapsible>
             </div>
 
