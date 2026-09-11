@@ -129,6 +129,7 @@ export const EMPTY_ANSWERS: Answers = {
   customYearsByLine: {},
   workingCapitalDaysByLine: {},
   compsCountByLine: {},
+  lineValuationMethod: { segment1: "dcf" },
 };
 
 export type AppState = {
