@@ -273,7 +273,7 @@ export function CheckItem({
   label: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
-  description?: string;
+  description?: string | undefined;
   disabled?: boolean;
 }) {
   return (
