@@ -179,7 +179,6 @@ function WorkflowSection({
             <thead className="bg-secondary/70 text-[12px] uppercase tracking-wide text-navy-soft">
               <tr>
                 <Th>ID</Th>
-                <Th>Title / Question</Th>
                 <Th>Category</Th>
                 <Th>Step</Th>
                 <Th>Status</Th>
@@ -193,7 +192,6 @@ function WorkflowSection({
                   <td className="whitespace-nowrap px-4 py-3 font-mono text-[12px] font-semibold text-primary">
                     {prompt.id}
                   </td>
-                  <td className="max-w-80 px-4 py-3 text-navy">{prompt.title}</td>
                   <td className="px-4 py-3 text-muted-foreground">{prompt.category}</td>
                   <td className="px-4 py-3 text-muted-foreground">{prompt.step}</td>
                   <td className="px-4 py-3">
@@ -376,13 +374,6 @@ function PromptEditor({
               placeholder="Select status"
             />
           </div>
-
-          <TextField
-            label="Title / Question"
-            value={draft.title}
-            onChange={(value) => setDraft({ ...draft, title: value })}
-            placeholder="e.g. Update Cost of Equity Parameters"
-          />
 
           <div className="grid gap-4 sm:grid-cols-2">
             <SelectField
