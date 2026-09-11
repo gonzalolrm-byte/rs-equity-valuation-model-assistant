@@ -445,13 +445,13 @@ const NO_GUESSING =
   "\n\nIf a required value cannot be located in the supplied documents, return exactly \"Data not found.\" for that field. Never estimate, interpolate or invent financial information.";
 
 export const INITIAL_PROMPTS: PromptAction[] = [
-  // --- Workflow A, Step 1: Template Selection & Adaptation ---------------------------
+  // --- Workflow A, Step 1: Template Selection & Key Inputs ---------------------------
   // Minimal set of instruction blocks for the first-time standardized model workflow.
   {
     id: "A-001",
     title: "Select Sector / Subsector Template",
-    category: "Template Selection & Adaptation",
-    step: "Workflow A – Step 1: Template Selection & Adaptation",
+    category: "Template Selection & Key Inputs",
+    step: "Workflow A – Step 1: Template Selection & Key Inputs",
     status: "Active",
     lastUpdated: "2026-09-10",
     variables: ["{{primary_sector}}", "{{subsector_template}}"],
@@ -463,7 +463,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     id: "A-002",
     title: "Company Name",
     category: "Template Population",
-    step: "Workflow A – Step 1: Template Selection & Adaptation",
+    step: "Workflow A – Step 1: Template Selection & Key Inputs",
     status: "Active",
     lastUpdated: "2026-09-09",
     variables: ["{{company_name}}"],
@@ -487,11 +487,11 @@ export const INITIAL_PROMPTS: PromptAction[] = [
 
 export const PROMPT_CATEGORIES = [
   // Categories mirror the section / step names the end user sees in the app.
-  "Template Selection & Adaptation",
+  "Template Selection & Key Inputs",
   "Template Population",
   "Modeling Approach",
   "Segmentation and Categorization",
-  "Other Modeling Adaptations",
+  "Other Modeling Key Inputs",
   "Document Upload",
   "Model Generation",
   "Model Updates",
@@ -499,7 +499,7 @@ export const PROMPT_CATEGORIES = [
 ];
 
 export const PROMPT_STEPS = [
-  "Workflow A – Step 1: Template Selection & Adaptation",
+  "Workflow A – Step 1: Template Selection & Key Inputs",
   "Workflow A – Step 2: Document Upload",
   "Workflow A – Step 3: Model Generation",
   "Workflow B – Step 1: Document Upload",

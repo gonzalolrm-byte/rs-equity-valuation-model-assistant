@@ -15,7 +15,7 @@ const WORKFLOWS = [
     prefix: "A",
     title: "Use Standardized Model for the First Time",
     description:
-      "AI instructions used during Workflow A. Step 1 instructions correspond directly to the questions and decisions collected in the Template Selection & Adaptation questionnaire and are used to configure the standardized DCF model.",
+      "AI instructions used during Workflow A. Step 1 instructions correspond directly to the questions and decisions collected in the Template Selection & Key Inputs questionnaire and are used to configure the standardized DCF model.",
   },
   {
     key: "Workflow B",
@@ -280,7 +280,7 @@ function WorkflowSection({
             editing ?? {
               id: nextId,
               title: "",
-              category: PROMPT_CATEGORIES[0] ?? "Template Selection & Adaptation",
+              category: PROMPT_CATEGORIES[0] ?? "Template Selection & Key Inputs",
               step: workflowSteps[0] ?? `${workflow.key} – Step 1`,
               status: "Active",
               lastUpdated: new Date().toISOString().slice(0, 10),
