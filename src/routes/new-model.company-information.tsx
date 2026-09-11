@@ -561,6 +561,7 @@ function SegmentMeasurements({
                 onChange={(value) => update({ output: value })}
                 // The sector/template defines the default unit; the user can
                 // keep it or pick "Other" to enter a custom measurement.
+                // Business Line 1 does not allow a custom measurement.
                 options={[
                   ...new Set(
                     [current.output, recommended.output, OTHER_MEASUREMENT].filter(Boolean),
