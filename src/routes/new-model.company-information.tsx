@@ -411,6 +411,52 @@ function CompanyInformation() {
                         { value: "sotp", label: "Sum-of-the-Parts (SOTP)" },
                       ]}
                     />
+                    {a.businessLineModeling === "sotp" && (
+                      <div className="mt-4 space-y-3 rounded-lg border border-border bg-muted/40 p-4">
+                        <p className="text-sm font-medium text-foreground">
+                          Valuation method by business line
+                        </p>
+                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                          {segmentOptions
+                            .filter((option) => a.selectedSegments.includes(option.value))
+                            .map((option) => {
+                              const isLine1 = option.value === "segment1";
+                              return (
+                                <div
+                                  key={option.value}
+                                  className="space-y-2 rounded-md border border-border bg-card p-3"
+                                >
+                                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                    {option.label}
+                                  </p>
+                                  <OptionRow
+                                    value={
+                                      isLine1
+                                        ? "dcf"
+                                        : (a.lineValuationMethod[option.value] ?? "dcf")
+                                    }
+                                    onChange={(value) =>
+                                      !isLine1 &&
+                                      setAnswer("lineValuationMethod", {
+                                        ...a.lineValuationMethod,
+                                        [option.value]: value as "dcf" | "comps",
+                                      })
+                                    }
+                                    disabled={isLine1}
+                                    options={[
+                                      { value: "dcf", label: "DCF" },
+                                      { value: "comps", label: "Comps" },
+                                    ]}
+                                  />
+                                </div>
+                              );
+                            })}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Business Line 1 is always valued with DCF.
+                        </p>
+                      </div>
+                    )}
                   </Question>
                 )}
 
