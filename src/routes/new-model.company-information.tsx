@@ -66,7 +66,7 @@ function CompanyInformation() {
   const navigate = useNavigate();
   const [showSegmentationNote, setShowSegmentationNote] = useState(false);
 
-  // Normalize stale saved answers after the COGS segmentation values changed.
+  // Normalize stale saved answers after the segmentation values changed.
   useEffect(() => {
     if (a.cogsBasis && !["business_line", "revenue_stream"].includes(a.cogsBasis)) {
       setAnswer("cogsBasis", "");
@@ -74,7 +74,13 @@ function CompanyInformation() {
     if (a.selectedSegments.length > 1 && a.cogsBasis === "revenue_stream") {
       setAnswer("cogsBasis", "business_line");
     }
-  }, [a.cogsBasis, a.selectedSegments, setAnswer]);
+    if (a.capexBasis && !["business_line", "revenue_stream"].includes(a.capexBasis)) {
+      setAnswer("capexBasis", "");
+    }
+    if (a.selectedSegments.length > 1 && a.capexBasis === "revenue_stream") {
+      setAnswer("capexBasis", "business_line");
+    }
+  }, [a.cogsBasis, a.capexBasis, a.selectedSegments, setAnswer]);
 
   const segmentNounLower = "business line";
   const segmentOptions = [
@@ -215,16 +221,17 @@ function CompanyInformation() {
 
                 <Question
                   number={3}
-                  label="Do you want CapEx to be segmented or modeled on an aggregate basis?"
+                  label="How do you want CapEx to be segmented?"
                   required
                   hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that CapEx also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
                 >
                   <OptionRow
                     value={a.capexBasis}
                     onChange={(value) => setAnswer("capexBasis", value as typeof a.capexBasis)}
+                    disabledOptions={a.selectedSegments.length > 1 ? ["revenue_stream"] : []}
                     options={[
-                      { value: "segmented", label: "Segmented" },
-                      { value: "aggregate", label: "Aggregate (company level)" },
+                      { value: "business_line", label: "By business line" },
+                      { value: "revenue_stream", label: "By revenue stream" },
                     ]}
                   />
                 </Question>
