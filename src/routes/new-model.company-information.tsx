@@ -517,6 +517,13 @@ function SegmentMeasurements({
   const needsCapacityUnit = !isPercentageBased;
   const needsAnyUnit = needsOutputUnit || needsCapacityUnit;
   const [showUnitNote, setShowUnitNote] = useState(false);
+  const isFirstSegment = segmentId === "segment1";
+
+  // Business Line 1 cannot use a custom measurement.
+  const outputValue =
+    isFirstSegment && current.output === OTHER_MEASUREMENT
+      ? recommended.output
+      : current.output;
 
   return (
     <div className="mt-2 rounded-xl border border-panel-border bg-panel/60 p-4">
@@ -557,18 +564,21 @@ function SegmentMeasurements({
                     <Lightbulb className="size-4" />
                   </button>
                 }
-                value={current.output}
-                onChange={(value) => update({ output: value })}
+                value={outputValue}
+                onChange={(value) =>
+                  update({ output: isFirstSegment && value === OTHER_MEASUREMENT ? recommended.output : value })
+                }
                 // The sector/template defines the default unit; the user can
                 // keep it or pick "Other" to enter a custom measurement.
-                // Business Line 1 does not allow a custom measurement.
                 options={[
                   ...new Set(
-                    [current.output, recommended.output, OTHER_MEASUREMENT].filter(Boolean),
+                    [outputValue, recommended.output, ...(isFirstSegment ? [] : [OTHER_MEASUREMENT])].filter(
+                      Boolean,
+                    ),
                   ),
                 ]}
               />
-              {current.output === OTHER_MEASUREMENT && (
+              {!isFirstSegment && current.output === OTHER_MEASUREMENT && (
                 <div className="mt-2">
                   <TextField
                     value={current.outputOther}
