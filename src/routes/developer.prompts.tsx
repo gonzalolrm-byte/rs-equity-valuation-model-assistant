@@ -234,7 +234,7 @@ function WorkflowSection({
                             deletePrompt(prompt.id);
                           }
                         }}
-                        className="rounded-md p-1.5 text-danger transition-colors hover:bg-danger-soft"
+                        className="rounded-md p-1.5 text-destructive transition-colors hover:bg-destructive/10"
                         aria-label={`Delete ${prompt.id}`}
                       >
                         <Trash2 className="size-4" />
