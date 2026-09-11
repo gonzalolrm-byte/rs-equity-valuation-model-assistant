@@ -163,7 +163,6 @@ function CompanyInformation() {
     ...(a.subsector3
       ? [{ value: "segment3", label: `Sub-sector 3 — ${a.subsector3}` }]
       : []),
-    { value: "other", label: "Other Sub-sector" },
   ];
   const revenueStreamOptions = [
     { value: "stream1", label: "Revenue Stream 1" },
@@ -1286,11 +1285,11 @@ function LineWorkingCapitalMatrix({
 }
 
 /**
- * Sub-sector / revenue stream selection matrix. Rows are sub-sectors
- * (up to four, including "Other") and columns are the revenue streams inside
- * each sub-sector (up to four, including "Other"). Selecting any revenue
- * stream automatically activates its sub-sector, and measurement units are
- * collected for every activated sub-sector.
+ * Sub-sector / revenue stream selection matrix. Rows are the sub-sectors
+ * selected in A.2 and columns are the revenue streams inside each sub-sector
+ * (up to four, including "Other"). Selecting any revenue stream automatically
+ * activates its sub-sector, and measurement units are collected for every
+ * activated sub-sector.
  */
 function SegmentMatrix({
   segmentOptions,
