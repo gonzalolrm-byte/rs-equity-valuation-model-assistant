@@ -66,6 +66,16 @@ function CompanyInformation() {
   const navigate = useNavigate();
   const [showSegmentationNote, setShowSegmentationNote] = useState(false);
 
+  // Normalize stale saved answers after the COGS segmentation values changed.
+  useEffect(() => {
+    if (a.cogsBasis && !["business_line", "revenue_stream"].includes(a.cogsBasis)) {
+      setAnswer("cogsBasis", "");
+    }
+    if (a.selectedSegments.length > 1 && a.cogsBasis === "revenue_stream") {
+      setAnswer("cogsBasis", "business_line");
+    }
+  }, [a.cogsBasis, a.selectedSegments, setAnswer]);
+
   const segmentNounLower = "business line";
   const segmentOptions = [
     { value: "segment1", label: "Business Line 1" },
