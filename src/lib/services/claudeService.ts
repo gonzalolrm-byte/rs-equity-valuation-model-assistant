@@ -42,13 +42,6 @@ export type RunContext = {
 };
 
 const MOCK_MISSING: Record<string, MissingItem[]> = {
-  "A-020": [
-    { field: "Deferred tax liabilities (FY2023)", worksheet: "Historicals", status: "Data not found" },
-  ],
-  "A-021": [
-    { field: "CapEx by segment (FY2022)", worksheet: "Operational Drivers", status: "Missing information" },
-    { field: "Utilities & Energy split", worksheet: "COGS Breakdown", status: "Requires user input" },
-  ],
   "B-04": [
     { field: "YTD other operating income", worksheet: "YTD Actuals", status: "Data not found" },
   ],
