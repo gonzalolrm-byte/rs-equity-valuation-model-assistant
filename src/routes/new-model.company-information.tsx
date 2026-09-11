@@ -116,6 +116,28 @@ function CompanyInformation() {
     }
   }, [a.countryCount, a.secondCountry, a.thirdCountry, setAnswer]);
 
+  // Ensure disabled subsectors are cleared and not represented as selected segments.
+  useEffect(() => {
+    if (!a.subsector2Enabled && (a.subsector2 || a.selectedSegments.includes("segment2"))) {
+      setAnswer("subsector2", "");
+      if (a.selectedSegments.includes("segment2")) {
+        setAnswer(
+          "selectedSegments",
+          a.selectedSegments.filter((id) => id !== "segment2"),
+        );
+      }
+    }
+    if (!a.subsector3Enabled && (a.subsector3 || a.selectedSegments.includes("segment3"))) {
+      setAnswer("subsector3", "");
+      if (a.selectedSegments.includes("segment3")) {
+        setAnswer(
+          "selectedSegments",
+          a.selectedSegments.filter((id) => id !== "segment3"),
+        );
+      }
+    }
+  }, [a.subsector2Enabled, a.subsector3Enabled, a.subsector2, a.subsector3, a.selectedSegments, setAnswer]);
+
   const segmentOptions = [
     {
       value: "segment1",
