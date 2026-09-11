@@ -442,6 +442,8 @@ export type PromptAction = {
   lastUpdated: string;
   promptText: string;
   requiredResources: string[];
+  /** True for actions created by a developer in the console (not shipped in the registry). */
+  custom?: boolean;
   /**
    * Questionnaire variables this instruction block consumes (e.g.
    * "{{company_name}}"). Step 1 instructions are instruction blocks that the
