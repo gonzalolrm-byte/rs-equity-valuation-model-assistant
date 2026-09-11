@@ -208,7 +208,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             // still the same action; otherwise the renumbered registry wins.
             return savedPrompt && savedPrompt.title === prompt.title ? savedPrompt : prompt;
           }),
-          ...savedPrompts.filter((item) => !registryIds.has(item.id)),
+          // Only keep non-registry actions that were actually created by a
+          // developer in the console; shipped actions removed from the
+          // registry are dropped from saved state.
+          ...savedPrompts.filter((item) => !registryIds.has(item.id) && item.custom === true),
         ];
         setState({
           ...INITIAL_STATE,

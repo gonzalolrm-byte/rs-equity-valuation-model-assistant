@@ -455,7 +455,12 @@ function PromptEditor({
           <Button
             disabled={!draft.id.trim() || !draft.title.trim()}
             onClick={() => {
-              if (isNew) addPrompt({ ...draft, lastUpdated: new Date().toISOString().slice(0, 10) });
+              if (isNew)
+                addPrompt({
+                  ...draft,
+                  custom: true,
+                  lastUpdated: new Date().toISOString().slice(0, 10),
+                });
               else savePrompt(draft);
               onClose();
             }}
