@@ -207,7 +207,16 @@ type Ctx = {
   reset: () => void;
 };
 
-const AppContext = createContext<Ctx | null>(null);
+/**
+ * Kept on globalThis so a hot-reloaded second copy of this module still shares
+ * the same context object as the provider mounted by the root route; otherwise
+ * consumers read a fresh, empty context and throw during dev updates.
+ */
+const globalScope = globalThis as typeof globalThis & {
+  __appStateContext?: ReturnType<typeof createContext<Ctx | null>>;
+};
+const AppContext = (globalScope.__appStateContext ??= createContext<Ctx | null>(null));
+
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(INITIAL_STATE);
