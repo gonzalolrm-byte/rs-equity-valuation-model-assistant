@@ -808,19 +808,123 @@ const KEYWORD_MEASUREMENTS: { match: RegExp; capacity: string; output: string }[
   { match: /water|utility|sanitation/i, capacity: "Water Treatment Capacity (m³/day)", output: "Cubic Metres (m³)" },
 ];
 
+/**
+ * PROTOTYPE: capacity-measurement options by subsector template. These are the
+ * choices shown in the Capacity measurement dropdown when capacity is allowed
+ * to differ from Maximum Output / Units Sold. The first option is used as the
+ * default capacity measurement for that subsector.
+ */
+const SUBSECTOR_CAPACITY_MEASUREMENTS: Record<string, string[]> = {
+  "Crop Production": ["Hectares", "Processing Capacity (MT/year)", "Units"],
+  "Livestock & Animal Products": ["Head of Livestock", "Processing Capacity (MT/year)", "Units"],
+  "Forestry & Timber": ["Hectares", "Processing Capacity (MT/year)", "Units"],
+  "Agri-Processing": ["Processing Capacity (MT/year)", "Production Capacity (Units/year)", "Units"],
+
+  "Specialty Chemicals": ["Processing Capacity (MT/year)", "Production Capacity (Units/year)", "Units"],
+  "Fertilizers & Agrochemicals": ["Processing Capacity (MT/year)", "Production Capacity (Units/year)", "Units"],
+  "Petrochemicals": ["Processing Capacity (MT/year)", "Storage Capacity (m³)", "Units"],
+  "Industrial Gases": ["Production Capacity (Units/year)", "Processing Capacity (MT/year)", "Units"],
+
+  "Cement & Aggregates": ["Processing Capacity (MT/year)", "Production Capacity (Units/year)", "Units"],
+  "Ready-Mix Concrete": ["Processing Capacity (MT/year)", "Production Capacity (Units/year)", "Units"],
+  "Construction Steel": ["Processing Capacity (MT/year)", "Production Capacity (Units/year)", "Units"],
+  "Building Products": ["Production Capacity (Units/year)", "Processing Capacity (MT/year)", "Units"],
+
+  "Food & Beverage": ["Production Capacity (Units/year)", "Processing Capacity (MT/year)", "Units"],
+  "Apparel & Textiles": ["Production Capacity (Units/year)", "Units"],
+  "Consumer Electronics": ["Production Capacity (Units/year)", "Units"],
+  "Retail & Distribution": ["Store Count", "Production Capacity (Units/year)", "Units"],
+
+  "K-12 Education": ["Seats", "Units"],
+  "Higher Education": ["Seats", "Units"],
+  "Vocational Training": ["Seats", "Units"],
+  "EdTech": ["Subscriber Capacity (Lines)", "Seats", "Units"],
+
+  "Hospitals & Clinics": ["Beds", "Units"],
+  "Pharmaceuticals": ["Production Capacity (Units/year)", "Processing Capacity (MT/year)", "Units"],
+  "Medical Devices": ["Production Capacity (Units/year)", "Units"],
+  "Health Insurance": ["Subscriber Capacity (Lines)", "Units"],
+
+  "Hotels & Resorts": ["Rooms / Keys", "Units"],
+  "Restaurants & Food Service": ["Seats", "Units"],
+  "Travel & Tour Operators": ["Units"],
+  "Entertainment": ["Seats", "Units"],
+
+  "Automotive & Components": ["Production Capacity (Units/year)", "Units"],
+  "Industrial Machinery": ["Production Capacity (Units/year)", "Units"],
+  "Electronics Manufacturing": ["Production Capacity (Units/year)", "Units"],
+  "Textile Manufacturing": ["Production Capacity (Units/year)", "Units"],
+
+  "Precious Metals": ["Processing Capacity (MT/year)", "Units"],
+  "Base Metals": ["Processing Capacity (MT/year)", "Units"],
+  "Iron & Steel": ["Processing Capacity (MT/year)", "Production Capacity (Units/year)", "Units"],
+  "Mining Services": ["Fleet Size (Vehicles)", "Processing Capacity (MT/year)", "Units"],
+
+  "Upstream Exploration & Production": ["Processing Capacity (MT/year)", "Storage Capacity (m³)", "Units"],
+  "Midstream & Pipelines": ["Storage Capacity (m³)", "Units"],
+  "Downstream Refining": ["Processing Capacity (MT/year)", "Storage Capacity (m³)", "Units"],
+  "Oilfield Services": ["Fleet Size (Vehicles)", "Units"],
+
+  "Thermal Power": ["Installed Capacity (MW)", "Units"],
+  "Renewable Energy (Solar/Wind)": ["Installed Capacity (MW)", "Units"],
+  Hydroelectric: ["Installed Capacity (MW)", "Units"],
+  "Gas-Fired Power": ["Installed Capacity (MW)", "Units"],
+
+  "Residential Development": ["Floor Area (sqm)", "Units"],
+  "Commercial Office": ["Floor Area (sqm)", "Units"],
+  "Industrial & Logistics": ["Floor Area (sqm)", "Storage Capacity (m³)", "Units"],
+  "Retail Real Estate": ["Floor Area (sqm)", "Units"],
+
+  "Mobile Telecom": ["Subscriber Capacity (Lines)", "Units"],
+  "Fixed Broadband": ["Subscriber Capacity (Lines)", "Units"],
+  "Data Centers": ["Floor Area (sqm)", "Units"],
+  "Software & IT Services": ["Subscriber Capacity (Lines)", "Units"],
+
+  "Freight & Trucking": ["Fleet Size (Vehicles)", "Units"],
+  "Ports & Terminals": ["Storage Capacity (m³)", "Units"],
+  Aviation: ["Seats", "Units"],
+  "Warehousing & Logistics": ["Storage Capacity (m³)", "Floor Area (sqm)", "Units"],
+
+  "Water Supply & Sanitation": ["Water Treatment Capacity (m³/day)", "Units"],
+  "Wastewater Treatment": ["Water Treatment Capacity (m³/day)", "Units"],
+  "Solid Waste Management": ["Processing Capacity (MT/year)", "Units"],
+  "Utilities Infrastructure": ["Installed Capacity (MW)", "Water Treatment Capacity (m³/day)", "Units"],
+
+  "Default Unit Economics": ["Units", "Production Capacity (Units/year)"],
+};
+
 export function recommendedMeasurements(input: {
   sector?: string;
+  subsector?: string;
   businessModel?: string;
-}): { capacity: string; output: string } {
-  // The selected sector template defines the default measurement units.
+}): { capacity: string; output: string; capacityOptions: string[] } {
+  // The selected sector template defines the default output unit.
   const bySector = input.sector ? SECTOR_MEASUREMENTS[input.sector] : undefined;
-  if (bySector) return bySector;
-  // Keywords in the business description are a fallback only, used when the
-  // selected template does not define its own units.
-  const text = `${input.businessModel ?? ""}`;
-  const keyword = KEYWORD_MEASUREMENTS.find((entry) => entry.match.test(text));
-  if (keyword) return { capacity: keyword.capacity, output: keyword.output };
-  return { capacity: "Units", output: "Units" };
+  let output = bySector?.output;
+
+  // If no sector match, use keywords in the business description as a fallback.
+  if (!output) {
+    const text = `${input.businessModel ?? ""}`;
+    const keyword = KEYWORD_MEASUREMENTS.find((entry) => entry.match.test(text));
+    output = keyword?.output ?? "Units";
+  }
+
+  // Capacity measurement options are driven by the selected subsector template.
+  const subsectorOptions = input.subsector
+    ? SUBSECTOR_CAPACITY_MEASUREMENTS[input.subsector]
+    : undefined;
+  const sectorCapacity = bySector?.capacity;
+  const baseOptions = subsectorOptions ?? (sectorCapacity ? [sectorCapacity, "Units"] : ["Units"]);
+  const capacityOptions = [
+    ...new Set([SAME_AS_OUTPUT_MEASUREMENT, ...baseOptions, OTHER_MEASUREMENT]),
+  ];
+
+  // Default capacity value: use the subsector's first option when it differs from
+  // the output unit; otherwise default to "Same as Maximum Output / Units Sold".
+  const primaryCapacity = baseOptions[0] ?? "Units";
+  const capacity = primaryCapacity === output ? SAME_AS_OUTPUT_MEASUREMENT : primaryCapacity;
+
+  return { capacity, output, capacityOptions };
 }
 
 /** Working capital line items modeled on a days basis (assets vs. liabilities). */
