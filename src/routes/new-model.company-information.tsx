@@ -699,9 +699,11 @@ function WorkingCapitalGroup({ title, items }: { title: string; items: string[] 
 function SegmentMatrix({
   segmentOptions,
   revenueStreamOptions,
+  footer,
 }: {
   segmentOptions: { value: string; label: string }[];
   revenueStreamOptions: { value: string; label: string }[];
+  footer?: ReactNode;
 }) {
   const { state, setAnswer } = useApp();
   const a = state.answers;
