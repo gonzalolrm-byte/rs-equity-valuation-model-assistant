@@ -200,7 +200,7 @@ function CompanyInformation() {
       <StepProgress steps={WORKFLOW_A_STEPS} current={1} />
 
       <main className="mx-auto max-w-7xl px-5 py-10">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="max-w-4xl">
           <div>
             <PageHeading
               step="Step 1 of 3"
@@ -824,16 +824,6 @@ function CompanyInformation() {
               </p>
             )}
           </div>
-
-          <SidePanel
-            about="These questions help us understand your company and select the most appropriate valuation template. The information you provide will be used to customize and populate the template in the next steps."
-            tips={[
-              "Answer all questions to the best of your knowledge.",
-              "You can modify your answers later if needed.",
-              "Fields marked with * are required.",
-              "Refer to the Guidelines for more detail on segmentation, COGS categories and CapEx modeling.",
-            ]}
-          />
         </div>
       </main>
     </div>
