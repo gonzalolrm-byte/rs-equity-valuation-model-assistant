@@ -65,6 +65,7 @@ function CompanyInformation() {
   const { state, setAnswer, toggleAnswerItem, saveProgress } = useApp();
   const a = state.answers;
   const navigate = useNavigate();
+  const [showSegmentationNote, setShowSegmentationNote] = useState(false);
 
   const segmentNounLower = "business line";
   const segmentOptions = [
