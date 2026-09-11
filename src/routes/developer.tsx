@@ -54,7 +54,7 @@ function DeveloperLayout() {
             <NavItem
               to="/developer/resources"
               icon={<FolderOpen className="size-4" />}
-              label="Resources & Templates"
+              label="Market Data & Additional Templates"
             />
             <NavItem
               to="/developer/prompts"
