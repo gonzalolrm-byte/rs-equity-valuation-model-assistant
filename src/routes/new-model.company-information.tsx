@@ -152,9 +152,11 @@ function CompanyInformation() {
     a.selectedSegments
       .filter((lineId) => a.lineStreamMode[lineId] === "multi")
       .every((lineId) => a.capexBasis[lineId]) &&
-    a.projectionYears &&
-    (a.projectionYears !== "custom" || a.customYears.trim()) &&
-    !customYearsError &&
+    (a.selectedSegments.length > 1 && a.businessLineModeling === "sotp"
+      ? a.selectedSegments.every((lineId) => a.projectionYearsByLine[lineId])
+      : a.projectionYears &&
+        (a.projectionYears !== "custom" || a.customYears.trim()) &&
+        !customYearsError) &&
     a.shareClasses &&
     a.liquidityPut &&
     (a.liquidityPut !== "yes" || a.putMechanisms.length > 0) &&
