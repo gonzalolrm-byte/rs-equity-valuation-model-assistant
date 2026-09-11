@@ -268,19 +268,24 @@ export function CheckItem({
   checked,
   onChange,
   description,
+  disabled = false,
 }: {
   label: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
   description?: string;
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
-      onClick={() => onChange(!checked)}
+      disabled={disabled}
+      onClick={() => !disabled && onChange(!checked)}
       aria-pressed={checked}
+      aria-disabled={disabled}
       className={[
         "flex w-full items-start gap-3 rounded-lg border px-4 py-3 text-left transition-colors",
+        disabled ? "cursor-not-allowed opacity-50" : "",
         checked
           ? "border-primary bg-panel"
           : "border-border bg-card hover:border-primary/50 hover:bg-secondary/60",
