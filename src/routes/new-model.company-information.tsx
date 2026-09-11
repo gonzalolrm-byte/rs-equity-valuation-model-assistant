@@ -486,16 +486,12 @@ function SegmentMeasurements({
 
   const recommended = recommendedMeasurements({
     sector: a.sector,
+    subsector: a.subsector,
     businessModel: a.businessModel,
   });
 
-  const defaultCapacity =
-    !saved?.capacity && recommended.capacity === recommended.output
-      ? SAME_AS_OUTPUT_MEASUREMENT
-      : recommended.capacity;
-
   const current: SegmentMeasurement = {
-    capacity: saved?.capacity || defaultCapacity,
+    capacity: saved?.capacity || recommended.capacity,
     capacityOther: saved?.capacityOther ?? "",
     output: saved?.output || recommended.output,
     outputOther: saved?.outputOther ?? "",
