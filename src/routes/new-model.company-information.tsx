@@ -830,21 +830,19 @@ function SegmentMatrix({
                     })}
                   </div>
                 )}
+
+                {lineSelected && (
+                  <SegmentMeasurements
+                    segmentId={line.value}
+                    segmentLabel={line.label}
+                    hideHeader
+                  />
+                )}
               </div>
             );
           })}
         </div>
       </div>
-
-      {segmentOptions
-        .filter((line) => a.selectedSegments.includes(line.value))
-        .map((line) => (
-          <SegmentMeasurements
-            key={line.value}
-            segmentId={line.value}
-            segmentLabel={line.label}
-          />
-        ))}
     </div>
   );
 }
