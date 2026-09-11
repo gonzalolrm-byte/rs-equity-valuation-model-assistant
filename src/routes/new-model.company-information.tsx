@@ -318,7 +318,7 @@ function CompanyInformation() {
                 </Question>
               </Collapsible>
 
-              <Collapsible title="C. Other Modeling Considerations">
+              <Collapsible title="C. Other Modeling Adaptations">
                 {(() => {
                   const showLineModeling = a.selectedSegments.length > 1;
                   const d = (n: number) => (showLineModeling ? n : n - 1);
