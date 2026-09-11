@@ -622,25 +622,6 @@ function SegmentMeasurements({
         </div>
       )}
 
-      {needsCapacityUnit && (a.revenueStreams[segmentId]?.length ?? 0) > 1 && (
-        <div className="mt-3 rounded-lg border border-panel-border bg-background/60 p-3">
-          <p className="text-[13px] font-medium text-navy">
-            Should capacity be modeled by revenue stream or on an aggregate basis?
-          </p>
-          <div className="mt-2">
-            <OptionRow
-              value={current.capacityBasis}
-              onChange={(value) =>
-                update({ capacityBasis: value as SegmentMeasurement["capacityBasis"] })
-              }
-              options={[
-                { value: "revenue_stream", label: "By revenue stream" },
-                { value: "aggregate", label: "At business line level" },
-              ]}
-            />
-          </div>
-        </div>
-      )}
 
       {needsAnyUnit && showUnitNote && (
         <p className="mt-4 rounded-lg border border-warning/30 bg-warning-soft p-3 text-[13px] text-navy-soft">
