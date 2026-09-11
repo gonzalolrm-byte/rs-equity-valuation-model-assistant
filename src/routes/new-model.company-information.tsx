@@ -1326,9 +1326,9 @@ function SegmentMatrix({
         changed = true;
       }
       for (let i = 1; i < streamOrder.length; i++) {
-        if (list.includes(streamOrder[i]) && !list.includes(streamOrder[i - 1])) {
+        if (list.includes(streamOrder[i]!) && !list.includes(streamOrder[i - 1]!)) {
           for (let j = i; j < streamOrder.length; j++) {
-            const idx = list.indexOf(streamOrder[j]);
+            const idx = list.indexOf(streamOrder[j]!);
             if (idx !== -1) {
               list.splice(idx, 1);
               changed = true;
