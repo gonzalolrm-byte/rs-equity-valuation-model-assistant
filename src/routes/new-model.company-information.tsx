@@ -174,7 +174,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={4}
+                  number={3}
                   label="Do you want CapEx to be segmented or modeled on an aggregate basis?"
                   required
                   hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that CapEx also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
