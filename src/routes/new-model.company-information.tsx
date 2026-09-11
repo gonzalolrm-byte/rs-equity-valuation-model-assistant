@@ -65,17 +65,17 @@ function CompanyInformation() {
   const a = state.answers;
   const navigate = useNavigate();
 
-  const segmentNoun =
-    a.segmentBasis === "revenue_stream"
-      ? "Revenue Stream"
-      : a.segmentBasis === "business_line"
-        ? "Business Line"
-        : "Segment";
-  const segmentNounLower = segmentNoun.toLowerCase();
+  const segmentNounLower = "business line";
   const segmentOptions = [
-    { value: "segment1", label: `${segmentNoun} 1` },
-    { value: "segment2", label: `${segmentNoun} 2` },
-    { value: "segment3", label: `${segmentNoun} 3` },
+    { value: "segment1", label: "Business Line 1" },
+    { value: "segment2", label: "Business Line 2" },
+    { value: "segment3", label: "Business Line 3" },
+    { value: "other", label: "Other Business Line" },
+  ];
+  const revenueStreamOptions = [
+    { value: "stream1", label: "Revenue Stream 1" },
+    { value: "stream2", label: "Revenue Stream 2" },
+    { value: "stream3", label: "Revenue Stream 3" },
     { value: "other", label: "Other" },
   ];
 
