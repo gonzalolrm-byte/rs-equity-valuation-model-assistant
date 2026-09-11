@@ -1,12 +1,15 @@
 import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, FolderOpen, MessageSquareCode, Settings } from "lucide-react";
 import { IfcLockup } from "@/components/AppHeader";
+import { useApp, type NavigationMode } from "@/lib/store";
 
 export const Route = createFileRoute("/developer")({
   component: DeveloperLayout,
 });
 
+
 function DeveloperLayout() {
+  const { state, patch } = useApp();
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
@@ -54,6 +57,28 @@ function DeveloperLayout() {
               label="Prompts & Actions"
             />
           </nav>
+          <div className="rounded-xl border border-panel-border bg-card p-4">
+            <p className="font-heading text-[14px] font-bold text-navy">Navigation Mode</p>
+            <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
+              Controls whether required fields must be completed before moving between steps.
+            </p>
+            <div className="mt-3 space-y-2">
+              <ModeOption
+                value="required"
+                current={state.navigationMode}
+                onSelect={(mode) => patch({ navigationMode: mode })}
+                label="Complete Required Data"
+                description="Follow the standard workflow and complete all required fields before proceeding."
+              />
+              <ModeOption
+                value="free"
+                current={state.navigationMode}
+                onSelect={(mode) => patch({ navigationMode: mode })}
+                label="Free Navigation"
+                description="Navigate freely across all sections without completing the required questionnaire or fields."
+              />
+            </div>
+          </div>
           <p className="rounded-xl border border-border bg-card p-4 text-[12px] leading-relaxed text-muted-foreground">
             Prototype access control: this console is unprotected in this build. Role-based
             authorization is added with the backend in the next phase.
@@ -65,6 +90,50 @@ function DeveloperLayout() {
         </main>
       </div>
     </div>
+  );
+}
+
+function ModeOption({
+  value,
+  current,
+  onSelect,
+  label,
+  description,
+}: {
+  value: NavigationMode;
+  current: NavigationMode;
+  onSelect: (mode: NavigationMode) => void;
+  label: string;
+  description: string;
+}) {
+  const active = current === value;
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(value)}
+      className={`w-full rounded-lg border p-3 text-left transition-colors ${
+        active
+          ? "border-primary bg-panel"
+          : "border-input hover:bg-secondary"
+      }`}
+      aria-pressed={active}
+    >
+      <span className="flex items-start gap-2">
+        <span
+          className={`mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border ${
+            active ? "border-primary" : "border-input"
+          }`}
+        >
+          {active && <span className="size-2 rounded-full bg-primary" />}
+        </span>
+        <span>
+          <span className="block text-[13px] font-semibold text-navy">{label}</span>
+          <span className="mt-0.5 block text-[12px] leading-relaxed text-muted-foreground">
+            {description}
+          </span>
+        </span>
+      </span>
+    </button>
   );
 }
 

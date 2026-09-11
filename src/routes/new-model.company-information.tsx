@@ -158,7 +158,10 @@ function CompanyInformation() {
       ? "When selecting More than 10 years, please enter a value of 10 or greater."
       : undefined;
 
+  const freeNavigation = state.navigationMode === "free";
   const canContinue =
+    freeNavigation ||
+    !!(
     a.sector &&
     a.subsector &&
     (isSotpFx
@@ -192,7 +195,9 @@ function CompanyInformation() {
     a.shareClasses &&
     a.liquidityPut &&
     (a.liquidityPut !== "yes" || a.putMechanisms.length > 0) &&
-    (a.selectedSegments.length <= 1 || a.businessLineModeling !== "");
+    (a.selectedSegments.length <= 1 || a.businessLineModeling !== "")
+    );
+
 
   return (
     <div className="min-h-screen bg-background">

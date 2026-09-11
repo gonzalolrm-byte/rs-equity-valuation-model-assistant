@@ -71,9 +71,11 @@ export const Route = createFileRoute("/new-model/upload")({
 function UploadStep() {
   const { state, saveProgress } = useApp();
   const navigate = useNavigate();
-  const ready = NEW_MODEL_SLOTS.filter((slot) => slot.required).every(
-    (slot) => (state.newFiles[slot.key]?.length ?? 0) > 0,
-  );
+  const ready =
+    state.navigationMode === "free" ||
+    NEW_MODEL_SLOTS.filter((slot) => slot.required).every(
+      (slot) => (state.newFiles[slot.key]?.length ?? 0) > 0,
+    );
 
   return (
     <div className="min-h-screen bg-background">
