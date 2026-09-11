@@ -9,6 +9,7 @@ export const Route = createFileRoute("/developer")({
 
 
 function DeveloperLayout() {
+  const { state, patch } = useApp();
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
@@ -56,7 +57,29 @@ function DeveloperLayout() {
               label="Prompts & Actions"
             />
           </nav>
-          <p className="rounded-xl border border-border bg-card p-4 text-[12px] leading-relaxed text-muted-foreground">
+          <div className="rounded-xl border border-panel-border bg-card p-4">
+            <p className="font-heading text-[14px] font-bold text-navy">Navigation Mode</p>
+            <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
+              Controls whether required fields must be completed before moving between steps.
+            </p>
+            <div className="mt-3 space-y-2">
+              <ModeOption
+                value="required"
+                current={state.navigationMode}
+                onSelect={(mode) => patch({ navigationMode: mode })}
+                label="Complete Required Data"
+                description="Follow the standard workflow and complete all required fields before proceeding."
+              />
+              <ModeOption
+                value="free"
+                current={state.navigationMode}
+                onSelect={(mode) => patch({ navigationMode: mode })}
+                label="Free Navigation"
+                description="Navigate freely across all sections without completing the required questionnaire or fields."
+              />
+            </div>
+          </div>
+
             Prototype access control: this console is unprotected in this build. Role-based
             authorization is added with the backend in the next phase.
           </p>
