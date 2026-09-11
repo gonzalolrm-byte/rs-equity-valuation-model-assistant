@@ -425,7 +425,7 @@ function CompanyInformation() {
 
                 <Question
                   number={3}
-                  label="How many comparable companies (comps) do you want to enter?"
+                  label="How many comparable companies (comps) does the company have?"
                 >
                   <TextField
                     value={a.compsCount}
