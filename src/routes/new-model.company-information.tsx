@@ -285,7 +285,7 @@ function CompanyInformation() {
                 </Question>
               </Collapsible>
 
-              <Collapsible title="C. FX Adaptations">
+              <Collapsible title="D. FX Adaptations">
                 <Question number={1} label="How many countries does the company operate in?" required>
                   <OptionRow
                     value={a.countryCount}
@@ -389,7 +389,7 @@ function CompanyInformation() {
                 </Question>
               </Collapsible>
 
-              <Collapsible title="D. Other Modeling Considerations">
+              <Collapsible title="C. Other Modeling Considerations">
                 {(() => {
                   const showLineModeling = a.selectedSegments.length > 1;
                   const d = (n: number) => (showLineModeling ? n : n - 1);
