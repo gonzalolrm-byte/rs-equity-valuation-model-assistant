@@ -893,16 +893,105 @@ const SUBSECTOR_CAPACITY_MEASUREMENTS: Record<string, string[]> = {
   "Default Unit Economics": ["Units", "Production Capacity (Units/year)"],
 };
 
+/**
+ * PROTOTYPE: default Maximum Output / Units Sold measurement by subsector
+ * template. When a subsector is not listed, recommendedMeasurements falls back
+ * to the sector-level default.
+ */
+const SUBSECTOR_OUTPUT_MEASUREMENTS: Record<string, string> = {
+  "Crop Production": "Metric Tons (MT)",
+  "Livestock & Animal Products": "Head of Livestock",
+  "Forestry & Timber": "Cubic Metres (m³)",
+  "Agri-Processing": "Metric Tons (MT)",
+
+  "Specialty Chemicals": "Metric Tons (MT)",
+  "Fertilizers & Agrochemicals": "Metric Tons (MT)",
+  Petrochemicals: "Metric Tons (MT)",
+  "Industrial Gases": "Units",
+
+  "Cement & Aggregates": "Metric Tons (MT)",
+  "Ready-Mix Concrete": "Cubic Metres (m³)",
+  "Construction Steel": "Metric Tons (MT)",
+  "Building Products": "Units",
+
+  "Food & Beverage": "Units",
+  "Apparel & Textiles": "Units",
+  "Consumer Electronics": "Units",
+  "Retail & Distribution": "Units",
+
+  "K-12 Education": "Students Enrolled",
+  "Higher Education": "Students Enrolled",
+  "Vocational Training": "Students Enrolled",
+  EdTech: "Subscribers",
+
+  "Hospitals & Clinics": "Patients Treated",
+  Pharmaceuticals: "Units",
+  "Medical Devices": "Units",
+  "Health Insurance": "Subscribers",
+
+  "Hotels & Resorts": "Room Nights",
+  "Restaurants & Food Service": "Customers Served",
+  "Travel & Tour Operators": "Customers Served",
+  Entertainment: "Tickets Sold",
+
+  "Automotive & Components": "Units",
+  "Industrial Machinery": "Units",
+  "Electronics Manufacturing": "Units",
+  "Textile Manufacturing": "Units",
+
+  "Precious Metals": "Metric Tons (MT)",
+  "Base Metals": "Metric Tons (MT)",
+  "Iron & Steel": "Metric Tons (MT)",
+  "Mining Services": "Metric Tons (MT)",
+
+  "Upstream Exploration & Production": "Barrels (bbl)",
+  "Midstream & Pipelines": "Barrels (bbl)",
+  "Downstream Refining": "Barrels (bbl)",
+  "Oilfield Services": "Units",
+
+  "Thermal Power": "Megawatt-hours (MWh)",
+  "Renewable Energy (Solar/Wind)": "Megawatt-hours (MWh)",
+  Hydroelectric: "Megawatt-hours (MWh)",
+  "Gas-Fired Power": "Megawatt-hours (MWh)",
+
+  "Residential Development": "Square Metres Sold (sqm)",
+  "Commercial Office": "Square Metres Sold (sqm)",
+  "Industrial & Logistics": "Square Metres Sold (sqm)",
+  "Retail Real Estate": "Square Metres Sold (sqm)",
+
+  "Mobile Telecom": "Subscribers",
+  "Fixed Broadband": "Subscribers",
+  "Data Centers": "Units",
+  "Software & IT Services": "Subscribers",
+
+  "Freight & Trucking": "Metric Tons (MT)",
+  "Ports & Terminals": "Metric Tons (MT)",
+  Aviation: "Passengers",
+  "Warehousing & Logistics": "Metric Tons (MT)",
+
+  "Water Supply & Sanitation": "Cubic Metres (m³)",
+  "Wastewater Treatment": "Cubic Metres (m³)",
+  "Solid Waste Management": "Metric Tons (MT)",
+  "Utilities Infrastructure": "Megawatt-hours (MWh)",
+
+  "Generic - Unit Economics": "Units",
+  "Generic - Percentage Based": "Units",
+};
+
 export function recommendedMeasurements(input: {
   sector?: string;
   subsector?: string;
   businessModel?: string;
 }): { capacity: string; output: string; capacityOptions: string[] } {
-  // The selected sector template defines the default output unit.
+  // The selected subsector template defines the default output unit.
+  const bySubsector = input.subsector
+    ? SUBSECTOR_OUTPUT_MEASUREMENTS[input.subsector]
+    : undefined;
   const bySector = input.sector ? SECTOR_MEASUREMENTS[input.sector] : undefined;
-  let output = bySector?.output;
 
-  // If no sector match, use keywords in the business description as a fallback.
+  let output: string | undefined = bySubsector ?? bySector?.output;
+
+  // If no template match, use keywords in the business description as a fallback.
   if (!output) {
     const text = `${input.businessModel ?? ""}`;
     const keyword = KEYWORD_MEASUREMENTS.find((entry) => entry.match.test(text));
