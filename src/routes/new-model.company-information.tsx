@@ -36,7 +36,7 @@ import {
 } from "@/lib/store";
 
 export const WORKFLOW_A_STEPS = [
-  "Company Information",
+  "Template Selection & Adaptation",
   "Upload Company Information",
   "Generate Standardized Model",
 ];
@@ -44,13 +44,13 @@ export const WORKFLOW_A_STEPS = [
 export const Route = createFileRoute("/new-model/company-information")({
   head: () => ({
     meta: [
-      { title: "Company Information — IFC Valuation Assistant" },
+      { title: "Template Selection & Adaptation — IFC Valuation Assistant" },
       {
         name: "description",
         content:
           "Step 1 of 3: answer the company, Revenue/COGS/CapEx adaptations and valuation questions used to identify and customize the standardized DCF template.",
       },
-      { property: "og:title", content: "Company Information — IFC Valuation Assistant" },
+      { property: "og:title", content: "Template Selection & Adaptation — IFC Valuation Assistant" },
       {
         property: "og:description",
         content: "Step 1 of 3 of the standardized DCF template workflow.",
@@ -111,7 +111,7 @@ function CompanyInformation() {
           <div>
             <PageHeading
               step="Step 1 of 3"
-              title="Company Information"
+              title="Template Selection & Adaptation"
               intro="Please answer the following questions to help us identify and customize the most appropriate valuation template for your company."
             />
 
