@@ -80,7 +80,7 @@ function CompanyInformation() {
         if (a.lineStreamMode[lineId] !== "multi") continue;
         const current = value[lineId];
         if (current === "business_line" || current === "revenue_stream") {
-          // "By revenue stream" only applies to a single business line setup.
+          // "By revenue stream" only applies to a single sub-sector setup.
           next[lineId] =
             a.selectedSegments.length > 1 && current === "revenue_stream"
               ? "business_line"
@@ -117,10 +117,13 @@ function CompanyInformation() {
   }, [a.countryCount, a.secondCountry, a.thirdCountry, setAnswer]);
 
   const segmentOptions = [
-    { value: "segment1", label: "Business Line 1" },
-    { value: "segment2", label: "Business Line 2" },
-    { value: "segment3", label: "Business Line 3" },
-    { value: "other", label: "Other Business Line" },
+    {
+      value: "segment1",
+      label: a.subsector ? `Sub-sector 1 — ${a.subsector}` : "Sub-sector 1",
+    },
+    { value: "segment2", label: "Sub-sector 2" },
+    { value: "segment3", label: "Sub-sector 3" },
+    { value: "other", label: "Other Sub-sector" },
   ];
   const revenueStreamOptions = [
     { value: "stream1", label: "Revenue Stream 1" },
@@ -251,7 +254,7 @@ function CompanyInformation() {
               <Collapsible title="B. Revenue, COGS, and CapEx Key Inputs">
                 <Question
                   number={1}
-                  label="Select the business lines and the revenue streams within each business line to include in the model:"
+                  label="Select the sub-sectors and the revenue streams within each sub-sector to include in the model:"
                   labelAction={
                     <button
                       type="button"
@@ -270,10 +273,10 @@ function CompanyInformation() {
                     footer={
                       showSegmentationNote && (
                         <p className="rounded-lg border border-warning/30 bg-warning-soft p-3 text-[13px] text-navy-soft">
-                          A business line reflects how a company's operations are divided into
+                          A sub-sector reflects how a company's operations are divided into
                           distinct operating segments based on differences in operating models and
                           market dynamics, while a revenue stream is a specific way the company
-                          generates revenue within a business line. A business line may include
+                          generates revenue within a sub-sector. A sub-sector may include
                           multiple revenue streams (up to four, including Other). Different business
                           lines typically have different measures of Units Sold and operating
                           capacity.
@@ -331,7 +334,7 @@ function CompanyInformation() {
                 {showLineModeling && (
                   <Question
                     number={1}
-                    label="How should the company's different business lines be modeled?"
+                    label="How should the company's different sub-sectors be modeled?"
                     required
                   >
                     <OptionRow
@@ -347,7 +350,7 @@ function CompanyInformation() {
                     {a.businessLineModeling === "sotp" && (
                       <div className="mt-4 space-y-3 rounded-lg border border-border bg-muted/40 p-4">
                         <p className="text-sm font-medium text-foreground">
-                          Valuation method by business line
+                          Valuation method by sub-sector
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {segmentOptions
@@ -397,7 +400,7 @@ function CompanyInformation() {
                             })}
                         </div>
                         <p className="text-xs text-muted-foreground">
-                          Business Line 1 is always valued with DCF.
+                          Sub-sector 1 is always valued with DCF.
                         </p>
                       </div>
                     )}
@@ -417,7 +420,7 @@ function CompanyInformation() {
                   required
                   hint={
                     isSotp
-                      ? "With Sum-of-the-Parts, the projection horizon is set for each business line."
+                      ? "With Sum-of-the-Parts, the projection horizon is set for each sub-sector."
                       : undefined
                   }
                 >
@@ -517,7 +520,7 @@ function CompanyInformation() {
                   label="How many comparable companies (comps) does the company have?"
                   hint={
                     isSotp
-                      ? "With Sum-of-the-Parts, comps are identified for each business line."
+                      ? "With Sum-of-the-Parts, comps are identified for each sub-sector."
                       : undefined
                   }
                 >
@@ -617,7 +620,7 @@ function CompanyInformation() {
                   <>
                     <Question
                       number={1}
-                      label="Select the main countries in which each business line operates."
+                      label="Select the main countries in which each sub-sector operates."
                       required
                     >
                       <div className="space-y-4">
@@ -636,7 +639,7 @@ function CompanyInformation() {
                               <p className="text-sm font-semibold text-foreground">{lineLabel}</p>
                               <div className="space-y-2">
                                 <p className="text-[13px] font-medium text-foreground">
-                                  How many countries does this business line operate in?
+                                  How many countries does this sub-sector operate in?
                                 </p>
                                 <OptionRow
                                   value={count}
@@ -900,7 +903,7 @@ function SegmentMeasurements({
   const [showUnitNote, setShowUnitNote] = useState(false);
   const isFirstSegment = segmentId === "segment1";
 
-  // Business Line 1 cannot use a custom measurement.
+  // Sub-sector 1 cannot use a custom measurement.
   const outputValue =
     isFirstSegment && current.output === OTHER_MEASUREMENT
       ? recommended.output
@@ -1067,7 +1070,7 @@ function WorkingCapitalGroup({ title, items }: { title: string; items: string[] 
 }
 
 /**
- * Generic matrix with the selected business lines as columns. Used for the
+ * Generic matrix with the selected sub-sectors as columns. Used for the
  * Sum-of-the-Parts breakdown of projection horizon, working capital days and
  * comparable companies.
  */
@@ -1120,7 +1123,7 @@ function LineMatrix({
 
 /**
  * Working capital days matrix for Sum-of-the-Parts: line items as rows and the
- * selected business lines as columns.
+ * selected sub-sectors as columns.
  */
 function LineWorkingCapitalMatrix({
   title,
@@ -1176,11 +1179,11 @@ function LineWorkingCapitalMatrix({
 }
 
 /**
- * Business line / revenue stream selection matrix. Rows are business lines
+ * Sub-sector / revenue stream selection matrix. Rows are sub-sectors
  * (up to four, including "Other") and columns are the revenue streams inside
- * each business line (up to four, including "Other"). Selecting any revenue
- * stream automatically activates its business line, and measurement units are
- * collected for every activated business line.
+ * each sub-sector (up to four, including "Other"). Selecting any revenue
+ * stream automatically activates its sub-sector, and measurement units are
+ * collected for every activated sub-sector.
  */
 function SegmentMatrix({
   segmentOptions,
@@ -1194,7 +1197,7 @@ function SegmentMatrix({
   const { state, setAnswer } = useApp();
   const a = state.answers;
 
-  // Business Line 1 is always part of the model; repair any saved state where
+  // Sub-sector 1 is always part of the model; repair any saved state where
   // it was left unselected (its checkbox is locked, so it could not be re-added).
   useEffect(() => {
     if (!a.selectedSegments.includes("segment1")) {
@@ -1203,7 +1206,7 @@ function SegmentMatrix({
   }, [a.selectedSegments, setAnswer]);
 
   const toggleLine = (lineId: string) => {
-    // Business Line 1 is always selected.
+    // Sub-sector 1 is always selected.
     if (lineId === "segment1") return;
     const isSelected = a.selectedSegments.includes(lineId);
     setAnswer(
@@ -1241,10 +1244,10 @@ function SegmentMatrix({
         // Multi-Stream defaults to Revenue Stream 1 and Revenue Stream 2.
         setAnswer("revenueStreams", { ...a.revenueStreams, [lineId]: ["stream1", "stream2"] });
       } else if (lineId === "segment1" && !current.includes("stream2")) {
-        // Business Line 1 always includes Revenue Stream 1 and 2 in Multi-Stream mode.
+        // Sub-sector 1 always includes Revenue Stream 1 and 2 in Multi-Stream mode.
         setAnswer("revenueStreams", { ...a.revenueStreams, [lineId]: [...current, "stream2"] });
       }
-      // Default COGS / CapEx segmentation to By business line when entering multi-stream mode.
+      // Default COGS / CapEx segmentation to By sub-sector when entering multi-stream mode.
       if (!a.cogsBasis[lineId]) {
         setAnswer("cogsBasis", { ...a.cogsBasis, [lineId]: "business_line" });
       }
@@ -1255,7 +1258,7 @@ function SegmentMatrix({
   };
 
   const toggleStream = (lineId: string, streamId: string) => {
-    // Revenue Stream 1 under Business Line 1 is always selected.
+    // Revenue Stream 1 under Sub-sector 1 is always selected.
     if (lineId === "segment1" && streamId === "stream1") return;
     const current = a.revenueStreams[lineId] ?? [];
     const next = current.includes(streamId)
@@ -1416,7 +1419,7 @@ function SegmentMatrix({
                         a.selectedSegments.length > 1 ? ["revenue_stream"] : []
                       }
                       options={[
-                        { value: "business_line", label: "By business line" },
+                        { value: "business_line", label: "By sub-sector" },
                         { value: "revenue_stream", label: "By revenue stream" },
                       ]}
                     />
@@ -1433,7 +1436,7 @@ function SegmentMatrix({
                         a.selectedSegments.length > 1 ? ["revenue_stream"] : []
                       }
                       options={[
-                        { value: "business_line", label: "By business line" },
+                        { value: "business_line", label: "By sub-sector" },
                         { value: "revenue_stream", label: "By revenue stream" },
                       ]}
                     />
