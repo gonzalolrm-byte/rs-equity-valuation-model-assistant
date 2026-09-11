@@ -175,12 +175,11 @@ function WorkflowSection({
 
       <div className="mt-4 overflow-hidden rounded-xl border border-border bg-card shadow-card">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[880px] text-left text-sm">
+          <table className="w-full min-w-[700px] text-left text-sm">
             <thead className="bg-secondary/70 text-[12px] uppercase tracking-wide text-navy-soft">
               <tr>
                 <Th>ID</Th>
                 <Th>Category</Th>
-                <Th>Step</Th>
                 <Th>Status</Th>
                 <Th>Last Updated</Th>
                 <Th>Actions</Th>
@@ -193,7 +192,6 @@ function WorkflowSection({
                     {prompt.id}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">{prompt.category}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{prompt.step}</td>
                   <td className="px-4 py-3">
                     <span
                       className={[
@@ -243,7 +241,7 @@ function WorkflowSection({
               ))}
               {rows.length === 0 && (
                 <tr className="border-t border-border">
-                  <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                  <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
                     No actions match these filters.
                   </td>
                 </tr>

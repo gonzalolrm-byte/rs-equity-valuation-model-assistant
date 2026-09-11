@@ -463,7 +463,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-001",
     title: "Select Sector / Subsector Template",
-    category: "Template Selection",
+    category: "Template Selection & Adaptation",
     step: "Workflow A – Step 1: Template Selection & Adaptation",
     status: "Active",
     lastUpdated: "2026-09-10",
@@ -475,7 +475,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   {
     id: "A-002",
     title: "Company Name",
-    category: "General Information",
+    category: "Template Population",
     step: "Workflow A – Step 1: Template Selection & Adaptation",
     status: "Active",
     lastUpdated: "2026-09-09",
@@ -572,8 +572,8 @@ export const INITIAL_PROMPTS: PromptAction[] = [
 
 export const PROMPT_CATEGORIES = [
   // Categories mirror the section / step names the end user sees in the app.
-  "Template Selection",
-  "General Information",
+  "Template Selection & Adaptation",
+  "Template Population",
   "Modeling Approach",
   "Segmentation and Categorization",
   "Other Modeling Adaptations",
