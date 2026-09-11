@@ -944,9 +944,19 @@ function SegmentMeasurements({
   const a = state.answers;
   const saved = a.segmentMeasurements[segmentId];
 
+  // Each sub-sector card is linked to its own A.2 subsector template selection.
+  const lineSubsector =
+    segmentId === "segment1"
+      ? a.subsector
+      : segmentId === "segment2"
+        ? a.subsector2
+        : segmentId === "segment3"
+          ? a.subsector3
+          : "";
+
   const recommended = recommendedMeasurements({
     sector: a.sector,
-    subsector: a.subsector,
+    subsector: lineSubsector,
     businessModel: a.businessModel,
     sectorSpecifics: state.sectorSpecifics,
   });
@@ -969,7 +979,7 @@ function SegmentMeasurements({
   // The selected subsector/template determines whether the model uses unit
   // economics or a percentage-based approach. Percentage-based templates do not
   // need operational measurement units.
-  const isPercentageBased = a.subsector === "Generic - Percentage Based";
+  const isPercentageBased = lineSubsector === "Generic - Percentage Based";
   const needsOutputUnit = !isPercentageBased;
   const needsCapacityUnit = !isPercentageBased;
   const needsAnyUnit = needsOutputUnit || needsCapacityUnit;
