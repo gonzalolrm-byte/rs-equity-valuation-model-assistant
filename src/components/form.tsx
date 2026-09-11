@@ -59,21 +59,26 @@ export function Question({
   label,
   required = false,
   hint,
+  labelAction,
   children,
 }: {
   number: number;
   label: string;
   required?: boolean;
   hint?: string;
+  labelAction?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <div>
-      <p className="text-[15px] font-semibold text-navy">
-        <span className="mr-1.5 text-navy-soft">{number}.</span>
-        {label}
-        {required && <span className="ml-1 text-destructive">*</span>}
-      </p>
+      <div className="flex items-start gap-2">
+        <p className="text-[15px] font-semibold text-navy">
+          <span className="mr-1.5 text-navy-soft">{number}.</span>
+          {label}
+          {required && <span className="ml-1 text-destructive">*</span>}
+        </p>
+        {labelAction}
+      </div>
       <div className="mt-3 space-y-3">{children}</div>
       {hint && (
         <p className="mt-3 flex gap-2 rounded-lg bg-panel px-3 py-2 text-[13px] leading-relaxed text-navy-soft">

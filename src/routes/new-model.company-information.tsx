@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Lightbulb } from "lucide-react";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button, ButtonLink } from "@/components/Button";
 import { SidePanel } from "@/components/SidePanel";
@@ -65,6 +65,7 @@ function CompanyInformation() {
   const { state, setAnswer, toggleAnswerItem, saveProgress } = useApp();
   const a = state.answers;
   const navigate = useNavigate();
+  const [showSegmentationNote, setShowSegmentationNote] = useState(false);
 
   const segmentNounLower = "business line";
   const segmentOptions = [
@@ -150,11 +151,34 @@ function CompanyInformation() {
                 <Question
                   number={1}
                   label="Select the business lines and the revenue streams within each business line to include in the model:"
-                  hint="A business line reflects how a company's operations are divided into distinct operating segments based on differences in operating models and market dynamics, while a revenue stream is a specific way the company generates revenue within a business line. A business line may include multiple revenue streams (up to four, including Other). Different business lines typically have different measures of Units Sold and operating capacity."
+                  labelAction={
+                    <button
+                      type="button"
+                      onClick={() => setShowSegmentationNote((v) => !v)}
+                      aria-expanded={showSegmentationNote}
+                      aria-label={showSegmentationNote ? "Hide segmentation guidance" : "Show segmentation guidance"}
+                      className="mt-0.5 shrink-0 rounded-lg p-1 text-warning transition-colors hover:bg-warning-soft"
+                    >
+                      <Lightbulb className="size-4" />
+                    </button>
+                  }
                 >
                   <SegmentMatrix
                     segmentOptions={segmentOptions}
                     revenueStreamOptions={revenueStreamOptions}
+                    footer={
+                      showSegmentationNote && (
+                        <p className="rounded-lg border border-warning/30 bg-warning-soft p-3 text-[13px] text-navy-soft">
+                          A business line reflects how a company's operations are divided into
+                          distinct operating segments based on differences in operating models and
+                          market dynamics, while a revenue stream is a specific way the company
+                          generates revenue within a business line. A business line may include
+                          multiple revenue streams (up to four, including Other). Different business
+                          lines typically have different measures of Units Sold and operating
+                          capacity.
+                        </p>
+                      )
+                    }
                   />
                 </Question>
 
@@ -675,9 +699,11 @@ function WorkingCapitalGroup({ title, items }: { title: string; items: string[] 
 function SegmentMatrix({
   segmentOptions,
   revenueStreamOptions,
+  footer,
 }: {
   segmentOptions: { value: string; label: string }[];
   revenueStreamOptions: { value: string; label: string }[];
+  footer?: ReactNode;
 }) {
   const { state, setAnswer } = useApp();
   const a = state.answers;
@@ -859,6 +885,7 @@ function SegmentMatrix({
             );
           })}
         </div>
+        {footer && <div className="mt-4">{footer}</div>}
       </div>
     </div>
   );
