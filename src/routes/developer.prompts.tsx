@@ -280,7 +280,7 @@ function WorkflowSection({
             editing ?? {
               id: nextId,
               title: "",
-              category: PROMPT_CATEGORIES[0] ?? "General Information",
+              category: PROMPT_CATEGORIES[0] ?? "Template Selection & Adaptation",
               step: workflowSteps[0] ?? `${workflow.key} – Step 1`,
               status: "Active",
               lastUpdated: new Date().toISOString().slice(0, 10),
@@ -289,7 +289,6 @@ function WorkflowSection({
             }
           }
           isNew={creating}
-          steps={workflowSteps}
           onClose={() => {
             setEditing(null);
             setCreating(false);
@@ -307,12 +306,10 @@ function Th({ children }: { children: React.ReactNode }) {
 function PromptEditor({
   prompt,
   isNew,
-  steps,
   onClose,
 }: {
   prompt: PromptAction;
   isNew: boolean;
-  steps: readonly string[];
   onClose: () => void;
 }) {
   const { state, savePrompt, addPrompt } = useApp();
@@ -373,22 +370,13 @@ function PromptEditor({
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <SelectField
-              label="Category"
-              value={draft.category}
-              onChange={(value) => setDraft({ ...draft, category: value })}
-              options={PROMPT_CATEGORIES}
-              placeholder="Select category"
-            />
-            <SelectField
-              label="Step / Workflow"
-              value={draft.step}
-              onChange={(value) => setDraft({ ...draft, step: value })}
-              options={steps}
-              placeholder="Select step"
-            />
-          </div>
+          <SelectField
+            label="Category"
+            value={draft.category}
+            onChange={(value) => setDraft({ ...draft, category: value })}
+            options={PROMPT_CATEGORIES}
+            placeholder="Select category"
+          />
 
           <TextField
             label="Questionnaire Variable(s)"
