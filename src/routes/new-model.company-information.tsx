@@ -239,7 +239,7 @@ function CompanyInformation() {
                 </Question>
 
                 {a.sector && (
-                  <Question number={2} label="Select Subsector Templates (up to 3)" required>
+                  <Question number={2} label="Select the Subsector(s) in which the company operates." required>
                     <div className="space-y-3">
                       {[
                         {
