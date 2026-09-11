@@ -134,7 +134,12 @@ function CompanyInformation() {
                   <Question number={2} label="Select Subsector Template" required>
                     <SelectField
                       value={a.subsector}
-                      onChange={(value) => setAnswer("subsector", value)}
+                      onChange={(value) => {
+                        setAnswer("subsector", value);
+                        // Reset per-segment measurement defaults so they reflect the
+                        // newly selected subsector template.
+                        setAnswer("segmentMeasurements", {});
+                      }}
                       options={[
                         ...(SUBSECTORS[a.sector] ?? []),
                         "Generic - Unit Economics",
