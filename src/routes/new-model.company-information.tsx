@@ -872,6 +872,7 @@ function SegmentMeasurements({
     sector: a.sector,
     subsector: a.subsector,
     businessModel: a.businessModel,
+    sectorSpecifics: state.sectorSpecifics,
   });
 
   const current: SegmentMeasurement = {

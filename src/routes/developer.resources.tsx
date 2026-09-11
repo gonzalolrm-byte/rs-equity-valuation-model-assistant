@@ -27,7 +27,7 @@ function Resources() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-extrabold">1. Resources &amp; Templates</h1>
+      <h1 className="font-heading text-2xl font-extrabold">2. Resources &amp; Templates</h1>
       <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">
         Upload and manage the core files and data sources used by the application. These files are
         accessible only to developers and are not visible to users.
