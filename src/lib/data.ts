@@ -611,7 +611,7 @@ const KEYWORD_MEASUREMENTS: { match: RegExp; capacity: string; output: string }[
  * to differ from Maximum Output / Units Sold. The first option is used as the
  * default capacity measurement for that subsector.
  */
-const SUBSECTOR_CAPACITY_MEASUREMENTS: Record<string, string[]> = {
+export const SUBSECTOR_CAPACITY_MEASUREMENTS: Record<string, string[]> = {
   "Crop Production": ["Hectares", "Processing Capacity (MT/year)", "Units"],
   "Livestock & Animal Products": ["Head of Livestock", "Processing Capacity (MT/year)", "Units"],
   "Forestry & Timber": ["Hectares", "Processing Capacity (MT/year)", "Units"],
@@ -695,7 +695,7 @@ const SUBSECTOR_CAPACITY_MEASUREMENTS: Record<string, string[]> = {
  * template. When a subsector is not listed, recommendedMeasurements falls back
  * to the sector-level default.
  */
-const SUBSECTOR_OUTPUT_MEASUREMENTS: Record<string, string> = {
+export const SUBSECTOR_OUTPUT_MEASUREMENTS: Record<string, string> = {
   "Crop Production": "Metric Tons (MT)",
   "Livestock & Animal Products": "Head of Livestock",
   "Forestry & Timber": "Cubic Metres (m³)",
@@ -775,18 +775,49 @@ const SUBSECTOR_OUTPUT_MEASUREMENTS: Record<string, string> = {
   "Generic - Percentage Based": "Units",
 };
 
+/**
+ * Developer Console overrides for the shipped sector/subsector defaults.
+ * PROTOTYPE: edited in the Developer Console (Sector Specifics) and stored with
+ * the app state; Phase 2 persists these with the template service.
+ */
+export type SubsectorMeasurementSetting = {
+  /** Default Maximum Output / Units Sold measurement. */
+  output: string;
+  /** Capacity measurements offered for this subsector template. */
+  capacityOptions: string[];
+};
+
+export type SectorSpecifics = Record<string, SubsectorMeasurementSetting>;
+
+/** Shipped defaults for a subsector template, before developer overrides. */
+export function defaultSubsectorMeasurements(
+  subsector: string,
+  sector?: string,
+): SubsectorMeasurementSetting {
+  const sectorDefaults = sector ? SECTOR_MEASUREMENTS[sector] : undefined;
+  const output = SUBSECTOR_OUTPUT_MEASUREMENTS[subsector] ?? sectorDefaults?.output ?? "Units";
+  const capacityOptions =
+    SUBSECTOR_CAPACITY_MEASUREMENTS[subsector] ??
+    (sectorDefaults?.capacity ? [sectorDefaults.capacity, "Units"] : ["Units"]);
+  return { output, capacityOptions };
+}
+
 export function recommendedMeasurements(input: {
   sector?: string;
   subsector?: string;
   businessModel?: string;
+  /** Developer Console overrides keyed by subsector template. */
+  sectorSpecifics?: SectorSpecifics;
 }): { capacity: string; output: string; capacityOptions: string[] } {
+  const override = input.subsector ? input.sectorSpecifics?.[input.subsector] : undefined;
+
   // The selected subsector template defines the default output unit.
   const bySubsector = input.subsector
     ? SUBSECTOR_OUTPUT_MEASUREMENTS[input.subsector]
     : undefined;
   const bySector = input.sector ? SECTOR_MEASUREMENTS[input.sector] : undefined;
 
-  let output: string | undefined = bySubsector ?? bySector?.output;
+  let output: string | undefined = override?.output || bySubsector || bySector?.output;
 
   // If no template match, use keywords in the business description as a fallback.
   if (!output) {
@@ -800,7 +831,10 @@ export function recommendedMeasurements(input: {
     ? SUBSECTOR_CAPACITY_MEASUREMENTS[input.subsector]
     : undefined;
   const sectorCapacity = bySector?.capacity;
-  const baseOptions = subsectorOptions ?? (sectorCapacity ? [sectorCapacity, "Units"] : ["Units"]);
+  const baseOptions =
+    (override?.capacityOptions?.length ? override.capacityOptions : undefined) ??
+    subsectorOptions ??
+    (sectorCapacity ? [sectorCapacity, "Units"] : ["Units"]);
   const capacityOptions = [
     ...new Set([SAME_AS_OUTPUT_MEASUREMENT, ...baseOptions, OTHER_MEASUREMENT]),
   ];

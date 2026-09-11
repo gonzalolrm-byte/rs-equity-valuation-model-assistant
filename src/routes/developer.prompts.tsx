@@ -53,7 +53,7 @@ function Prompts() {
   return (
     <div>
       <div>
-        <h1 className="font-heading text-2xl font-extrabold">2. Prompts &amp; Actions</h1>
+        <h1 className="font-heading text-2xl font-extrabold">3. Prompts &amp; Actions</h1>
         <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">
           Manage the list of actions / questions and their corresponding Claude prompts, organized
           by workflow. Each item has a unique ID (A-## for the first-time standardized model,

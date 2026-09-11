@@ -1,5 +1,5 @@
 import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
-import { ArrowLeft, FolderOpen, MessageSquareCode, Settings } from "lucide-react";
+import { ArrowLeft, FolderOpen, MessageSquareCode, Settings, SlidersHorizontal } from "lucide-react";
 import { IfcLockup } from "@/components/AppHeader";
 import { useApp, type NavigationMode } from "@/lib/store";
 
@@ -46,6 +46,11 @@ function DeveloperLayout() {
             </p>
           </div>
           <nav className="space-y-1.5">
+            <NavItem
+              to="/developer/sector-specifics"
+              icon={<SlidersHorizontal className="size-4" />}
+              label="Sector Specifics"
+            />
             <NavItem
               to="/developer/resources"
               icon={<FolderOpen className="size-4" />}

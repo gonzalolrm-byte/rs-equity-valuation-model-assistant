@@ -17,6 +17,7 @@ import { Route as HelpRouteImport } from './routes/help'
 import { Route as DeveloperIndexRouteImport } from './routes/developer.index'
 import { Route as DeveloperPromptsRouteImport } from './routes/developer.prompts'
 import { Route as DeveloperResourcesRouteImport } from './routes/developer.resources'
+import { Route as DeveloperSectorSpecificsRouteImport } from './routes/developer.sector-specifics'
 import { Route as NewModelCompanyInformationRouteImport } from './routes/new-model.company-information'
 import { Route as NewModelGenerateRouteImport } from './routes/new-model.generate'
 import { Route as NewModelUploadRouteImport } from './routes/new-model.upload'
@@ -64,6 +65,12 @@ const DeveloperResourcesRoute = DeveloperResourcesRouteImport.update({
   path: '/resources',
   getParentRoute: () => DeveloperRoute,
 } as any)
+const DeveloperSectorSpecificsRoute =
+  DeveloperSectorSpecificsRouteImport.update({
+    id: '/sector-specifics',
+    path: '/sector-specifics',
+    getParentRoute: () => DeveloperRoute,
+  } as any)
 const NewModelCompanyInformationRoute =
   NewModelCompanyInformationRouteImport.update({
     id: '/new-model/company-information',
@@ -104,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/help': typeof HelpRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
   '/developer/resources': typeof DeveloperResourcesRoute
+  '/developer/sector-specifics': typeof DeveloperSectorSpecificsRoute
   '/new-model/company-information': typeof NewModelCompanyInformationRoute
   '/new-model/generate': typeof NewModelGenerateRoute
   '/new-model/upload': typeof NewModelUploadRoute
@@ -119,6 +127,7 @@ export interface FileRoutesByTo {
   '/help': typeof HelpRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
   '/developer/resources': typeof DeveloperResourcesRoute
+  '/developer/sector-specifics': typeof DeveloperSectorSpecificsRoute
   '/new-model/company-information': typeof NewModelCompanyInformationRoute
   '/new-model/generate': typeof NewModelGenerateRoute
   '/new-model/upload': typeof NewModelUploadRoute
@@ -136,6 +145,7 @@ export interface FileRoutesById {
   '/help': typeof HelpRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
   '/developer/resources': typeof DeveloperResourcesRoute
+  '/developer/sector-specifics': typeof DeveloperSectorSpecificsRoute
   '/new-model/company-information': typeof NewModelCompanyInformationRoute
   '/new-model/generate': typeof NewModelGenerateRoute
   '/new-model/upload': typeof NewModelUploadRoute
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/help'
     | '/developer/prompts'
     | '/developer/resources'
+    | '/developer/sector-specifics'
     | '/new-model/company-information'
     | '/new-model/generate'
     | '/new-model/upload'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/help'
     | '/developer/prompts'
     | '/developer/resources'
+    | '/developer/sector-specifics'
     | '/new-model/company-information'
     | '/new-model/generate'
     | '/new-model/upload'
@@ -185,6 +197,7 @@ export interface FileRouteTypes {
     | '/help'
     | '/developer/prompts'
     | '/developer/resources'
+    | '/developer/sector-specifics'
     | '/new-model/company-information'
     | '/new-model/generate'
     | '/new-model/upload'
@@ -266,6 +279,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DeveloperResourcesRouteImport
       parentRoute: typeof DeveloperRoute
     }
+    '/developer/sector-specifics': {
+      id: '/developer/sector-specifics'
+      path: '/sector-specifics'
+      fullPath: '/developer/sector-specifics'
+      preLoaderRoute: typeof DeveloperSectorSpecificsRouteImport
+      parentRoute: typeof DeveloperRoute
+    }
     '/new-model/company-information': {
       id: '/new-model/company-information'
       path: '/new-model/company-information'
@@ -314,12 +334,14 @@ declare module '@tanstack/react-router' {
 interface DeveloperRouteChildren {
   DeveloperPromptsRoute: typeof DeveloperPromptsRoute
   DeveloperResourcesRoute: typeof DeveloperResourcesRoute
+  DeveloperSectorSpecificsRoute: typeof DeveloperSectorSpecificsRoute
   DeveloperIndexRoute: typeof DeveloperIndexRoute
 }
 
 const DeveloperRouteChildren: DeveloperRouteChildren = {
   DeveloperPromptsRoute: DeveloperPromptsRoute,
   DeveloperResourcesRoute: DeveloperResourcesRoute,
+  DeveloperSectorSpecificsRoute: DeveloperSectorSpecificsRoute,
   DeveloperIndexRoute: DeveloperIndexRoute,
 }
 
