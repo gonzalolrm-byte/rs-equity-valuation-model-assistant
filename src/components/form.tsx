@@ -218,6 +218,51 @@ export function OptionRow({
   );
 }
 
+export function SegmentedToggleRow({
+  label,
+  options,
+  value,
+  onChange,
+  disabled = false,
+  disabledOptions = [],
+}: {
+  label: string;
+  options: { value: string; label: string }[];
+  value: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
+  disabledOptions?: string[];
+}) {
+  return (
+    <div className={["flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between", disabled ? "opacity-60" : ""].join(" ")}>
+      <span className="text-[15px] font-semibold text-navy">{label}</span>
+      <div className="flex shrink-0 gap-2 rounded-lg border border-border bg-card p-1">
+        {options.map((option) => {
+          const selected = value === option.value;
+          const optionDisabled = disabled || disabledOptions.includes(option.value);
+          return (
+            <button
+              key={option.value}
+              type="button"
+              disabled={optionDisabled}
+              onClick={() => onChange(option.value)}
+              className={[
+                "rounded-md px-3.5 py-1.5 text-[14px] font-medium transition-colors",
+                optionDisabled ? "cursor-not-allowed opacity-50" : "",
+                selected
+                  ? "bg-primary text-primary-foreground"
+                  : "text-navy-soft hover:bg-secondary",
+              ].join(" ")}
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function CheckItem({
   label,
   checked,
