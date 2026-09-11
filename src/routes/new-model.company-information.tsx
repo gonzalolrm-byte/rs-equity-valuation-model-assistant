@@ -755,6 +755,7 @@ function SegmentMatrix({
   return (
     <div className="space-y-4">
       <div className="rounded-xl border border-border bg-card p-4 shadow-card">
+        {footer && <div className="mb-4">{footer}</div>}
         <div className="space-y-3">
           {segmentOptions.map((line) => {
             const lineSelected = a.selectedSegments.includes(line.value);
@@ -885,7 +886,6 @@ function SegmentMatrix({
             );
           })}
         </div>
-        {footer && <div className="mt-4">{footer}</div>}
       </div>
     </div>
   );
