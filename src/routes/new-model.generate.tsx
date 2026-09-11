@@ -53,8 +53,8 @@ function GenerateStep() {
     const model = buildModel({
       companyName: answers.companyName || "Company",
       templateUsed:
-        state.resources.find((resource) => resource.id === "res-dcf")?.files[0] ??
-        "IFC_Standard_DCF_RealSector.xlsx",
+        state.subsectorTemplates[answers.subsector]?.[0] ??
+        `IFC_Standard_DCF_${answers.subsector.replace(/\s+/g, "_")}.xlsx`,
       appliedActions: [],
     });
     setLines((prev) => [...prev, "Adapting template and populating available data…", "Done."]);
