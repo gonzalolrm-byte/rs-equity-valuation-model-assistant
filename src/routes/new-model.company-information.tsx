@@ -902,6 +902,48 @@ function SegmentMatrix({
                     hideHeader
                   />
                 )}
+
+                {lineSelected && (
+                  <div className="mt-3 space-y-3 rounded-lg border border-panel-border bg-card p-3">
+                    <p className="text-[13px] font-medium text-navy-soft">
+                      How do you want COGS and CapEx to be segmented?
+                    </p>
+                    <SegmentedToggleRow
+                      label="COGS"
+                      value={a.cogsBasis[line.value] ?? ""}
+                      onChange={(value) =>
+                        setAnswer("cogsBasis", {
+                          ...a.cogsBasis,
+                          [line.value]: value as "business_line" | "revenue_stream",
+                        })
+                      }
+                      disabledOptions={
+                        a.selectedSegments.length > 1 ? ["revenue_stream"] : []
+                      }
+                      options={[
+                        { value: "business_line", label: "By business line" },
+                        { value: "revenue_stream", label: "By revenue stream" },
+                      ]}
+                    />
+                    <SegmentedToggleRow
+                      label="CapEx"
+                      value={a.capexBasis[line.value] ?? ""}
+                      onChange={(value) =>
+                        setAnswer("capexBasis", {
+                          ...a.capexBasis,
+                          [line.value]: value as "business_line" | "revenue_stream",
+                        })
+                      }
+                      disabledOptions={
+                        a.selectedSegments.length > 1 ? ["revenue_stream"] : []
+                      }
+                      options={[
+                        { value: "business_line", label: "By business line" },
+                        { value: "revenue_stream", label: "By revenue stream" },
+                      ]}
+                    />
+                  </div>
+                )}
               </div>
             );
           })}
