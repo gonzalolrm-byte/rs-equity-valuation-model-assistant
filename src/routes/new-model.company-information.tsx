@@ -76,6 +76,8 @@ function CompanyInformation() {
       let changed = false;
       const next: Record<string, "business_line" | "revenue_stream"> = {};
       for (const lineId of a.selectedSegments) {
+        // COGS / CapEx segmentation only applies in multi-stream mode.
+        if (a.lineStreamMode[lineId] !== "multi") continue;
         const current = value[lineId];
         if (current === "business_line" || current === "revenue_stream") {
           // "By revenue stream" only applies to a single business line setup.
@@ -86,6 +88,10 @@ function CompanyInformation() {
           if (next[lineId] !== current) changed = true;
         } else if (current !== undefined) {
           changed = true;
+        } else {
+          // Default to business-line segmentation when first entering multi-stream mode.
+          next[lineId] = "business_line";
+          changed = true;
         }
       }
       if (changed || Object.keys(value).some((lineId) => !a.selectedSegments.includes(lineId))) {
@@ -94,7 +100,7 @@ function CompanyInformation() {
     };
     normalize("cogsBasis", a.cogsBasis);
     normalize("capexBasis", a.capexBasis);
-  }, [a.cogsBasis, a.capexBasis, a.selectedSegments, setAnswer]);
+  }, [a.cogsBasis, a.capexBasis, a.selectedSegments, a.lineStreamMode, setAnswer]);
 
   const segmentOptions = [
     { value: "segment1", label: "Business Line 1" },
@@ -122,8 +128,12 @@ function CompanyInformation() {
     a.mainCountry.trim() &&
     a.mainCountryCurrency &&
     a.reportingCurrency &&
-    a.selectedSegments.every((lineId) => a.cogsBasis[lineId]) &&
-    a.selectedSegments.every((lineId) => a.capexBasis[lineId]) &&
+    a.selectedSegments
+      .filter((lineId) => a.lineStreamMode[lineId] === "multi")
+      .every((lineId) => a.cogsBasis[lineId]) &&
+    a.selectedSegments
+      .filter((lineId) => a.lineStreamMode[lineId] === "multi")
+      .every((lineId) => a.capexBasis[lineId]) &&
     a.projectionYears &&
     (a.projectionYears !== "custom" || a.customYears.trim()) &&
     !customYearsError &&
@@ -743,9 +753,16 @@ function SegmentMatrix({
   const setMode = (lineId: string, mode: "single" | "multi") => {
     setAnswer("lineStreamMode", { ...a.lineStreamMode, [lineId]: mode });
     if (mode === "single") {
-      const next = { ...a.revenueStreams };
-      delete next[lineId];
-      setAnswer("revenueStreams", next);
+      const nextStreams = { ...a.revenueStreams };
+      delete nextStreams[lineId];
+      setAnswer("revenueStreams", nextStreams);
+      // COGS / CapEx segmentation is hidden in single-stream mode.
+      const nextCogs = { ...a.cogsBasis };
+      delete nextCogs[lineId];
+      setAnswer("cogsBasis", nextCogs);
+      const nextCapex = { ...a.capexBasis };
+      delete nextCapex[lineId];
+      setAnswer("capexBasis", nextCapex);
     } else {
       const current = a.revenueStreams[lineId] ?? [];
       if (current.length === 0) {
@@ -754,6 +771,13 @@ function SegmentMatrix({
       } else if (lineId === "segment1" && !current.includes("stream2")) {
         // Business Line 1 always includes Revenue Stream 1 and 2 in Multi-Stream mode.
         setAnswer("revenueStreams", { ...a.revenueStreams, [lineId]: [...current, "stream2"] });
+      }
+      // Default COGS / CapEx segmentation to By business line when entering multi-stream mode.
+      if (!a.cogsBasis[lineId]) {
+        setAnswer("cogsBasis", { ...a.cogsBasis, [lineId]: "business_line" });
+      }
+      if (!a.capexBasis[lineId]) {
+        setAnswer("capexBasis", { ...a.capexBasis, [lineId]: "business_line" });
       }
     }
   };
@@ -902,7 +926,7 @@ function SegmentMatrix({
                   />
                 )}
 
-                {lineSelected && (
+                {lineSelected && mode === "multi" && (
                   <div className="mt-3 space-y-3 rounded-lg border border-panel-border bg-card p-3">
                     <p className="text-[13px] font-medium text-navy-soft">
                       How do you want COGS and CapEx to be segmented?
