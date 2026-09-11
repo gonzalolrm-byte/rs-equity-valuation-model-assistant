@@ -298,10 +298,7 @@ function CompanyInformation() {
                   />
                   {a.countryCount === "1" && (
                     <div className="mt-6">
-                      <Question
-                        number={1}
-                        label="Does the company have material revenues, costs, or investments denominated in a currency other than the local currency?"
-                      >
+                      <Question label="Does the company have material revenues, costs, or investments denominated in a currency other than the local currency?">
                         <OptionRow
                           value={a.hasForeignCurrency}
                           onChange={(value) =>
