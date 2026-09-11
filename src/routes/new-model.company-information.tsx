@@ -102,6 +102,13 @@ function CompanyInformation() {
     normalize("capexBasis", a.capexBasis);
   }, [a.cogsBasis, a.capexBasis, a.selectedSegments, a.lineStreamMode, setAnswer]);
 
+  // Ensure subsector selections are never duplicated across the three dropdowns.
+  useEffect(() => {
+    if (a.subsector && a.subsector === a.subsector2) setAnswer("subsector2", "");
+    if (a.subsector && a.subsector === a.subsector3) setAnswer("subsector3", "");
+    if (a.subsector2 && a.subsector2 === a.subsector3) setAnswer("subsector3", "");
+  }, [a.subsector, a.subsector2, a.subsector3, setAnswer]);
+
   // Clear country fields that are no longer relevant when the country count changes.
   useEffect(() => {
     if (!a.countryCount) return;
