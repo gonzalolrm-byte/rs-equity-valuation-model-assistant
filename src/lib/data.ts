@@ -331,14 +331,14 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   // E. Other Modeling Considerations.
   {
     id: "A-001",
-    title: "Select Sector Template",
+    title: "Select Sector / Subsector Template",
     category: "Template Selection",
     step: "Workflow A – Step 1: Template Selection & Adaptation",
     status: "Active",
     lastUpdated: "2026-09-10",
-    variables: ["{{primary_sector}}"],
+    variables: ["{{primary_sector}}", "{{subsector_template}}"],
     promptText:
-      "Select the standardized DCF template that corresponds to {{primary_sector}} from the IFC DCF template library. Use this template as the base workbook for all subsequent configuration and population steps. If no exact sector match exists, choose the closest available template and note the mapping. Do not alter the template's core structure unless required by another questionnaire response.",
+      "Select the standardized DCF template that corresponds to {{primary_sector}} — {{subsector_template}} from the IFC DCF template library. Use this template as the base workbook for all subsequent configuration and population steps. If no exact subsector template exists, choose the closest available template and note the mapping. Do not alter the template's core structure unless required by another questionnaire response.",
     requiredResources: ["res-dcf"],
   },
   {
