@@ -121,8 +121,14 @@ function CompanyInformation() {
       value: "segment1",
       label: a.subsector ? `Sub-sector 1 — ${a.subsector}` : "Sub-sector 1",
     },
-    { value: "segment2", label: "Sub-sector 2" },
-    { value: "segment3", label: "Sub-sector 3" },
+    {
+      value: "segment2",
+      label: a.subsector2 ? `Sub-sector 2 — ${a.subsector2}` : "Sub-sector 2",
+    },
+    {
+      value: "segment3",
+      label: a.subsector3 ? `Sub-sector 3 — ${a.subsector3}` : "Sub-sector 3",
+    },
     { value: "other", label: "Other Sub-sector" },
   ];
   const revenueStreamOptions = [
@@ -224,6 +230,8 @@ function CompanyInformation() {
                     onChange={(value) => {
                       setAnswer("sector", value);
                       setAnswer("subsector", "");
+                      setAnswer("subsector2", "");
+                      setAnswer("subsector3", "");
                     }}
                     options={SECTORS}
                     placeholder="Select a sector"
@@ -231,22 +239,87 @@ function CompanyInformation() {
                 </Question>
 
                 {a.sector && (
-                  <Question number={2} label="Select Subsector Template" required>
-                    <SelectField
-                      value={a.subsector}
-                      onChange={(value) => {
-                        setAnswer("subsector", value);
-                        // Reset per-segment measurement defaults so they reflect the
-                        // newly selected subsector template.
-                        setAnswer("segmentMeasurements", {});
-                      }}
-                      options={[
-                        ...(SUBSECTORS[a.sector] ?? []),
-                        "Generic - Unit Economics",
-                        "Generic - Percentage Based",
-                      ]}
-                      placeholder="Select a subsector template"
-                    />
+                  <Question number={2} label="Select Subsector Templates (up to 3)" required>
+                    <div className="space-y-3">
+                      {[
+                        {
+                          key: "subsector" as const,
+                          segmentId: "segment1",
+                          label: "Sub-sector 1",
+                          value: a.subsector,
+                          exclude: [a.subsector2, a.subsector3],
+                        },
+                        ...(a.subsector
+                          ? [
+                              {
+                                key: "subsector2" as const,
+                                segmentId: "segment2",
+                                label: "Sub-sector 2",
+                                value: a.subsector2,
+                                exclude: [a.subsector, a.subsector3],
+                              },
+                            ]
+                          : []),
+                        ...(a.subsector && a.subsector2
+                          ? [
+                              {
+                                key: "subsector3" as const,
+                                segmentId: "segment3",
+                                label: "Sub-sector 3",
+                                value: a.subsector3,
+                                exclude: [a.subsector, a.subsector2],
+                              },
+                            ]
+                          : []),
+                      ].map((row) => (
+                        <div key={row.key} className="space-y-1.5">
+                          <div className="text-sm font-medium text-foreground">
+                            {row.label}
+                            {row.key === "subsector" && (
+                              <span className="text-destructive"> *</span>
+                            )}
+                          </div>
+                          <SelectField
+                            value={row.value}
+                            onChange={(value) => {
+                              setAnswer(row.key, value);
+                              // Reset per-segment measurement defaults so they
+                              // reflect the newly selected subsector template.
+                              setAnswer("segmentMeasurements", {});
+                              // Clearing a higher subsector clears the ones below it.
+                              if (row.key === "subsector" && !value) {
+                                setAnswer("subsector2", "");
+                                setAnswer("subsector3", "");
+                              }
+                              if (row.key === "subsector2" && !value) {
+                                setAnswer("subsector3", "");
+                              }
+                              // Keep the matching sub-sector card in B.1 selected
+                              // while this subsector is chosen.
+                              setAnswer(
+                                "selectedSegments",
+                                value
+                                  ? Array.from(
+                                      new Set([
+                                        ...a.selectedSegments,
+                                        row.segmentId,
+                                      ]),
+                                    )
+                                  : a.selectedSegments.filter(
+                                      (id) => id !== row.segmentId,
+                                    ),
+                              );
+                            }}
+                            options={[
+                              ...(SUBSECTORS[a.sector] ?? []),
+                              "Generic - Unit Economics",
+                              "Generic - Percentage Based",
+                            ].filter((option) => !row.exclude.includes(option))}
+                            placeholder={`Select ${row.label.toLowerCase()} template`}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </Question>
                 )}
               </Collapsible>
@@ -871,9 +944,19 @@ function SegmentMeasurements({
   const a = state.answers;
   const saved = a.segmentMeasurements[segmentId];
 
+  // Each sub-sector card is linked to its own A.2 subsector template selection.
+  const lineSubsector =
+    segmentId === "segment1"
+      ? a.subsector
+      : segmentId === "segment2"
+        ? a.subsector2
+        : segmentId === "segment3"
+          ? a.subsector3
+          : "";
+
   const recommended = recommendedMeasurements({
     sector: a.sector,
-    subsector: a.subsector,
+    subsector: lineSubsector,
     businessModel: a.businessModel,
     sectorSpecifics: state.sectorSpecifics,
   });
@@ -896,7 +979,7 @@ function SegmentMeasurements({
   // The selected subsector/template determines whether the model uses unit
   // economics or a percentage-based approach. Percentage-based templates do not
   // need operational measurement units.
-  const isPercentageBased = a.subsector === "Generic - Percentage Based";
+  const isPercentageBased = lineSubsector === "Generic - Percentage Based";
   const needsOutputUnit = !isPercentageBased;
   const needsCapacityUnit = !isPercentageBased;
   const needsAnyUnit = needsOutputUnit || needsCapacityUnit;

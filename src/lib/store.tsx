@@ -51,6 +51,8 @@ export type Answers = {
   companyName: string;
   sector: string;
   subsector: string;
+  subsector2: string;
+  subsector3: string;
   businessModel: string;
   mainCountry: string;
   mainCountryCurrency: string;
@@ -104,6 +106,8 @@ export const EMPTY_ANSWERS: Answers = {
   companyName: "",
   sector: "",
   subsector: "",
+  subsector2: "",
+  subsector3: "",
   businessModel: "",
   mainCountry: "",
   mainCountryCurrency: "",
