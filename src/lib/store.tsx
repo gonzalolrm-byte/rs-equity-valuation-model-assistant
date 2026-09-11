@@ -52,9 +52,7 @@ export type Answers = {
   sector: string;
   subsector: string;
   subsector2: string;
-  subsector2Enabled: boolean;
   subsector3: string;
-  subsector3Enabled: boolean;
   businessModel: string;
   mainCountry: string;
   mainCountryCurrency: string;
@@ -109,9 +107,7 @@ export const EMPTY_ANSWERS: Answers = {
   sector: "",
   subsector: "",
   subsector2: "",
-  subsector2Enabled: false,
   subsector3: "",
-  subsector3Enabled: false,
   businessModel: "",
   mainCountry: "",
   mainCountryCurrency: "",
