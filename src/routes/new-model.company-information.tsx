@@ -897,6 +897,115 @@ function WorkingCapitalGroup({ title, items }: { title: string; items: string[] 
 }
 
 /**
+ * Generic matrix with the selected business lines as columns. Used for the
+ * Sum-of-the-Parts breakdown of projection horizon, working capital days and
+ * comparable companies.
+ */
+function LineMatrix({
+  lines,
+  rows,
+  renderCell,
+  title,
+}: {
+  lines: { value: string; label: string }[];
+  rows: { key: string; label: string }[];
+  renderCell: (lineId: string, rowKey: string) => ReactNode;
+  title?: string;
+}) {
+  return (
+    <div className="rounded-xl border border-panel-border bg-panel/60 p-4">
+      {title && <p className="mb-3 text-[15px] font-semibold text-navy">{title}</p>}
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[560px] border-separate border-spacing-x-3 border-spacing-y-2">
+          <thead>
+            <tr>
+              <th className="w-1/4 text-left" />
+              {lines.map((line) => (
+                <th
+                  key={line.value}
+                  className="text-left text-[13px] font-semibold uppercase tracking-wide text-navy-soft"
+                >
+                  {line.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.key}>
+                <td className="align-top pt-2 text-[15px] font-medium text-navy">{row.label}</td>
+                {lines.map((line) => (
+                  <td key={line.value} className="align-top">
+                    {renderCell(line.value, row.key)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Working capital days matrix for Sum-of-the-Parts: line items as rows and the
+ * selected business lines as columns.
+ */
+function LineWorkingCapitalMatrix({
+  title,
+  items,
+  lines,
+}: {
+  title: string;
+  items: string[];
+  lines: { value: string; label: string }[];
+}) {
+  const { state, setAnswer } = useApp();
+  const a = state.answers;
+
+  const update = (lineId: string, item: string, partial: Partial<WorkingCapitalDays>) => {
+    const forLine = a.workingCapitalDaysByLine[lineId] ?? {};
+    const current: WorkingCapitalDays = forLine[item] ?? { basis: "", manualDays: "" };
+    setAnswer("workingCapitalDaysByLine", {
+      ...a.workingCapitalDaysByLine,
+      [lineId]: { ...forLine, [item]: { ...current, ...partial } },
+    });
+  };
+
+  return (
+    <LineMatrix
+      title={title}
+      lines={lines}
+      rows={items.map((item) => ({ key: item, label: item }))}
+      renderCell={(lineId, item) => {
+        const current =
+          a.workingCapitalDaysByLine[lineId]?.[item] ?? { basis: "", manualDays: "" };
+        return (
+          <div className="space-y-2">
+            <SelectField
+              value={current.basis}
+              onChange={(value) => update(lineId, item, { basis: value })}
+              options={WORKING_CAPITAL_BASIS_OPTIONS}
+              placeholder="Select basis"
+            />
+            {current.basis === MANUAL_WORKING_CAPITAL_BASIS && (
+              <TextField
+                value={current.manualDays}
+                onChange={(value) =>
+                  update(lineId, item, { manualDays: value.replace(/\D/g, "") })
+                }
+                placeholder="Days"
+              />
+            )}
+          </div>
+        );
+      }}
+    />
+  );
+}
+
+/**
  * Business line / revenue stream selection matrix. Rows are business lines
  * (up to four, including "Other") and columns are the revenue streams inside
  * each business line (up to four, including "Other"). Selecting any revenue
