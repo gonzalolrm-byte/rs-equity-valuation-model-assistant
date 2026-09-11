@@ -479,7 +479,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     lastUpdated: "2026-09-09",
     variables: ["{{cogs_segmentation}}"],
     promptText:
-      "Model COGS on a {{cogs_segmentation}} basis. If Segmented is selected, align COGS with the selected business lines or revenue streams wherever the source information permits. If Aggregate is selected, maintain COGS at the company level and do not create separate COGS schedules by segment.",
+      "Model COGS on a {{cogs_segmentation}} basis. If By business line is selected, align COGS with the selected business lines. If By revenue stream is selected, align COGS with the selected revenue streams wherever the source information permits. Do not create separate COGS schedules by segment or stream when not selected.",
     requiredResources: [],
   },
   {
