@@ -120,12 +120,25 @@ function CompanyInformation() {
                 <Question number={1} label="Select Primary Sector" required>
                   <SelectField
                     value={a.sector}
-                    onChange={(value) => setAnswer("sector", value)}
+                    onChange={(value) => {
+                      setAnswer("sector", value);
+                      setAnswer("subsector", "");
+                    }}
                     options={SECTORS}
                     placeholder="Select a sector"
                   />
                 </Question>
 
+                {a.sector && (
+                  <Question number={2} label="Select Subsector Template" required>
+                    <SelectField
+                      value={a.subsector}
+                      onChange={(value) => setAnswer("subsector", value)}
+                      options={SUBSECTORS[a.sector] ?? []}
+                      placeholder="Select a subsector template"
+                    />
+                  </Question>
+                )}
               </Collapsible>
 
               <Collapsible title="B. Revenue, COGS, and CapEx Adaptations">
