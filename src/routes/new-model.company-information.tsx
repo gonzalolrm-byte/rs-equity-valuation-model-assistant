@@ -225,13 +225,17 @@ function CompanyInformation() {
             <div className="space-y-4">
               <Collapsible title="A. Template Selection" defaultOpen>
                 <Question number={1} label="Select Primary Sector" required>
-                  <SelectField
+                    <SelectField
                     value={a.sector}
                     onChange={(value) => {
                       setAnswer("sector", value);
                       setAnswer("subsector", "");
                       setAnswer("subsector2", "");
+                      setAnswer("subsector2Enabled", false);
                       setAnswer("subsector3", "");
+                      setAnswer("subsector3Enabled", false);
+                      setAnswer("selectedSegments", ["segment1"]);
+                      setAnswer("segmentMeasurements", {});
                     }}
                     options={SECTORS}
                     placeholder="Select a sector"
