@@ -117,7 +117,10 @@ function CompanyInformation() {
   }, [a.countryCount, a.secondCountry, a.thirdCountry, setAnswer]);
 
   const segmentOptions = [
-    { value: "segment1", label: "Sub-sector 1" },
+    {
+      value: "segment1",
+      label: a.subsector ? `Sub-sector 1 — ${a.subsector}` : "Sub-sector 1",
+    },
     { value: "segment2", label: "Sub-sector 2" },
     { value: "segment3", label: "Sub-sector 3" },
     { value: "other", label: "Other Sub-sector" },
