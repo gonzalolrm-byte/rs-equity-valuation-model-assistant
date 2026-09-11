@@ -388,7 +388,12 @@ function CompanyInformation() {
               </Collapsible>
 
               <Collapsible title="D. Other Modeling Considerations">
-                {a.selectedSegments.length > 1 && (
+                {(() => {
+                  const showLineModeling = a.selectedSegments.length > 1;
+                  const d = (n: number) => (showLineModeling ? n : n - 1);
+                  return (
+                    <>
+                {showLineModeling && (
                   <Question
                     number={1}
                     label="How should the company's different business lines be modeled?"
@@ -407,7 +412,7 @@ function CompanyInformation() {
                   </Question>
                 )}
 
-                <Question number={2} label="How many years of projections do you need?" required>
+                <Question number={d(2)} label="How many years of projections do you need?" required>
                   <OptionRow
                     columns={3}
                     value={a.projectionYears}
