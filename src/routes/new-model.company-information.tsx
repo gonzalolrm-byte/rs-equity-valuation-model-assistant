@@ -1402,7 +1402,7 @@ function SegmentMatrix({
     if (index <= 0) return;
     // Streams must be selected in order: stream N can only be toggled if
     // stream N-1 is already selected.
-    const previous = streamOrder[index - 1];
+    const previous = streamOrder[index - 1]!;
     if (!current.includes(previous)) return;
 
     let next: string[];
