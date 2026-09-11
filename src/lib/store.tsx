@@ -123,6 +123,10 @@ export const EMPTY_ANSWERS: Answers = {
   liquidityPut: "",
   putMechanisms: [],
   workingCapitalDays: {},
+  projectionYearsByLine: {},
+  customYearsByLine: {},
+  workingCapitalDaysByLine: {},
+  compsCountByLine: {},
 };
 
 export type AppState = {
