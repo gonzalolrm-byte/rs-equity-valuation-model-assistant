@@ -15,7 +15,6 @@ import {
   TextField,
 } from "@/components/form";
 import {
-  CAPACITY_MEASUREMENTS,
   COGS_CATEGORIES,
   CURRENCIES,
   defaultCurrencyForCountry,
