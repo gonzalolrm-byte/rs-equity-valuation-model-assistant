@@ -662,6 +662,8 @@ function SegmentMatrix({
   const a = state.answers;
 
   const toggleLine = (lineId: string) => {
+    // Business Line 1 is always selected.
+    if (lineId === "segment1") return;
     const isSelected = a.selectedSegments.includes(lineId);
     setAnswer(
       "selectedSegments",
@@ -677,6 +679,8 @@ function SegmentMatrix({
   };
 
   const toggleStream = (lineId: string, streamId: string) => {
+    // Revenue Stream 1 under Business Line 1 is always selected.
+    if (lineId === "segment1" && streamId === "stream1") return;
     const current = a.revenueStreams[lineId] ?? [];
     const next = current.includes(streamId)
       ? current.filter((item) => item !== streamId)
