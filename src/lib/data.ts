@@ -385,19 +385,6 @@ export type DeveloperResource = {
 
 export const INITIAL_RESOURCES: DeveloperResource[] = [
   {
-    id: "res-dcf",
-    name: "DCF Templates",
-    description:
-      "Standardized DCF valuation templates, organized by sector and model type. Multiple files allowed.",
-    kind: "template",
-    lastUpdated: "2026-08-14",
-    files: [
-      "IFC_Standard_DCF_RealSector_v4.2.xlsx",
-      "IFC_Standard_DCF_Infrastructure_v3.8.xlsx",
-      "IFC_Standard_DCF_Manufacturing_v2.6.xlsx",
-    ],
-  },
-  {
     id: "res-waterfall",
     name: "Preferred Waterfall Template",
     description: "Preferred / common share waterfall used when preferred instruments exist.",
@@ -470,7 +457,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     variables: ["{{primary_sector}}", "{{subsector_template}}"],
     promptText:
       "Select the standardized DCF template that corresponds to {{primary_sector}} — {{subsector_template}} from the IFC DCF template library. Use this template as the base workbook for all subsequent configuration and population steps. If no exact subsector template exists, choose the closest available template and note the mapping. Do not alter the template's core structure unless required by another questionnaire response.",
-    requiredResources: ["res-dcf"],
+    requiredResources: [],
   },
   {
     id: "A-002",
