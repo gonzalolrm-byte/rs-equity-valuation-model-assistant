@@ -134,7 +134,11 @@ function CompanyInformation() {
                     <SelectField
                       value={a.subsector}
                       onChange={(value) => setAnswer("subsector", value)}
-                      options={SUBSECTORS[a.sector] ?? []}
+                      options={[
+                        ...(SUBSECTORS[a.sector] ?? []),
+                        "Generic - Unit Economics",
+                        "Generic - Percentage Based",
+                      ]}
                       placeholder="Select a subsector template"
                     />
                   </Question>
