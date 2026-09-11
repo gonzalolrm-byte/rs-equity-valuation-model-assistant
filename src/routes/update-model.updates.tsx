@@ -12,7 +12,7 @@ import { WORKFLOW_B_STEPS } from "./update-model.upload";
 export const Route = createFileRoute("/update-model/updates")({
   head: () => ({
     meta: [
-      { title: "Update Standardized Valuation Model — IFC Valuation Assistant" },
+      { title: "Update Standardized Valuation Model — Real Sector – Equity Valuation Model Assistant" },
       {
         name: "description",
         content:
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/update-model/updates")({
       },
       {
         property: "og:title",
-        content: "Update Standardized Valuation Model — IFC Valuation Assistant",
+        content: "Update Standardized Valuation Model — Real Sector – Equity Valuation Model Assistant",
       },
       {
         property: "og:description",

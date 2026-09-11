@@ -46,13 +46,13 @@ export const WORKFLOW_A_STEPS = [
 export const Route = createFileRoute("/new-model/company-information")({
   head: () => ({
     meta: [
-      { title: "Template Selection & Adaptation — IFC Valuation Assistant" },
+      { title: "Template Selection & Adaptation — Real Sector – Equity Valuation Model Assistant" },
       {
         name: "description",
         content:
           "Step 1 of 3: answer the company, Revenue/COGS/CapEx adaptations and valuation questions used to identify and customize the standardized DCF template.",
       },
-      { property: "og:title", content: "Template Selection & Adaptation — IFC Valuation Assistant" },
+      { property: "og:title", content: "Template Selection & Adaptation — Real Sector – Equity Valuation Model Assistant" },
       {
         property: "og:description",
         content: "Step 1 of 3 of the standardized DCF template workflow.",

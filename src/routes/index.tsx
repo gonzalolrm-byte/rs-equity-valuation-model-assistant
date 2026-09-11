@@ -7,13 +7,13 @@ import { useApp } from "@/lib/store";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "IFC Valuation Assistant — Standardized DCF Models" },
+      { title: "Real Sector – Equity Valuation Model Assistant — Standardized DCF Models" },
       {
         name: "description",
         content:
           "Create a standardized DCF valuation model for the first time, or update an existing portfolio company model with the latest financial, operational and market information.",
       },
-      { property: "og:title", content: "IFC Valuation Assistant — Standardized DCF Models" },
+      { property: "og:title", content: "Real Sector – Equity Valuation Model Assistant — Standardized DCF Models" },
       {
         property: "og:description",
         content:
@@ -34,7 +34,7 @@ function Home() {
       <AppHeader />
       <main className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
         <div className="text-center">
-          <p className="eyebrow">Welcome to IFC Valuation Assistant</p>
+          <p className="eyebrow">Welcome to Real Sector – Equity Valuation Model Assistant</p>
           <h1 className="mt-3 text-4xl font-extrabold sm:text-5xl">What would you like to do?</h1>
           <p className="mt-3 text-lg text-muted-foreground">Select one option to get started.</p>
         </div>

@@ -52,13 +52,13 @@ export const NEW_MODEL_SLOTS: UploadSlot[] = [
 export const Route = createFileRoute("/new-model/upload")({
   head: () => ({
     meta: [
-      { title: "Upload Company Information — IFC Valuation Assistant" },
+      { title: "Upload Company Information — Real Sector – Equity Valuation Model Assistant" },
       {
         name: "description",
         content:
           "Step 2 of 3: upload audited financial statements, operational reports and the latest valuation model used to populate your standardized template.",
       },
-      { property: "og:title", content: "Upload Company Information — IFC Valuation Assistant" },
+      { property: "og:title", content: "Upload Company Information — Real Sector – Equity Valuation Model Assistant" },
       {
         property: "og:description",
         content: "Step 2 of 3 of the standardized DCF template workflow.",

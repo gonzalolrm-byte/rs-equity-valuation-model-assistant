@@ -16,13 +16,13 @@ import { WORKFLOW_A_STEPS } from "./new-model.company-information";
 export const Route = createFileRoute("/new-model/generate")({
   head: () => ({
     meta: [
-      { title: "Generate Standardized Model — IFC Valuation Assistant" },
+      { title: "Generate Standardized Model — Real Sector – Equity Valuation Model Assistant" },
       {
         name: "description",
         content:
           "Step 3 of 3: review your inputs, save your configuration and generate the standardized DCF valuation model.",
       },
-      { property: "og:title", content: "Generate Standardized Model — IFC Valuation Assistant" },
+      { property: "og:title", content: "Generate Standardized Model — Real Sector – Equity Valuation Model Assistant" },
       {
         property: "og:description",
         content: "Step 3 of 3 of the standardized DCF template workflow.",
