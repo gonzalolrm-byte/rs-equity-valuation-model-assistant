@@ -90,6 +90,8 @@ export type Answers = {
   workingCapitalDaysByLine: Record<string, Record<string, WorkingCapitalDays>>;
   /** Per-business-line comparable company counts, keyed by segment id. */
   compsCountByLine: Record<string, string>;
+  /** Per-business-line valuation method (SOTP only). Business Line 1 is always DCF. */
+  lineValuationMethod: Record<string, "dcf" | "comps">;
 };
 
 export const EMPTY_ANSWERS: Answers = {
