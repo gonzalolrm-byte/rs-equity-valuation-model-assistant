@@ -87,7 +87,6 @@ function CompanyInformation() {
       : undefined;
 
   const canContinue =
-    a.companyName.trim() &&
     a.sector &&
     a.mainCountry.trim() &&
     a.mainCountryCurrency &&
@@ -117,15 +116,7 @@ function CompanyInformation() {
 
             <div className="space-y-4">
               <Collapsible title="A. Template Selection" defaultOpen>
-                <Question number={1} label="What is the company name?" required>
-                  <TextField
-                    value={a.companyName}
-                    onChange={(value) => setAnswer("companyName", value)}
-                    placeholder="Enter company name"
-                  />
-                </Question>
-
-                <Question number={2} label="Select the Sector-based template that best fits the company:" required>
+                <Question number={1} label="Select Primary Sector" required>
                   <SelectField
                     value={a.sector}
                     onChange={(value) => setAnswer("sector", value)}
