@@ -129,6 +129,7 @@ export function SelectField({
   onChange,
   options,
   placeholder = "Select an option",
+  disabled = false,
 }: {
   label?: string;
   labelAction?: ReactNode;
@@ -136,9 +137,10 @@ export function SelectField({
   onChange: (value: string) => void;
   options: readonly string[];
   placeholder?: string;
+  disabled?: boolean;
 }) {
   return (
-    <label className="block">
+    <label className={disabled ? "block opacity-50" : "block"}>
       {label && (
         <span className="mb-1.5 flex items-center gap-2 text-sm text-muted-foreground">
           {labelAction}
@@ -148,8 +150,9 @@ export function SelectField({
       <div className="relative">
         <select
           value={value}
+          disabled={disabled}
           onChange={(event) => onChange(event.target.value)}
-          className="w-full appearance-none rounded-lg border border-input bg-card px-3.5 py-2.5 pr-10 text-[15px] text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-ring/25"
+          className="w-full appearance-none rounded-lg border border-input bg-card px-3.5 py-2.5 pr-10 text-[15px] text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-ring/25 disabled:cursor-not-allowed"
         >
           <option value="">{placeholder}</option>
           {options.map((option) => (
