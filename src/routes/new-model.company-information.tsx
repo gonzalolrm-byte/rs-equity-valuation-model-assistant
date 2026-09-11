@@ -148,41 +148,13 @@ function CompanyInformation() {
               <Collapsible title="B. Revenue, COGS, and CapEx Adaptations">
                 <Question
                   number={1}
-                  label="Do you want to segment the template by business line or revenue stream?"
-                  hint="A business line reflects how a company's operations are divided into distinct operating segments based on differences in operating models and market dynamics, while a revenue stream is a specific way the company generates revenue within a business line. A business line may include multiple revenue streams. Different business lines typically have different measures of Units Sold and operating capacity."
+                  label="Select the business lines and the revenue streams within each business line to include in the model:"
+                  hint="A business line reflects how a company's operations are divided into distinct operating segments based on differences in operating models and market dynamics, while a revenue stream is a specific way the company generates revenue within a business line. A business line may include multiple revenue streams (up to four, including Other). Different business lines typically have different measures of Units Sold and operating capacity."
                 >
-                  <OptionRow
-                    value={a.segmentBasis}
-                    onChange={(value) => setAnswer("segmentBasis", value as typeof a.segmentBasis)}
-                    options={[
-                      { value: "business_line", label: "Business line (e.g., Retail, Online, Wholesale)" },
-                      { value: "revenue_stream", label: "Revenue stream (e.g., Product categories, Service types)" },
-                    ]}
+                  <SegmentMatrix
+                    segmentOptions={segmentOptions}
+                    revenueStreamOptions={revenueStreamOptions}
                   />
-                </Question>
-
-                <Question
-                  number={2}
-                  label="Select the number of segments to include in the model:"
-                  hint='Select the segments that apply, then confirm the measurement units for each segment. "Other" can be used for any additional segment that is not one of the primary three. Maximum Output and Units Sold always share the same measurement unit.'
-                >
-                  <div className="space-y-3">
-                    {segmentOptions.map((option) => (
-                      <div key={option.value}>
-                        <CheckItem
-                          label={option.label}
-                          checked={a.selectedSegments.includes(option.value)}
-                          onChange={() => toggleAnswerItem("selectedSegments", option.value)}
-                        />
-                        {a.selectedSegments.includes(option.value) && (
-                          <SegmentMeasurements
-                            segmentId={option.value}
-                            segmentLabel={option.label}
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </div>
                 </Question>
 
                 <Question
