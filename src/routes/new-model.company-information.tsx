@@ -123,8 +123,8 @@ function CompanyInformation() {
     a.mainCountry.trim() &&
     a.mainCountryCurrency &&
     a.reportingCurrency &&
-    a.cogsBasis &&
-    a.capexBasis &&
+    a.selectedSegments.every((lineId) => a.cogsBasis[lineId]) &&
+    a.selectedSegments.every((lineId) => a.capexBasis[lineId]) &&
     a.projectionYears &&
     (a.projectionYears !== "custom" || a.customYears.trim()) &&
     !customYearsError &&
@@ -222,27 +222,51 @@ function CompanyInformation() {
                   required
                   hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that COGS and CapEx also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
                 >
-                  <div className="space-y-3 rounded-xl border border-panel-border bg-panel/60 p-4">
-                    <SegmentedToggleRow
-                      label="COGS"
-                      value={a.cogsBasis}
-                      onChange={(value) => setAnswer("cogsBasis", value as typeof a.cogsBasis)}
-                      disabledOptions={a.selectedSegments.length > 1 ? ["revenue_stream"] : []}
-                      options={[
-                        { value: "business_line", label: "By business line" },
-                        { value: "revenue_stream", label: "By revenue stream" },
-                      ]}
-                    />
-                    <SegmentedToggleRow
-                      label="CapEx"
-                      value={a.capexBasis}
-                      onChange={(value) => setAnswer("capexBasis", value as typeof a.capexBasis)}
-                      disabledOptions={a.selectedSegments.length > 1 ? ["revenue_stream"] : []}
-                      options={[
-                        { value: "business_line", label: "By business line" },
-                        { value: "revenue_stream", label: "By revenue stream" },
-                      ]}
-                    />
+                  <div className="space-y-3">
+                    {segmentOptions
+                      .filter((line) => a.selectedSegments.includes(line.value))
+                      .map((line) => (
+                        <div
+                          key={line.value}
+                          className="space-y-3 rounded-xl border border-panel-border bg-panel/60 p-4"
+                        >
+                          <p className="text-sm font-semibold text-foreground">{line.label}</p>
+                          <SegmentedToggleRow
+                            label="COGS"
+                            value={a.cogsBasis[line.value] ?? ""}
+                            onChange={(value) =>
+                              setAnswer("cogsBasis", {
+                                ...a.cogsBasis,
+                                [line.value]: value as "business_line" | "revenue_stream",
+                              })
+                            }
+                            disabledOptions={
+                              a.selectedSegments.length > 1 ? ["revenue_stream"] : []
+                            }
+                            options={[
+                              { value: "business_line", label: "By business line" },
+                              { value: "revenue_stream", label: "By revenue stream" },
+                            ]}
+                          />
+                          <SegmentedToggleRow
+                            label="CapEx"
+                            value={a.capexBasis[line.value] ?? ""}
+                            onChange={(value) =>
+                              setAnswer("capexBasis", {
+                                ...a.capexBasis,
+                                [line.value]: value as "business_line" | "revenue_stream",
+                              })
+                            }
+                            disabledOptions={
+                              a.selectedSegments.length > 1 ? ["revenue_stream"] : []
+                            }
+                            options={[
+                              { value: "business_line", label: "By business line" },
+                              { value: "revenue_stream", label: "By revenue stream" },
+                            ]}
+                          />
+                        </div>
+                      ))}
                   </div>
                 </Question>
 
