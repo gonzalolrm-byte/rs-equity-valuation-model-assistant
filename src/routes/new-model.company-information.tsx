@@ -885,7 +885,6 @@ function SegmentMatrix({
             );
           })}
         </div>
-        {footer && <div className="mt-4">{footer}</div>}
       </div>
     </div>
   );
