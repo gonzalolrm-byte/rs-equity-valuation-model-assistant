@@ -368,6 +368,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         setState((prev) => ({
           ...INITIAL_STATE,
           prompts: prev.prompts,
+          sectorSpecifics: prev.sectorSpecifics,
           resources: prev.resources,
         })),
     }),
