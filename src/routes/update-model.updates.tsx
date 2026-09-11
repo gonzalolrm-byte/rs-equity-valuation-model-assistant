@@ -79,14 +79,16 @@ function UpdateSelections() {
                 Back
               </ButtonLink>
               <Button
-                disabled={state.selectedActions.length === 0}
+                disabled={
+                  state.navigationMode !== "free" && state.selectedActions.length === 0
+                }
                 onClick={() => navigate({ to: "/update-model/review" })}
               >
                 Next
                 <ArrowRight className="size-4" />
               </Button>
             </div>
-            {state.selectedActions.length === 0 && (
+            {state.navigationMode !== "free" && state.selectedActions.length === 0 && (
               <p className="mt-2 text-right text-sm text-muted-foreground">
                 Select at least one update to continue.
               </p>
