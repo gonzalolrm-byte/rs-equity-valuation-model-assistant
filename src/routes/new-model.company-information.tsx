@@ -240,85 +240,156 @@ function CompanyInformation() {
 
                 {a.sector && (
                   <Question number={2} label="Select the Subsector(s) in which the company operates" required>
-                    <div className="space-y-3">
-                      {[
-                        {
-                          key: "subsector" as const,
-                          segmentId: "segment1",
-                          label: "Sub-sector 1",
-                          value: a.subsector,
-                          exclude: [a.subsector2, a.subsector3],
-                        },
-                        ...(a.subsector
-                          ? [
-                              {
-                                key: "subsector2" as const,
-                                segmentId: "segment2",
-                                label: "Sub-sector 2",
-                                value: a.subsector2,
-                                exclude: [a.subsector, a.subsector3],
-                              },
-                            ]
-                          : []),
-                        ...(a.subsector && a.subsector2
-                          ? [
-                              {
-                                key: "subsector3" as const,
-                                segmentId: "segment3",
-                                label: "Sub-sector 3",
-                                value: a.subsector3,
-                                exclude: [a.subsector, a.subsector2],
-                              },
-                            ]
-                          : []),
-                      ].map((row) => (
-                        <div key={row.key} className="space-y-1.5">
-                          <div className="text-sm font-medium text-foreground">
-                            {row.label}
-                            {row.key === "subsector" && (
-                              <span className="text-destructive"> *</span>
-                            )}
-                          </div>
-                          <SelectField
-                            value={row.value}
-                            onChange={(value) => {
-                              setAnswer(row.key, value);
-                              // Reset per-segment measurement defaults so they
-                              // reflect the newly selected subsector template.
-                              setAnswer("segmentMeasurements", {});
-                              // Clearing a higher subsector clears the ones below it.
-                              if (row.key === "subsector" && !value) {
-                                setAnswer("subsector2", "");
-                                setAnswer("subsector3", "");
-                              }
-                              if (row.key === "subsector2" && !value) {
-                                setAnswer("subsector3", "");
-                              }
-                              // Keep the matching sub-sector card in B.1 selected
-                              // while this subsector is chosen.
+                    <div className="space-y-4">
+                      <div className="space-y-1.5">
+                        <div className="text-sm font-medium text-foreground">
+                          Sub-sector 1
+                          <span className="text-destructive"> *</span>
+                        </div>
+                        <SelectField
+                          value={a.subsector}
+                          onChange={(value) => {
+                            setAnswer("subsector", value);
+                            // Reset per-segment measurement defaults so they
+                            // reflect the newly selected subsector template.
+                            setAnswer("segmentMeasurements", {});
+                            // Clearing the primary subsector clears everything.
+                            if (!value) {
+                              setAnswer("subsector2", "");
+                              setAnswer("subsector3", "");
+                              setAnswer("subsector2Enabled", false);
+                              setAnswer("subsector3Enabled", false);
+                            }
+                            setAnswer(
+                              "selectedSegments",
+                              value ? ["segment1"] : [],
+                            );
+                          }}
+                          options={[
+                            ...(SUBSECTORS[a.sector] ?? []),
+                            "Generic - Unit Economics",
+                            "Generic - Percentage Based",
+                          ].filter(
+                            (option) =>
+                              option !== a.subsector2 &&
+                              option !== a.subsector3,
+                          )}
+                          placeholder="Select sub-sector 1 template"
+                        />
+                      </div>
+
+                      <div className="space-y-2 rounded-lg border border-border bg-card p-3">
+                        <CheckItem
+                          label="Include Sub-sector 2"
+                          checked={a.subsector2Enabled}
+                          onChange={(checked) => {
+                            setAnswer("subsector2Enabled", checked);
+                            if (!checked) {
+                              setAnswer("subsector2", "");
+                              setAnswer("subsector3Enabled", false);
+                              setAnswer("subsector3", "");
                               setAnswer(
                                 "selectedSegments",
-                                value
-                                  ? Array.from(
-                                      new Set([
-                                        ...a.selectedSegments,
-                                        row.segmentId,
-                                      ]),
-                                    )
-                                  : a.selectedSegments.filter(
-                                      (id) => id !== row.segmentId,
-                                    ),
+                                a.selectedSegments.filter(
+                                  (id) => id !== "segment2" && id !== "segment3",
+                                ),
                               );
-                            }}
-                            options={[
-                              ...(SUBSECTORS[a.sector] ?? []),
-                              "Generic - Unit Economics",
-                              "Generic - Percentage Based",
-                            ].filter((option) => !row.exclude.includes(option))}
-                            placeholder={`Select ${row.label.toLowerCase()} template`}
-                          />
+                            }
+                          }}
+                        />
+                        <div className="text-sm font-medium text-foreground">
+                          Sub-sector 2
                         </div>
-                      ))}
+                        <SelectField
+                          value={a.subsector2}
+                          disabled={!a.subsector2Enabled}
+                          onChange={(value) => {
+                            setAnswer("subsector2", value);
+                            setAnswer("segmentMeasurements", {});
+                            if (!value) {
+                              setAnswer("subsector3", "");
+                              setAnswer("subsector3Enabled", false);
+                            }
+                            setAnswer(
+                              "selectedSegments",
+                              value
+                                ? Array.from(
+                                    new Set([
+                                      ...a.selectedSegments,
+                                      "segment2",
+                                    ]),
+                                  )
+                                : a.selectedSegments.filter(
+                                    (id) => id !== "segment2",
+                                  ),
+                            );
+                          }}
+                          options={[
+                            ...(SUBSECTORS[a.sector] ?? []),
+                            "Generic - Unit Economics",
+                            "Generic - Percentage Based",
+                          ].filter(
+                            (option) =>
+                              option !== a.subsector &&
+                              option !== a.subsector3,
+                          )}
+                          placeholder="Select sub-sector 2 template"
+                        />
+                      </div>
+
+                      <div className="space-y-2 rounded-lg border border-border bg-card p-3">
+                        <CheckItem
+                          label="Include Sub-sector 3"
+                          checked={a.subsector3Enabled}
+                          disabled={!a.subsector2 || !a.subsector2Enabled}
+                          onChange={(checked) => {
+                            setAnswer("subsector3Enabled", checked);
+                            if (!checked) {
+                              setAnswer("subsector3", "");
+                              setAnswer(
+                                "selectedSegments",
+                                a.selectedSegments.filter(
+                                  (id) => id !== "segment3",
+                                ),
+                              );
+                            }
+                          }}
+                        />
+                        <div className="text-sm font-medium text-foreground">
+                          Sub-sector 3
+                        </div>
+                        <SelectField
+                          value={a.subsector3}
+                          disabled={!a.subsector3Enabled || !a.subsector2}
+                          onChange={(value) => {
+                            setAnswer("subsector3", value);
+                            setAnswer("segmentMeasurements", {});
+                            setAnswer(
+                              "selectedSegments",
+                              value
+                                ? Array.from(
+                                    new Set([
+                                      ...a.selectedSegments,
+                                      "segment3",
+                                    ]),
+                                  )
+                                : a.selectedSegments.filter(
+                                    (id) => id !== "segment3",
+                                  ),
+                            );
+                          }}
+                          options={[
+                            ...(SUBSECTORS[a.sector] ?? []),
+                            "Generic - Unit Economics",
+                            "Generic - Percentage Based",
+                          ].filter(
+                            (option) =>
+                              option !== a.subsector &&
+                              option !== a.subsector2,
+                          )}
+                          placeholder="Select sub-sector 3 template"
+                        />
+                      </div>
                     </div>
                   </Question>
                 )}
