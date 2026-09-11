@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button, ButtonLink } from "@/components/Button";
-import { SidePanel } from "@/components/SidePanel";
 import { StepProgress } from "@/components/StepProgress";
 import { PageHeading } from "@/components/form";
 import { UploadCard, type UploadSlot } from "@/components/UploadCard";
@@ -88,7 +87,7 @@ function UpdateUpload() {
       <StepProgress steps={WORKFLOW_B_STEPS} current={1} />
 
       <main className="mx-auto max-w-7xl px-5 py-10">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="mx-auto max-w-3xl">
           <div>
             <PageHeading
               step="Step 1 of 3"
@@ -124,15 +123,6 @@ function UpdateUpload() {
             )}
           </div>
 
-          <SidePanel
-            about="Upload the key documents listed on this page. These files will be used to extract relevant information and update your standardized valuation model."
-            tips={[
-              "Use the most recent and complete information available.",
-              "Ensure documents are in PDF, Excel or PowerPoint format.",
-              "If a document is very large, you may compress it or upload key sections.",
-              "You can upload multiple files for each category if needed.",
-            ]}
-          />
         </div>
       </main>
     </div>

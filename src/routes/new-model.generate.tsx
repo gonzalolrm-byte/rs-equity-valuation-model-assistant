@@ -5,7 +5,6 @@ import { AppHeader } from "@/components/AppHeader";
 import { Button, ButtonLink } from "@/components/Button";
 import { ModelOutputCard } from "@/components/ModelOutputCard";
 import { RunConsole } from "@/components/RunConsole";
-import { SidePanel } from "@/components/SidePanel";
 import { StepProgress } from "@/components/StepProgress";
 import { PageHeading } from "@/components/form";
 import { runActions } from "@/lib/services/claudeService";
@@ -69,7 +68,7 @@ function GenerateStep() {
       <StepProgress steps={WORKFLOW_A_STEPS} current={3} />
 
       <main className="mx-auto max-w-7xl px-5 py-10">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="mx-auto max-w-3xl">
           <div className="space-y-5">
             <PageHeading
               step="Step 3 of 3"
@@ -197,15 +196,6 @@ function GenerateStep() {
             </div>
           </div>
 
-          <SidePanel
-            about="Save your information and generate the standardized valuation model. The model is based on your responses in Step 1, the documents uploaded in Step 2 and IFC's standard templates."
-            tips={[
-              "You can save your information and return later to make changes.",
-              "The generated model is a standardized template. You may need to review and refine certain inputs.",
-              "Unresolved inputs are flagged rather than estimated.",
-              "If you encounter any issues, check the Guidelines or contact the team.",
-            ]}
-          />
         </div>
       </main>
     </div>
