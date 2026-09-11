@@ -38,7 +38,7 @@ import {
 
 export const WORKFLOW_A_STEPS = [
   "Template Selection & Adaptation",
-  "Upload Company Information",
+  "Populate Template",
   "Generate Standardized Model",
 ];
 

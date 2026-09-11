@@ -9,7 +9,7 @@ import { UploadCard, type UploadSlot } from "@/components/UploadCard";
 import { useApp } from "@/lib/store";
 
 export const WORKFLOW_B_STEPS = [
-  "Upload Company Information",
+  "Populate Template",
   "Update Valuation Model",
   "Review and Save",
 ];
@@ -57,13 +57,13 @@ export const UPDATE_MODEL_SLOTS: UploadSlot[] = [
 export const Route = createFileRoute("/update-model/upload")({
   head: () => ({
     meta: [
-      { title: "Upload Company Information — Update Model" },
+      { title: "Populate Template — Update Model" },
       {
         name: "description",
         content:
           "Step 1 of 3: upload the last quarter standardized valuation model, audited financials and the client's financial model used to update your model.",
       },
-      { property: "og:title", content: "Upload Company Information — Update Model" },
+      { property: "og:title", content: "Populate Template — Update Model" },
       {
         property: "og:description",
         content: "Step 1 of 3 of the portfolio company model update workflow.",
@@ -90,7 +90,7 @@ function UpdateUpload() {
           <div>
             <PageHeading
               step="Step 1 of 3"
-              title="Upload Company Information"
+              title="Populate Template"
               intro="Please upload the relevant documents below. These files will be used to update your standardized valuation model."
             />
 
