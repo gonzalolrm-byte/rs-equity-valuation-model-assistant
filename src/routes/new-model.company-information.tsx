@@ -492,24 +492,39 @@ function SegmentMeasurements({
   const needsOutputUnit = !isPercentageBased;
   const needsCapacityUnit = !isPercentageBased;
   const needsAnyUnit = needsOutputUnit || needsCapacityUnit;
+  const [showUnitNote, setShowUnitNote] = useState(false);
 
   return (
     <div className="mt-2 rounded-xl border border-panel-border bg-panel/60 p-4">
-      {!hideHeader && (
-        <p className="text-[15px] font-semibold text-navy">
-          {segmentLabel}
-          {needsAnyUnit ? " — measurement units" : " — segment detail"}
-        </p>
-      )}
-      {needsAnyUnit ? (
-        <p className="mt-1 text-[13px] text-muted-foreground">
+      <div className="flex items-start justify-between gap-3">
+        {!hideHeader && (
+          <p className="text-[15px] font-semibold text-navy">
+            {segmentLabel}
+            {needsAnyUnit ? " — measurement units" : " — segment detail"}
+          </p>
+        )}
+        {needsAnyUnit && (
+          <button
+            type="button"
+            onClick={() => setShowUnitNote((v) => !v)}
+            aria-expanded={showUnitNote}
+            aria-label={showUnitNote ? "Hide measurement guidance" : "Show measurement guidance"}
+            className="shrink-0 rounded-lg p-1.5 text-amber-500 transition-colors hover:bg-amber-500/10 hover:text-amber-600"
+          >
+            <Lightbulb className="size-5" />
+          </button>
+        )}
+      </div>
+      {needsAnyUnit && showUnitNote && (
+        <p className="mt-2 rounded-lg border border-amber-200/60 bg-amber-50/60 p-3 text-[13px] text-navy-soft">
           Recommended units are pre-selected. Maximum Output and Units Sold (or equivalent)
           always use the same unit of measurement, while Capacity may be expressed in either
           the same or a different unit. Maximum Output represents the maximum quantity of
           products that can be sold, excluding sales from inventory, or the maximum volume of
           services or operational activity that can be delivered in a particular year.
         </p>
-      ) : (
+      )}
+      {!needsAnyUnit && (
         <p className="mt-1 text-[13px] text-muted-foreground">
           Based on the selected template, revenue, COGS and CapEx are modeled on a percentage
           basis, so no measurement units are required for this segment.
