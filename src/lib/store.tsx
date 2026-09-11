@@ -94,6 +94,7 @@ export const EMPTY_ANSWERS: Answers = {
   secondCountryCurrency: "",
   thirdCountry: "",
   thirdCountryCurrency: "",
+  countryCount: "",
   hasForeignCurrency: "",
   reportingCurrency: "",
   segmentBasis: "business_line",
