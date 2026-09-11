@@ -15,7 +15,6 @@ import {
   TextField,
 } from "@/components/form";
 import {
-  CAPACITY_MEASUREMENTS,
   COGS_CATEGORIES,
   CURRENCIES,
   defaultCurrencyForCountry,
@@ -135,7 +134,12 @@ function CompanyInformation() {
                   <Question number={2} label="Select Subsector Template" required>
                     <SelectField
                       value={a.subsector}
-                      onChange={(value) => setAnswer("subsector", value)}
+                      onChange={(value) => {
+                        setAnswer("subsector", value);
+                        // Reset per-segment measurement defaults so they reflect the
+                        // newly selected subsector template.
+                        setAnswer("segmentMeasurements", {});
+                      }}
                       options={[
                         ...(SUBSECTORS[a.sector] ?? []),
                         "Generic - Unit Economics",
@@ -486,16 +490,12 @@ function SegmentMeasurements({
 
   const recommended = recommendedMeasurements({
     sector: a.sector,
+    subsector: a.subsector,
     businessModel: a.businessModel,
   });
 
-  const defaultCapacity =
-    !saved?.capacity && recommended.capacity === recommended.output
-      ? SAME_AS_OUTPUT_MEASUREMENT
-      : recommended.capacity;
-
   const current: SegmentMeasurement = {
-    capacity: saved?.capacity || defaultCapacity,
+    capacity: saved?.capacity || recommended.capacity,
     capacityOther: saved?.capacityOther ?? "",
     output: saved?.output || recommended.output,
     outputOther: saved?.outputOther ?? "",
@@ -517,6 +517,13 @@ function SegmentMeasurements({
   const needsCapacityUnit = !isPercentageBased;
   const needsAnyUnit = needsOutputUnit || needsCapacityUnit;
   const [showUnitNote, setShowUnitNote] = useState(false);
+  const isFirstSegment = segmentId === "segment1";
+
+  // Business Line 1 cannot use a custom measurement.
+  const outputValue =
+    isFirstSegment && current.output === OTHER_MEASUREMENT
+      ? recommended.output
+      : current.output;
 
   return (
     <div className="mt-2 rounded-xl border border-panel-border bg-panel/60 p-4">
@@ -557,17 +564,21 @@ function SegmentMeasurements({
                     <Lightbulb className="size-4" />
                   </button>
                 }
-                value={current.output}
-                onChange={(value) => update({ output: value })}
+                value={outputValue}
+                onChange={(value) =>
+                  update({ output: isFirstSegment && value === OTHER_MEASUREMENT ? recommended.output : value })
+                }
                 // The sector/template defines the default unit; the user can
                 // keep it or pick "Other" to enter a custom measurement.
                 options={[
                   ...new Set(
-                    [current.output, recommended.output, OTHER_MEASUREMENT].filter(Boolean),
+                    [outputValue, recommended.output, ...(isFirstSegment ? [] : [OTHER_MEASUREMENT])].filter(
+                      Boolean,
+                    ),
                   ),
                 ]}
               />
-              {current.output === OTHER_MEASUREMENT && (
+              {!isFirstSegment && current.output === OTHER_MEASUREMENT && (
                 <div className="mt-2">
                   <TextField
                     value={current.outputOther}
@@ -584,7 +595,11 @@ function SegmentMeasurements({
                 label="Capacity measurement"
                 value={current.capacity}
                 onChange={(value) => update({ capacity: value })}
-                options={CAPACITY_MEASUREMENTS}
+                options={[
+                  ...new Set(
+                    [current.capacity, ...recommended.capacityOptions].filter(Boolean),
+                  ),
+                ]}
               />
               {current.capacity === OTHER_MEASUREMENT && (
                 <div className="mt-2">
