@@ -1193,6 +1193,14 @@ function SegmentMatrix({
   const { state, setAnswer } = useApp();
   const a = state.answers;
 
+  // Business Line 1 is always part of the model; repair any saved state where
+  // it was left unselected (its checkbox is locked, so it could not be re-added).
+  useEffect(() => {
+    if (!a.selectedSegments.includes("segment1")) {
+      setAnswer("selectedSegments", ["segment1", ...a.selectedSegments]);
+    }
+  }, [a.selectedSegments, setAnswer]);
+
   const toggleLine = (lineId: string) => {
     // Business Line 1 is always selected.
     if (lineId === "segment1") return;
