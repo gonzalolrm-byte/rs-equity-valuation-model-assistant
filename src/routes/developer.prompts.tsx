@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Pencil, Play, Plus, Power, Search, X } from "lucide-react";
+import { Pencil, Play, Plus, Power, Search, Trash2, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/Button";
 import { SelectField, TextField } from "@/components/form";
@@ -111,7 +111,7 @@ function WorkflowSection({
   category: string;
   status: string;
 }) {
-  const { state, togglePromptStatus } = useApp();
+  const { state, togglePromptStatus, deletePrompt } = useApp();
   const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<PromptAction | null>(null);
   const [creating, setCreating] = useState(false);
@@ -226,6 +226,18 @@ function WorkflowSection({
                         aria-label={`Toggle status of ${prompt.id}`}
                       >
                         <Power className="size-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm(`Delete action ${prompt.id} (${prompt.title})?`)) {
+                            deletePrompt(prompt.id);
+                          }
+                        }}
+                        className="rounded-md p-1.5 text-destructive transition-colors hover:bg-destructive/10"
+                        aria-label={`Delete ${prompt.id}`}
+                      >
+                        <Trash2 className="size-4" />
                       </button>
                     </div>
                   </td>
