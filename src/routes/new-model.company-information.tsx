@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Lightbulb } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button, ButtonLink } from "@/components/Button";
 import { SidePanel } from "@/components/SidePanel";
@@ -65,6 +65,16 @@ function CompanyInformation() {
   const a = state.answers;
   const navigate = useNavigate();
   const [showSegmentationNote, setShowSegmentationNote] = useState(false);
+
+  // Normalize stale saved answers after the COGS segmentation values changed.
+  useEffect(() => {
+    if (a.cogsBasis && !["business_line", "revenue_stream"].includes(a.cogsBasis)) {
+      setAnswer("cogsBasis", "");
+    }
+    if (a.selectedSegments.length > 1 && a.cogsBasis === "revenue_stream") {
+      setAnswer("cogsBasis", "business_line");
+    }
+  }, [a.cogsBasis, a.selectedSegments, setAnswer]);
 
   const segmentNounLower = "business line";
   const segmentOptions = [
@@ -188,16 +198,17 @@ function CompanyInformation() {
 
                 <Question
                   number={2}
-                  label="Do you want COGS to be segmented or modeled on an aggregate basis?"
+                  label="How do you want COGS to be segmented?"
                   required
                   hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that COGS also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
                 >
                   <OptionRow
                     value={a.cogsBasis}
                     onChange={(value) => setAnswer("cogsBasis", value as typeof a.cogsBasis)}
+                    disabledOptions={a.selectedSegments.length > 1 ? ["revenue_stream"] : []}
                     options={[
-                      { value: "segmented", label: "Segmented" },
-                      { value: "aggregate", label: "Aggregate (company level)" },
+                      { value: "business_line", label: "By business line" },
+                      { value: "revenue_stream", label: "By revenue stream" },
                     ]}
                   />
                 </Question>

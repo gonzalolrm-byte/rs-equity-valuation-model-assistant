@@ -170,12 +170,14 @@ export function OptionRow({
   onChange,
   columns = 2,
   disabled = false,
+  disabledOptions = [],
 }: {
   options: { value: string; label: string }[];
   value: string;
   onChange: (value: string) => void;
   columns?: number;
   disabled?: boolean;
+  disabledOptions?: string[];
 }) {
   return (
     <div
@@ -184,15 +186,16 @@ export function OptionRow({
     >
       {options.map((option) => {
         const selected = value === option.value;
+        const optionDisabled = disabled || disabledOptions.includes(option.value);
         return (
           <button
             key={option.value}
             type="button"
-            disabled={disabled}
+            disabled={optionDisabled}
             onClick={() => onChange(option.value)}
             className={[
               "flex items-center gap-3 rounded-lg border px-4 py-3 text-left text-[15px] transition-colors",
-              disabled ? "cursor-not-allowed" : "",
+              optionDisabled ? "cursor-not-allowed opacity-60" : "",
               selected
                 ? "border-primary bg-panel text-navy"
                 : "border-border bg-card text-navy-soft hover:border-primary/50 hover:bg-secondary/60",
