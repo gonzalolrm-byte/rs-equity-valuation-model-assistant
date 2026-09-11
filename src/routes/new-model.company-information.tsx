@@ -125,8 +125,11 @@ function CompanyInformation() {
   const canContinue =
     a.sector &&
     a.subsector &&
+    a.countryCount &&
     a.mainCountry.trim() &&
-    a.mainCountryCurrency &&
+    ((a.countryCount !== "2" && a.countryCount !== "3" && a.countryCount !== "more") ||
+      a.secondCountry.trim()) &&
+    ((a.countryCount !== "3" && a.countryCount !== "more") || a.thirdCountry.trim()) &&
     a.reportingCurrency &&
     a.selectedSegments
       .filter((lineId) => a.lineStreamMode[lineId] === "multi")
