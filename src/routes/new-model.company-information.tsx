@@ -628,7 +628,7 @@ function SegmentMeasurements({
               }
               options={[
                 { value: "revenue_stream", label: "By revenue stream" },
-                { value: "aggregate", label: "Aggregate (company level)" },
+                { value: "aggregate", label: "At business line level" },
               ]}
             />
           </div>
