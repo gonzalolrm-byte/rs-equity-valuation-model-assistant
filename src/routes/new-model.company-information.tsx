@@ -102,6 +102,20 @@ function CompanyInformation() {
     normalize("capexBasis", a.capexBasis);
   }, [a.cogsBasis, a.capexBasis, a.selectedSegments, a.lineStreamMode, setAnswer]);
 
+  // Clear country fields that are no longer relevant when the country count changes.
+  useEffect(() => {
+    if (!a.countryCount) return;
+    if (a.countryCount === "1" && (a.secondCountry || a.thirdCountry)) {
+      setAnswer("secondCountry", "");
+      setAnswer("secondCountryCurrency", "");
+      setAnswer("thirdCountry", "");
+      setAnswer("thirdCountryCurrency", "");
+    } else if (a.countryCount === "2" && a.thirdCountry) {
+      setAnswer("thirdCountry", "");
+      setAnswer("thirdCountryCurrency", "");
+    }
+  }, [a.countryCount, a.secondCountry, a.thirdCountry, setAnswer]);
+
   const segmentOptions = [
     { value: "segment1", label: "Business Line 1" },
     { value: "segment2", label: "Business Line 2" },
