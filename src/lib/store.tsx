@@ -67,7 +67,7 @@ export type Answers = {
   lineStreamMode: Record<string, "single" | "multi">;
   /** Per-segment operational driver measurement units, keyed by segment id. */
   segmentMeasurements: Record<string, SegmentMeasurement>;
-  cogsBasis: "" | "segmented" | "aggregate";
+  cogsBasis: "" | "business_line" | "revenue_stream";
   capexBasis: "" | "segmented" | "aggregate";
   otherDirectCosts: string[];
   projectionYears: "" | "5" | "10" | "custom";
