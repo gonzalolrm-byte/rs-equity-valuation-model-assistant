@@ -78,6 +78,7 @@ export type Answers = {
 export const EMPTY_ANSWERS: Answers = {
   companyName: "",
   sector: "",
+  subsector: "",
   businessModel: "",
   mainCountry: "",
   mainCountryCurrency: "",
