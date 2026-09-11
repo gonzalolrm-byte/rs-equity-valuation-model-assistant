@@ -296,6 +296,25 @@ function CompanyInformation() {
                       { value: "more", label: "More than 3" },
                     ]}
                   />
+                  {a.countryCount === "1" && (
+                    <div className="mt-6">
+                      <Question
+                        number={1}
+                        label="Does the company have material revenues, costs, or investments denominated in a currency other than the local currency?"
+                      >
+                        <OptionRow
+                          value={a.hasForeignCurrency}
+                          onChange={(value) =>
+                            setAnswer("hasForeignCurrency", value as typeof a.hasForeignCurrency)
+                          }
+                          options={[
+                            { value: "yes", label: "Yes" },
+                            { value: "no", label: "No" },
+                          ]}
+                        />
+                      </Question>
+                    </div>
+                  )}
                 </Question>
 
                 {a.countryCount && (
