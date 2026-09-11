@@ -116,7 +116,7 @@ function CompanyInformation() {
             />
 
             <div className="space-y-4">
-              <Collapsible title="A. General Information" defaultOpen>
+              <Collapsible title="A. Template Selection" defaultOpen>
                 <Question number={1} label="What is the company name?" required>
                   <TextField
                     value={a.companyName}
