@@ -285,7 +285,7 @@ function CompanyInformation() {
                 </Question>
               </Collapsible>
 
-              <Collapsible title="C. FX Adaptations">
+              <Collapsible title="D. FX Adaptations">
                 <Question number={1} label="How many countries does the company operate in?" required>
                   <OptionRow
                     value={a.countryCount}
@@ -389,7 +389,7 @@ function CompanyInformation() {
                 </Question>
               </Collapsible>
 
-              <Collapsible title="D. Other Modeling Considerations">
+              <Collapsible title="C. Other Modeling Considerations">
                 {(() => {
                   const showLineModeling = a.selectedSegments.length > 1;
                   const d = (n: number) => (showLineModeling ? n : n - 1);
@@ -416,38 +416,49 @@ function CompanyInformation() {
                         <p className="text-sm font-medium text-foreground">
                           Valuation method by business line
                         </p>
-                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                        <div className="flex flex-wrap gap-2">
                           {segmentOptions
                             .filter((option) => a.selectedSegments.includes(option.value))
                             .map((option) => {
                               const isLine1 = option.value === "segment1";
+                              const current = isLine1
+                                ? "dcf"
+                                : (a.lineValuationMethod[option.value] ?? "dcf");
                               return (
                                 <div
                                   key={option.value}
-                                  className="space-y-2 rounded-md border border-border bg-card p-3"
+                                  className="flex items-center gap-2 rounded-full border border-border bg-card py-1.5 pl-3 pr-1.5"
                                 >
-                                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                  <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                                     {option.label}
-                                  </p>
-                                  <OptionRow
-                                    value={
-                                      isLine1
-                                        ? "dcf"
-                                        : (a.lineValuationMethod[option.value] ?? "dcf")
-                                    }
-                                    onChange={(value) =>
-                                      !isLine1 &&
-                                      setAnswer("lineValuationMethod", {
-                                        ...a.lineValuationMethod,
-                                        [option.value]: value as "dcf" | "comps",
-                                      })
-                                    }
-                                    disabled={isLine1}
-                                    options={[
-                                      { value: "dcf", label: "DCF" },
-                                      { value: "comps", label: "Comps" },
-                                    ]}
-                                  />
+                                  </span>
+                                  <div className="flex rounded-full bg-muted p-0.5">
+                                    {(["dcf", "comps"] as const).map((method) => {
+                                      const selected = current === method;
+                                      return (
+                                        <button
+                                          key={method}
+                                          type="button"
+                                          disabled={isLine1}
+                                          onClick={() =>
+                                            setAnswer("lineValuationMethod", {
+                                              ...a.lineValuationMethod,
+                                              [option.value]: method,
+                                            })
+                                          }
+                                          className={[
+                                            "rounded-full px-3 py-1 text-xs font-medium transition-colors",
+                                            selected
+                                              ? "bg-primary text-primary-foreground"
+                                              : "text-muted-foreground hover:text-foreground",
+                                            isLine1 ? "cursor-not-allowed opacity-70" : "",
+                                          ].join(" ")}
+                                        >
+                                          {method === "dcf" ? "DCF" : "Comps"}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
                                 </div>
                               );
                             })}
