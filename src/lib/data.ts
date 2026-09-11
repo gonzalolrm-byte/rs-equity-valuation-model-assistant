@@ -27,6 +27,106 @@ export const SECTORS = [
   "Generic - Percentage Based",
 ] as const;
 
+/**
+ * Subsector templates offered for each primary sector/template.
+ * PROTOTYPE: this is the single source of truth for the A.2 dropdown; Phase 2
+ * moves the list to the backend/template service.
+ */
+export const SUBSECTORS: Record<string, string[]> = {
+  "Agribusiness & Forestry": [
+    "Crop Production",
+    "Livestock & Animal Products",
+    "Forestry & Timber",
+    "Agri-Processing",
+  ],
+  Chemicals: [
+    "Specialty Chemicals",
+    "Fertilizers & Agrochemicals",
+    "Petrochemicals",
+    "Industrial Gases",
+  ],
+  "Construction Materials": [
+    "Cement & Aggregates",
+    "Ready-Mix Concrete",
+    "Construction Steel",
+    "Building Products",
+  ],
+  "Consumer Goods & Retail": [
+    "Food & Beverage",
+    "Apparel & Textiles",
+    "Consumer Electronics",
+    "Retail & Distribution",
+  ],
+  Education: [
+    "K-12 Education",
+    "Higher Education",
+    "Vocational Training",
+    "EdTech",
+  ],
+  "Health Care": [
+    "Hospitals & Clinics",
+    "Pharmaceuticals",
+    "Medical Devices",
+    "Health Insurance",
+  ],
+  "Hospitality & Tourism": [
+    "Hotels & Resorts",
+    "Restaurants & Food Service",
+    "Travel & Tour Operators",
+    "Entertainment",
+  ],
+  Manufacturing: [
+    "Automotive & Components",
+    "Industrial Machinery",
+    "Electronics Manufacturing",
+    "Textile Manufacturing",
+  ],
+  "Metals & Mining": [
+    "Precious Metals",
+    "Base Metals",
+    "Iron & Steel",
+    "Mining Services",
+  ],
+  "Oil, Gas & Refining": [
+    "Upstream Exploration & Production",
+    "Midstream & Pipelines",
+    "Downstream Refining",
+    "Oilfield Services",
+  ],
+  "Power Generation": [
+    "Thermal Power",
+    "Renewable Energy (Solar/Wind)",
+    "Hydroelectric",
+    "Gas-Fired Power",
+  ],
+  "Real Estate": [
+    "Residential Development",
+    "Commercial Office",
+    "Industrial & Logistics",
+    "Retail Real Estate",
+  ],
+  "Telecommunications & Technology": [
+    "Mobile Telecom",
+    "Fixed Broadband",
+    "Data Centers",
+    "Software & IT Services",
+  ],
+  "Transport & Logistics": [
+    "Freight & Trucking",
+    "Ports & Terminals",
+    "Aviation",
+    "Warehousing & Logistics",
+  ],
+  "Water & Utilities": [
+    "Water Supply & Sanitation",
+    "Wastewater Treatment",
+    "Solid Waste Management",
+    "Utilities Infrastructure",
+  ],
+  "Generic - Unit Economics": ["Default Unit Economics"],
+  "Generic - Percentage Based": ["Default Percentage Based"],
+};
+
 export const CURRENCIES = [
   "USD – US Dollar",
   "EUR – Euro",
@@ -231,14 +331,14 @@ export const INITIAL_PROMPTS: PromptAction[] = [
   // E. Other Modeling Considerations.
   {
     id: "A-001",
-    title: "Select Sector Template",
+    title: "Select Sector / Subsector Template",
     category: "Template Selection",
     step: "Workflow A – Step 1: Template Selection & Adaptation",
     status: "Active",
     lastUpdated: "2026-09-10",
-    variables: ["{{primary_sector}}"],
+    variables: ["{{primary_sector}}", "{{subsector_template}}"],
     promptText:
-      "Select the standardized DCF template that corresponds to {{primary_sector}} from the IFC DCF template library. Use this template as the base workbook for all subsequent configuration and population steps. If no exact sector match exists, choose the closest available template and note the mapping. Do not alter the template's core structure unless required by another questionnaire response.",
+      "Select the standardized DCF template that corresponds to {{primary_sector}} — {{subsector_template}} from the IFC DCF template library. Use this template as the base workbook for all subsequent configuration and population steps. If no exact subsector template exists, choose the closest available template and note the mapping. Do not alter the template's core structure unless required by another questionnaire response.",
     requiredResources: ["res-dcf"],
   },
   {

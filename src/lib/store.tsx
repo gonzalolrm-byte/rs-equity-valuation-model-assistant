@@ -48,6 +48,7 @@ export type WorkingCapitalDays = {
 export type Answers = {
   companyName: string;
   sector: string;
+  subsector: string;
   businessModel: string;
   mainCountry: string;
   mainCountryCurrency: string;
@@ -77,6 +78,7 @@ export type Answers = {
 export const EMPTY_ANSWERS: Answers = {
   companyName: "",
   sector: "",
+  subsector: "",
   businessModel: "",
   mainCountry: "",
   mainCountryCurrency: "",
