@@ -247,35 +247,27 @@ function CompanyInformation() {
                           segmentId: "segment1",
                           label: "Sub-sector 1",
                           value: a.subsector,
-                          exclude: [a.subsector2, a.subsector3],
+                          required: true,
                         },
-                        ...(a.subsector
-                          ? [
-                              {
-                                key: "subsector2" as const,
-                                segmentId: "segment2",
-                                label: "Sub-sector 2",
-                                value: a.subsector2,
-                                exclude: [a.subsector, a.subsector3],
-                              },
-                            ]
-                          : []),
-                        ...(a.subsector && a.subsector2
-                          ? [
-                              {
-                                key: "subsector3" as const,
-                                segmentId: "segment3",
-                                label: "Sub-sector 3",
-                                value: a.subsector3,
-                                exclude: [a.subsector, a.subsector2],
-                              },
-                            ]
-                          : []),
+                        {
+                          key: "subsector2" as const,
+                          segmentId: "segment2",
+                          label: "Sub-sector 2",
+                          value: a.subsector2,
+                          required: false,
+                        },
+                        {
+                          key: "subsector3" as const,
+                          segmentId: "segment3",
+                          label: "Sub-sector 3",
+                          value: a.subsector3,
+                          required: false,
+                        },
                       ].map((row) => (
                         <div key={row.key} className="space-y-1.5">
                           <div className="text-sm font-medium text-foreground">
                             {row.label}
-                            {row.key === "subsector" && (
+                            {row.required && (
                               <span className="text-destructive"> *</span>
                             )}
                           </div>
@@ -286,36 +278,34 @@ function CompanyInformation() {
                               // Reset per-segment measurement defaults so they
                               // reflect the newly selected subsector template.
                               setAnswer("segmentMeasurements", {});
-                              // Clearing a higher subsector clears the ones below it.
-                              if (row.key === "subsector" && !value) {
-                                setAnswer("subsector2", "");
-                                setAnswer("subsector3", "");
+                              // Auto-select the matching sub-sector card when a
+                              // template is chosen (never auto-deselect).
+                              if (value) {
+                                setAnswer(
+                                  "selectedSegments",
+                                  Array.from(
+                                    new Set([
+                                      ...a.selectedSegments,
+                                      row.segmentId,
+                                    ]),
+                                  ),
+                                );
                               }
-                              if (row.key === "subsector2" && !value) {
-                                setAnswer("subsector3", "");
-                              }
-                              // Keep the matching sub-sector card in B.1 selected
-                              // while this subsector is chosen.
-                              setAnswer(
-                                "selectedSegments",
-                                value
-                                  ? Array.from(
-                                      new Set([
-                                        ...a.selectedSegments,
-                                        row.segmentId,
-                                      ]),
-                                    )
-                                  : a.selectedSegments.filter(
-                                      (id) => id !== row.segmentId,
-                                    ),
-                              );
                             }}
                             options={[
                               ...(SUBSECTORS[a.sector] ?? []),
                               "Generic - Unit Economics",
                               "Generic - Percentage Based",
-                            ].filter((option) => !row.exclude.includes(option))}
-                            placeholder={`Select ${row.label.toLowerCase()} template`}
+                            ].filter((option) => {
+                              if (row.key === "subsector") {
+                                return option !== a.subsector2 && option !== a.subsector3;
+                              }
+                              if (row.key === "subsector2") {
+                                return option !== a.subsector && option !== a.subsector3;
+                              }
+                              return option !== a.subsector && option !== a.subsector2;
+                            })}
+                            placeholder="Select or disregard"
                           />
                         </div>
                       ))}
