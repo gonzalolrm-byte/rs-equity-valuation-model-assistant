@@ -491,7 +491,7 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     lastUpdated: "2026-09-09",
     variables: ["{{capex_segmentation}}"],
     promptText:
-      "Model CapEx on a {{capex_segmentation}} basis. If Segmented is selected, align CapEx with the selected business lines or revenue streams wherever applicable. If Aggregate is selected, maintain CapEx at the company level and do not create separate CapEx schedules by segment.",
+      "Model CapEx on a {{capex_segmentation}} basis. If By business line is selected, align CapEx with the selected business lines. If By revenue stream is selected, align CapEx with the selected revenue streams wherever applicable. Do not create separate CapEx schedules by segment or stream when not selected.",
     requiredResources: [],
   },
   {
