@@ -158,7 +158,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={3}
+                  number={2}
                   label="Do you want COGS to be segmented or modeled on an aggregate basis?"
                   required
                   hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that COGS also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
