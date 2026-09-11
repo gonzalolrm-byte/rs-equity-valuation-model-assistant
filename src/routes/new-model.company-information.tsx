@@ -188,16 +188,17 @@ function CompanyInformation() {
 
                 <Question
                   number={2}
-                  label="Do you want COGS to be segmented or modeled on an aggregate basis?"
+                  label="How do you want COGS to be segmented?"
                   required
                   hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that COGS also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
                 >
                   <OptionRow
                     value={a.cogsBasis}
                     onChange={(value) => setAnswer("cogsBasis", value as typeof a.cogsBasis)}
+                    disabledOptions={a.selectedSegments.length > 1 ? ["revenue_stream"] : []}
                     options={[
-                      { value: "segmented", label: "Segmented" },
-                      { value: "aggregate", label: "Aggregate (company level)" },
+                      { value: "business_line", label: "By business line" },
+                      { value: "revenue_stream", label: "By revenue stream" },
                     ]}
                   />
                 </Question>
