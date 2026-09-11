@@ -190,7 +190,7 @@ function CompanyInformation() {
                 </Question>
 
                 <Question
-                  number={5}
+                  number={4}
                   label='Which standard COGS categories should be combined under "Other Direct Costs"? Select all that apply.'
                   hint="Categories should be aggregated only when data is unavailable or a category is not relevant. Otherwise, keep these categories separate, as this breakdown supports more robust analysis and forecasting."
                 >
