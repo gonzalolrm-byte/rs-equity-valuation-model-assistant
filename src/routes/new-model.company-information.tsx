@@ -643,3 +643,166 @@ function WorkingCapitalGroup({ title, items }: { title: string; items: string[] 
     </div>
   );
 }
+
+/**
+ * Business line / revenue stream selection matrix. Rows are business lines
+ * (up to four, including "Other") and columns are the revenue streams inside
+ * each business line (up to four, including "Other"). Selecting any revenue
+ * stream automatically activates its business line, and measurement units are
+ * collected for every activated business line.
+ */
+function SegmentMatrix({
+  segmentOptions,
+  revenueStreamOptions,
+}: {
+  segmentOptions: { value: string; label: string }[];
+  revenueStreamOptions: { value: string; label: string }[];
+}) {
+  const { state, setAnswer } = useApp();
+  const a = state.answers;
+
+  const toggleLine = (lineId: string) => {
+    const isSelected = a.selectedSegments.includes(lineId);
+    setAnswer(
+      "selectedSegments",
+      isSelected
+        ? a.selectedSegments.filter((item) => item !== lineId)
+        : [...a.selectedSegments, lineId],
+    );
+    if (isSelected) {
+      const next = { ...a.revenueStreams };
+      delete next[lineId];
+      setAnswer("revenueStreams", next);
+    }
+  };
+
+  const toggleStream = (lineId: string, streamId: string) => {
+    const current = a.revenueStreams[lineId] ?? [];
+    const next = current.includes(streamId)
+      ? current.filter((item) => item !== streamId)
+      : [...current, streamId];
+    setAnswer("revenueStreams", { ...a.revenueStreams, [lineId]: next });
+    if (next.length > 0 && !a.selectedSegments.includes(lineId)) {
+      setAnswer("selectedSegments", [...a.selectedSegments, lineId]);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="overflow-x-auto rounded-xl border border-border bg-card p-4 shadow-card">
+        <div className="min-w-[640px]">
+          <div className="grid grid-cols-[minmax(150px,1.4fr)_repeat(4,minmax(0,1fr))] gap-2">
+            <span className="text-[13px] font-semibold uppercase tracking-wide text-navy-soft">
+              Business line
+            </span>
+            {revenueStreamOptions.map((stream) => (
+              <span
+                key={stream.value}
+                className="text-center text-[13px] font-semibold uppercase tracking-wide text-navy-soft"
+              >
+                {stream.label}
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-2 space-y-2">
+            {segmentOptions.map((line) => {
+              const lineSelected = a.selectedSegments.includes(line.value);
+              const streams = a.revenueStreams[line.value] ?? [];
+              return (
+                <div
+                  key={line.value}
+                  className="grid grid-cols-[minmax(150px,1.4fr)_repeat(4,minmax(0,1fr))] items-stretch gap-2"
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggleLine(line.value)}
+                    aria-pressed={lineSelected}
+                    className={[
+                      "flex items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-[15px] transition-colors",
+                      lineSelected
+                        ? "border-primary bg-panel text-navy"
+                        : "border-border bg-card text-navy-soft hover:border-primary/50 hover:bg-secondary/60",
+                    ].join(" ")}
+                  >
+                    <span
+                      className={[
+                        "flex size-4.5 shrink-0 items-center justify-center rounded border-2 text-primary-foreground",
+                        lineSelected ? "border-primary bg-primary" : "border-input",
+                      ].join(" ")}
+                    >
+                      {lineSelected && (
+                        <svg
+                          viewBox="0 0 12 12"
+                          className="size-3"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.2"
+                        >
+                          <path d="M2 6.5 4.6 9 10 3.4" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                    </span>
+                    {line.label}
+                  </button>
+
+                  {revenueStreamOptions.map((stream) => {
+                    const active = streams.includes(stream.value);
+                    return (
+                      <button
+                        key={stream.value}
+                        type="button"
+                        onClick={() => toggleStream(line.value, stream.value)}
+                        aria-pressed={active}
+                        aria-label={`${line.label} — ${stream.label}`}
+                        className={[
+                          "flex items-center justify-center rounded-lg border py-2.5 transition-colors",
+                          active
+                            ? "border-primary bg-primary/10"
+                            : "border-border bg-card hover:border-primary/50 hover:bg-secondary/60",
+                        ].join(" ")}
+                      >
+                        <span
+                          className={[
+                            "flex size-5 items-center justify-center rounded border-2 text-primary-foreground",
+                            active ? "border-primary bg-primary" : "border-input",
+                          ].join(" ")}
+                        >
+                          {active && (
+                            <svg
+                              viewBox="0 0 12 12"
+                              className="size-3"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.2"
+                            >
+                              <path
+                                d="M2 6.5 4.6 9 10 3.4"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          )}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {segmentOptions
+        .filter((line) => a.selectedSegments.includes(line.value))
+        .map((line) => (
+          <SegmentMeasurements
+            key={line.value}
+            segmentId={line.value}
+            segmentLabel={line.label}
+          />
+        ))}
+    </div>
+  );
+}
