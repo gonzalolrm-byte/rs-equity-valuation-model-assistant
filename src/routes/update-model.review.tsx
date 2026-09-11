@@ -17,13 +17,13 @@ import { WORKFLOW_B_STEPS } from "./update-model.upload";
 export const Route = createFileRoute("/update-model/review")({
   head: () => ({
     meta: [
-      { title: "Review and Save — IFC Valuation Assistant" },
+      { title: "Review and Save — Real Sector – Equity Valuation Model Assistant" },
       {
         name: "description",
         content:
           "Step 3 of 3: save your selections for later, or apply the selected updates and download the updated standardized valuation model.",
       },
-      { property: "og:title", content: "Review and Save — IFC Valuation Assistant" },
+      { property: "og:title", content: "Review and Save — Real Sector – Equity Valuation Model Assistant" },
       {
         property: "og:description",
         content: "Step 3 of 3 of the portfolio company model update workflow.",

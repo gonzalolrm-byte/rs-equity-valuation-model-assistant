@@ -5,13 +5,13 @@ import { COGS_CATEGORIES } from "@/lib/data";
 export const Route = createFileRoute("/guidelines")({
   head: () => ({
     meta: [
-      { title: "Valuation Guidelines — IFC Valuation Assistant" },
+      { title: "Valuation Guidelines — Real Sector – Equity Valuation Model Assistant" },
       {
         name: "description",
         content:
           "Guidance on segmentation, COGS categories, CapEx modeling, projection horizons, share classes and liquidity put mechanics for standardized DCF models.",
       },
-      { property: "og:title", content: "Valuation Guidelines — IFC Valuation Assistant" },
+      { property: "og:title", content: "Valuation Guidelines — Real Sector – Equity Valuation Model Assistant" },
       {
         property: "og:description",
         content: "Segmentation, COGS, CapEx, projection horizon and liquidity put guidance.",

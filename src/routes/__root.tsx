@@ -78,13 +78,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "IFC Valuation Assistant" },
+      { title: "Real Sector – Equity Valuation Model Assistant" },
       {
         name: "description",
         content:
           "Standardized DCF valuation templates, adapted and populated from your company documents.",
       },
-      { property: "og:title", content: "IFC Valuation Assistant" },
+      { property: "og:title", content: "Real Sector – Equity Valuation Model Assistant" },
       {
         property: "og:description",
         content:

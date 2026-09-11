@@ -10,7 +10,7 @@ export function AppHeader({ showDeveloper = true }: { showDeveloper?: boolean })
           <span className="hidden h-10 w-px bg-border md:block" />
           <span className="hidden md:block">
             <span className="block font-heading text-lg font-bold leading-tight text-navy">
-              IFC Valuation Assistant
+              Real Sector – Equity Valuation Model Assistant
             </span>
             <span className="block text-sm text-muted-foreground">
               CROMC Equity Team

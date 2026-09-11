@@ -5,13 +5,13 @@ import { ButtonLink } from "@/components/Button";
 export const Route = createFileRoute("/help")({
   head: () => ({
     meta: [
-      { title: "Help — IFC Valuation Assistant" },
+      { title: "Help — Real Sector – Equity Valuation Model Assistant" },
       {
         name: "description",
         content:
-          "How the IFC Valuation Assistant works: the two workflows, what to upload, how missing information is flagged, and where to get support.",
+          "How the Real Sector – Equity Valuation Model Assistant works: the two workflows, what to upload, how missing information is flagged, and where to get support.",
       },
-      { property: "og:title", content: "Help — IFC Valuation Assistant" },
+      { property: "og:title", content: "Help — Real Sector – Equity Valuation Model Assistant" },
       {
         property: "og:description",
         content: "How the two valuation workflows work and what to upload for each.",

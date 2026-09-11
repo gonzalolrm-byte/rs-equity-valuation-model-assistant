@@ -5,13 +5,13 @@ import { AppHeader } from "@/components/AppHeader";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — IFC Valuation Assistant" },
+      { title: "Contact — Real Sector – Equity Valuation Model Assistant" },
       {
         name: "description",
         content:
           "Reach the valuation team for questions on standardized templates, model updates or access to the Developer Console.",
       },
-      { property: "og:title", content: "Contact — IFC Valuation Assistant" },
+      { property: "og:title", content: "Contact — Real Sector – Equity Valuation Model Assistant" },
       {
         property: "og:description",
         content: "Reach the valuation team for template, model update or access questions.",

@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * IFC Valuation Assistant design system.
+ * Real Sector – Equity Valuation Model Assistant design system.
  * Institutional finance: white surfaces, dark navy headings, IFC blue accent,
  * light blue information panels, green success states.
  * All colors are oklch semantic tokens. Never hardcode colors in components.
