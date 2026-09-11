@@ -516,10 +516,10 @@ function SegmentMeasurements({
     });
   };
 
-  // The selected sector/template determines whether the model uses unit economics
-  // or a percentage-based approach. Percentage-based templates do not need
-  // operational measurement units.
-  const isPercentageBased = a.sector === "Generic - Percentage Based";
+  // The selected subsector/template determines whether the model uses unit
+  // economics or a percentage-based approach. Percentage-based templates do not
+  // need operational measurement units.
+  const isPercentageBased = a.subsector === "Generic - Percentage Based";
   const needsOutputUnit = !isPercentageBased;
   const needsCapacityUnit = !isPercentageBased;
   const needsAnyUnit = needsOutputUnit || needsCapacityUnit;
