@@ -509,14 +509,14 @@ function SegmentMeasurements({
             onClick={() => setShowUnitNote((v) => !v)}
             aria-expanded={showUnitNote}
             aria-label={showUnitNote ? "Hide measurement guidance" : "Show measurement guidance"}
-            className="shrink-0 rounded-lg p-1.5 text-amber-500 transition-colors hover:bg-amber-500/10 hover:text-amber-600"
+            className="shrink-0 rounded-lg p-1.5 text-warning transition-colors hover:bg-warning-soft"
           >
             <Lightbulb className="size-5" />
           </button>
         )}
       </div>
       {needsAnyUnit && showUnitNote && (
-        <p className="mt-2 rounded-lg border border-amber-200/60 bg-amber-50/60 p-3 text-[13px] text-navy-soft">
+        <p className="mt-2 rounded-lg border border-warning/30 bg-warning-soft p-3 text-[13px] text-navy-soft">
           Recommended units are pre-selected. Maximum Output and Units Sold (or equivalent)
           always use the same unit of measurement, while Capacity may be expressed in either
           the same or a different unit. Maximum Output represents the maximum quantity of
