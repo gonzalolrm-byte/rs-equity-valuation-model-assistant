@@ -496,32 +496,10 @@ function SegmentMeasurements({
 
   return (
     <div className="mt-2 rounded-xl border border-panel-border bg-panel/60 p-4">
-      <div className="flex items-start justify-between gap-3">
-        {!hideHeader && (
-          <p className="text-[15px] font-semibold text-navy">
-            {segmentLabel}
-            {needsAnyUnit ? " — measurement units" : " — segment detail"}
-          </p>
-        )}
-        {needsAnyUnit && (
-          <button
-            type="button"
-            onClick={() => setShowUnitNote((v) => !v)}
-            aria-expanded={showUnitNote}
-            aria-label={showUnitNote ? "Hide measurement guidance" : "Show measurement guidance"}
-            className="shrink-0 rounded-lg p-1.5 text-warning transition-colors hover:bg-warning-soft"
-          >
-            <Lightbulb className="size-5" />
-          </button>
-        )}
-      </div>
-      {needsAnyUnit && showUnitNote && (
-        <p className="mt-2 rounded-lg border border-warning/30 bg-warning-soft p-3 text-[13px] text-navy-soft">
-          Recommended units are pre-selected. Maximum Output and Units Sold (or equivalent)
-          always use the same unit of measurement, while Capacity may be expressed in either
-          the same or a different unit. Maximum Output represents the maximum quantity of
-          products that can be sold, excluding sales from inventory, or the maximum volume of
-          services or operational activity that can be delivered in a particular year.
+      {!hideHeader && (
+        <p className="text-[15px] font-semibold text-navy">
+          {segmentLabel}
+          {needsAnyUnit ? " — measurement units" : " — segment detail"}
         </p>
       )}
       {!needsAnyUnit && (
@@ -541,6 +519,20 @@ function SegmentMeasurements({
             <div>
               <SelectField
                 label="Maximum Output / Units Sold measurement"
+                labelAction={
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setShowUnitNote((v) => !v);
+                    }}
+                    aria-expanded={showUnitNote}
+                    aria-label={showUnitNote ? "Hide measurement guidance" : "Show measurement guidance"}
+                    className="rounded-lg p-1 text-warning transition-colors hover:bg-warning-soft"
+                  >
+                    <Lightbulb className="size-4" />
+                  </button>
+                }
                 value={current.output}
                 onChange={(value) => update({ output: value })}
                 // The sector/template defines the default unit; the user can
@@ -584,7 +576,6 @@ function SegmentMeasurements({
         </div>
       )}
 
-
       {needsCapacityUnit && (a.revenueStreams[segmentId]?.length ?? 0) > 1 && (
         <div className="mt-3 rounded-lg border border-panel-border bg-background/60 p-3">
           <p className="text-[13px] font-medium text-navy">
@@ -603,6 +594,16 @@ function SegmentMeasurements({
             />
           </div>
         </div>
+      )}
+
+      {needsAnyUnit && showUnitNote && (
+        <p className="mt-4 rounded-lg border border-warning/30 bg-warning-soft p-3 text-[13px] text-navy-soft">
+          Recommended units are pre-selected. Maximum Output and Units Sold (or equivalent)
+          always use the same unit of measurement, while Capacity may be expressed in either
+          the same or a different unit. Maximum Output represents the maximum quantity of
+          products that can be sold, excluding sales from inventory, or the maximum volume of
+          services or operational activity that can be delivered in a particular year.
+        </p>
       )}
     </div>
   );
