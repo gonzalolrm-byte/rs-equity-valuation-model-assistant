@@ -6,13 +6,13 @@ import { useApp } from "@/lib/store";
 export const Route = createFileRoute("/developer/resources")({
   head: () => ({
     meta: [
-      { title: "Resources & Templates — Developer Console" },
+      { title: "Market Data & Additional Templates — Developer Console" },
       {
         name: "description",
         content:
           "Upload and manage the standardized DCF templates, waterfall and put templates, cost of equity report and macro tool used by the application.",
       },
-      { property: "og:title", content: "Resources & Templates — Developer Console" },
+      { property: "og:title", content: "Market Data & Additional Templates — Developer Console" },
       {
         property: "og:description",
         content: "Manage the internal templates and reference data used to build valuation models.",
@@ -27,7 +27,7 @@ function Resources() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-extrabold">2. Resources &amp; Templates</h1>
+      <h1 className="font-heading text-2xl font-extrabold">2. Market Data &amp; Additional Templates</h1>
       <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">
         Upload and manage the core files and data sources used by the application. These files are
         accessible only to developers and are not visible to users.
