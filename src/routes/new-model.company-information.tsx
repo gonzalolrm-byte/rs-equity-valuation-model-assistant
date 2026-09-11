@@ -591,7 +591,11 @@ function SegmentMeasurements({
                 label="Capacity measurement"
                 value={current.capacity}
                 onChange={(value) => update({ capacity: value })}
-                options={CAPACITY_MEASUREMENTS}
+                options={[
+                  ...new Set(
+                    [current.capacity, ...recommended.capacityOptions].filter(Boolean),
+                  ),
+                ]}
               />
               {current.capacity === OTHER_MEASUREMENT && (
                 <div className="mt-2">
