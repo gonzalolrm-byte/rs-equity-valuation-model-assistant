@@ -17,6 +17,7 @@ import {
 } from "@/components/form";
 import {
   COGS_CATEGORIES,
+  COUNTRIES,
   CURRENCIES,
   defaultCurrencyForCountry,
   OTHER_MEASUREMENT,
@@ -300,47 +301,50 @@ function CompanyInformation() {
                 {a.countryCount && (
                   <Question
                     number={2}
-                    label={`Enter the name of the main countries in which the company operates (${
+                    label={`Select the main countries in which the company operates (${
                       a.countryCount === "more" ? "list the top 3" : `list up to ${a.countryCount} name${a.countryCount === "1" ? "" : "s"}`
                     }).`}
                     required
                   >
                     <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
-                      <TextField
+                      <SelectField
                         label="Main country"
                         value={a.mainCountry}
                         onChange={(value) => {
                           setAnswer("mainCountry", value);
                           setAnswer("mainCountryCurrency", defaultCurrencyForCountry(value) ?? "");
                         }}
-                        placeholder="Enter country name"
+                        options={COUNTRIES}
+                        placeholder="Select country"
                       />
                       <CurrencyDisplay label="Currency" value={a.mainCountryCurrency} />
                     </div>
                     {a.countryCount !== "1" && (
                       <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
-                        <TextField
+                        <SelectField
                           label="Second country"
                           value={a.secondCountry}
                           onChange={(value) => {
                             setAnswer("secondCountry", value);
                             setAnswer("secondCountryCurrency", defaultCurrencyForCountry(value) ?? "");
                           }}
-                          placeholder="Enter country name"
+                          options={COUNTRIES}
+                          placeholder="Select country"
                         />
                         <CurrencyDisplay label="Currency" value={a.secondCountryCurrency} />
                       </div>
                     )}
                     {(a.countryCount === "3" || a.countryCount === "more") && (
                       <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
-                        <TextField
+                        <SelectField
                           label="Third country"
                           value={a.thirdCountry}
                           onChange={(value) => {
                             setAnswer("thirdCountry", value);
                             setAnswer("thirdCountryCurrency", defaultCurrencyForCountry(value) ?? "");
                           }}
-                          placeholder="Enter country name"
+                          options={COUNTRIES}
+                          placeholder="Select country"
                         />
                         <CurrencyDisplay label="Currency" value={a.thirdCountryCurrency} />
                       </div>
