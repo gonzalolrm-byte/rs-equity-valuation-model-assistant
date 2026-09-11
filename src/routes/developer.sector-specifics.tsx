@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Info, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { FileSpreadsheet, Info, RotateCcw, Trash2, Upload } from "lucide-react";
+import { useRef, useState } from "react";
+
 import {
   CAPACITY_MEASUREMENTS,
   OTHER_MEASUREMENT,
@@ -190,6 +191,73 @@ function SubsectorCard({ sector, subsector }: { sector: string; subsector: strin
           </div>
         </div>
       </div>
+
+      <TemplateUpload subsector={subsector} />
     </section>
   );
 }
+
+function TemplateUpload({ subsector }: { subsector: string }) {
+  const { state, addSubsectorTemplateFiles, removeSubsectorTemplateFile } = useApp();
+  const files = state.subsectorTemplates[subsector] ?? [];
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <div className="mt-5 border-t border-border pt-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="text-[13px] font-semibold text-navy">Template file</p>
+          <p className="mt-1 text-[12px] text-muted-foreground">
+            {files.length
+              ? `${files.length} file(s) uploaded for this template`
+              : "No template uploaded yet · Excel (.xlsx, .xls) or PDF (.pdf)"}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          className="inline-flex items-center gap-2 rounded-lg border border-primary/40 px-3.5 py-2 text-[13px] font-semibold text-primary transition-colors hover:bg-panel"
+        >
+          <Upload className="size-4" />
+          {files.length ? "Upload / Replace" : "Upload template"}
+        </button>
+        <input
+          ref={inputRef}
+          type="file"
+          multiple
+          accept=".xlsx,.xls,.pdf"
+          className="hidden"
+          onChange={(event) => {
+            if (event.target.files?.length) {
+              addSubsectorTemplateFiles(subsector, Array.from(event.target.files));
+            }
+            event.target.value = "";
+          }}
+        />
+      </div>
+
+      {files.length > 0 && (
+        <ul className="mt-3 space-y-2">
+          {files.map((file) => (
+            <li
+              key={file}
+              className="flex items-center gap-3 rounded-lg border border-border bg-secondary/40 px-3 py-2.5"
+            >
+              <FileSpreadsheet className="size-4 shrink-0 text-primary" />
+              <span className="min-w-0 flex-1 truncate text-sm text-navy">{file}</span>
+              <button
+                type="button"
+                onClick={() => removeSubsectorTemplateFile(subsector, file)}
+                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                aria-label={`Remove ${file}`}
+              >
+                <Trash2 className="size-4" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+

@@ -158,7 +158,10 @@ export type AppState = {
   resources: DeveloperResource[];
   /** Developer overrides of the default measurement units per subsector template. */
   sectorSpecifics: SectorSpecifics;
+  /** Uploaded template file names per subsector template (prototype: names only). */
+  subsectorTemplates: Record<string, string[]>;
 };
+
 
 const INITIAL_STATE: AppState = {
   workflow: "",
@@ -174,6 +177,8 @@ const INITIAL_STATE: AppState = {
   prompts: INITIAL_PROMPTS,
   resources: INITIAL_RESOURCES,
   sectorSpecifics: {},
+  subsectorTemplates: {},
+
 };
 
 
@@ -195,6 +200,9 @@ type Ctx = {
   removeResourceFile: (id: string, fileName: string) => void;
   setSubsectorMeasurements: (subsector: string, setting: SubsectorMeasurementSetting) => void;
   resetSubsectorMeasurements: (subsector: string) => void;
+  addSubsectorTemplateFiles: (subsector: string, files: File[]) => void;
+  removeSubsectorTemplateFile: (subsector: string, fileName: string) => void;
+
   saveProgress: () => void;
   reset: () => void;
 };
@@ -363,13 +371,38 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           delete next[subsector];
           return { ...prev, sectorSpecifics: next };
         }),
+      addSubsectorTemplateFiles: (subsector, files) =>
+        setState((prev) => ({
+          ...prev,
+          subsectorTemplates: {
+            ...prev.subsectorTemplates,
+            [subsector]: [
+              ...new Set([
+                ...(prev.subsectorTemplates[subsector] ?? []),
+                ...files.map((file) => file.name),
+              ]),
+            ],
+          },
+        })),
+      removeSubsectorTemplateFile: (subsector, fileName) =>
+        setState((prev) => ({
+          ...prev,
+          subsectorTemplates: {
+            ...prev.subsectorTemplates,
+            [subsector]: (prev.subsectorTemplates[subsector] ?? []).filter(
+              (file) => file !== fileName,
+            ),
+          },
+        })),
       saveProgress: () => setState((prev) => ({ ...prev, savedAt: new Date().toISOString() })),
       reset: () =>
         setState((prev) => ({
           ...INITIAL_STATE,
           prompts: prev.prompts,
           sectorSpecifics: prev.sectorSpecifics,
+          subsectorTemplates: prev.subsectorTemplates,
           resources: prev.resources,
+
         })),
     }),
     [state, patch],
