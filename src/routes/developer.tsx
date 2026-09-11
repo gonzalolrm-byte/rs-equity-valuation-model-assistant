@@ -79,7 +79,7 @@ function DeveloperLayout() {
               />
             </div>
           </div>
-
+          <p className="rounded-xl border border-border bg-card p-4 text-[12px] leading-relaxed text-muted-foreground">
             Prototype access control: this console is unprotected in this build. Role-based
             authorization is added with the backend in the next phase.
           </p>
