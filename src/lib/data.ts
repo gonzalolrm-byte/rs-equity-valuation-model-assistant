@@ -485,30 +485,6 @@ export const INITIAL_PROMPTS: PromptAction[] = [
     requiredResources: [],
   },
   {
-    id: "A-003",
-    title: "Primary Sector",
-    category: "General Information",
-    step: "Workflow A – Step 1: Template Selection & Adaptation",
-    status: "Active",
-    lastUpdated: "2026-09-09",
-    variables: ["{{primary_sector}}"],
-    promptText:
-      "Treat {{primary_sector}} as the company's primary sector. Use this sector classification when determining sector-appropriate terminology, operating drivers, measurement units, assumptions, and model conventions within the already-selected standardized template. Do not change the standardized template structure unless required by another questionnaire response.",
-    requiredResources: [],
-  },
-  {
-    id: "A-004",
-    title: "Countries of Operation",
-    category: "General Information",
-    step: "Workflow A – Step 1: Template Selection & Adaptation",
-    status: "Active",
-    lastUpdated: "2026-09-09",
-    variables: ["{{country_1}}", "{{country_2}}", "{{country_3}}"],
-    promptText:
-      "Configure the model for the following operating countries: {{country_1}}, {{country_2}}, and {{country_3}}, where provided. Use the corresponding local currencies and country-specific macroeconomic assumptions, including inflation and real GDP growth, where required by the template. Ignore unused country slots.",
-    requiredResources: ["res-macro"],
-  },
-  {
     id: "B-01",
     title: "Add one year of historicals",
     category: "Model Updates",
