@@ -3,7 +3,6 @@ import { ArrowLeft, ArrowRight, Lightbulb } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button, ButtonLink } from "@/components/Button";
-import { SidePanel } from "@/components/SidePanel";
 import { StepProgress } from "@/components/StepProgress";
 import {
   CheckItem,
