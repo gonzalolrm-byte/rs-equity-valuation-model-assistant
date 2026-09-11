@@ -1501,7 +1501,7 @@ function SegmentMatrix({
                   <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                     {revenueStreamOptions.map((stream, index) => {
                       const active = streams.includes(stream.value);
-                      const previous = streamOrder[index - 1];
+                      const previous = streamOrder[index - 1]!;
                       const disabled =
                         index === 0 || !streams.includes(previous);
                       return (
