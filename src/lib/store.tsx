@@ -52,7 +52,9 @@ export type Answers = {
   sector: string;
   subsector: string;
   subsector2: string;
+  subsector2Enabled: boolean;
   subsector3: string;
+  subsector3Enabled: boolean;
   businessModel: string;
   mainCountry: string;
   mainCountryCurrency: string;
