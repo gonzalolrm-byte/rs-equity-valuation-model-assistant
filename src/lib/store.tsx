@@ -138,8 +138,12 @@ export const EMPTY_ANSWERS: Answers = {
   lineCountries: {},
 };
 
+export type NavigationMode = "required" | "free";
+
 export type AppState = {
   workflow: "" | "new" | "update";
+  /** Developer setting: "required" enforces field validation, "free" unlocks navigation for demos. */
+  navigationMode: NavigationMode;
   answers: Answers;
   newFiles: FileSlots;
   updateFiles: FileSlots;
@@ -154,6 +158,7 @@ export type AppState = {
 
 const INITIAL_STATE: AppState = {
   workflow: "",
+  navigationMode: "required",
   answers: EMPTY_ANSWERS,
   newFiles: {},
   updateFiles: {},
@@ -165,6 +170,7 @@ const INITIAL_STATE: AppState = {
   prompts: INITIAL_PROMPTS,
   resources: INITIAL_RESOURCES,
 };
+
 
 const STORAGE_KEY = "ifc-valuation-assistant-v1";
 
