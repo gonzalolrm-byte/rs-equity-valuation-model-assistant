@@ -163,7 +163,6 @@ function CompanyInformation() {
     ...(a.subsector3
       ? [{ value: "segment3", label: `Sub-sector 3 — ${a.subsector3}` }]
       : []),
-    { value: "other", label: "Other Sub-sector" },
   ];
   const revenueStreamOptions = [
     { value: "stream1", label: "Revenue Stream 1" },
