@@ -48,6 +48,7 @@ export type WorkingCapitalDays = {
 export type Answers = {
   companyName: string;
   sector: string;
+  subsector: string;
   businessModel: string;
   mainCountry: string;
   mainCountryCurrency: string;
