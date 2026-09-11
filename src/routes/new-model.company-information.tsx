@@ -66,7 +66,7 @@ function CompanyInformation() {
   const navigate = useNavigate();
   const [showSegmentationNote, setShowSegmentationNote] = useState(false);
 
-  // Normalize stale saved answers after the COGS segmentation values changed.
+  // Normalize stale saved answers after the segmentation values changed.
   useEffect(() => {
     if (a.cogsBasis && !["business_line", "revenue_stream"].includes(a.cogsBasis)) {
       setAnswer("cogsBasis", "");
@@ -74,7 +74,13 @@ function CompanyInformation() {
     if (a.selectedSegments.length > 1 && a.cogsBasis === "revenue_stream") {
       setAnswer("cogsBasis", "business_line");
     }
-  }, [a.cogsBasis, a.selectedSegments, setAnswer]);
+    if (a.capexBasis && !["business_line", "revenue_stream"].includes(a.capexBasis)) {
+      setAnswer("capexBasis", "");
+    }
+    if (a.selectedSegments.length > 1 && a.capexBasis === "revenue_stream") {
+      setAnswer("capexBasis", "business_line");
+    }
+  }, [a.cogsBasis, a.capexBasis, a.selectedSegments, setAnswer]);
 
   const segmentNounLower = "business line";
   const segmentOptions = [
