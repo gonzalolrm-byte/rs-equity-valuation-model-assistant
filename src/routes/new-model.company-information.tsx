@@ -157,7 +157,8 @@ function CompanyInformation() {
     !customYearsError &&
     a.shareClasses &&
     a.liquidityPut &&
-    (a.liquidityPut !== "yes" || a.putMechanisms.length > 0);
+    (a.liquidityPut !== "yes" || a.putMechanisms.length > 0) &&
+    (a.selectedSegments.length <= 1 || a.businessLineModeling !== "");
 
   return (
     <div className="min-h-screen bg-background">
@@ -387,7 +388,26 @@ function CompanyInformation() {
               </Collapsible>
 
               <Collapsible title="D. Other Modeling Considerations">
-                <Question number={1} label="How many years of projections do you need?" required>
+                {a.selectedSegments.length > 1 && (
+                  <Question
+                    number={1}
+                    label="How should the company's different business lines be modeled?"
+                    required
+                  >
+                    <OptionRow
+                      value={a.businessLineModeling}
+                      onChange={(value) =>
+                        setAnswer("businessLineModeling", value as typeof a.businessLineModeling)
+                      }
+                      options={[
+                        { value: "consolidated", label: "Consolidated Cash Flow" },
+                        { value: "sotp", label: "Sum-of-the-Parts (SOTP)" },
+                      ]}
+                    />
+                  </Question>
+                )}
+
+                <Question number={2} label="How many years of projections do you need?" required>
                   <OptionRow
                     columns={3}
                     value={a.projectionYears}
