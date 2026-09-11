@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button, ButtonLink } from "@/components/Button";
-import { SidePanel } from "@/components/SidePanel";
 import { StepProgress } from "@/components/StepProgress";
 import { PageHeading } from "@/components/form";
 import { UploadCard, type UploadSlot } from "@/components/UploadCard";
@@ -83,7 +82,7 @@ function UploadStep() {
       <StepProgress steps={WORKFLOW_A_STEPS} current={2} />
 
       <main className="mx-auto max-w-7xl px-5 py-10">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="mx-auto max-w-3xl">
           <div>
             <PageHeading
               step="Step 2 of 3"

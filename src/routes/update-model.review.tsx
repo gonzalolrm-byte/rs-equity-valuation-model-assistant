@@ -5,7 +5,6 @@ import { AppHeader } from "@/components/AppHeader";
 import { Button, ButtonLink } from "@/components/Button";
 import { ModelOutputCard } from "@/components/ModelOutputCard";
 import { RunConsole } from "@/components/RunConsole";
-import { SidePanel } from "@/components/SidePanel";
 import { StepProgress } from "@/components/StepProgress";
 import { PageHeading } from "@/components/form";
 import { UPDATE_ACTIONS } from "@/lib/data";
@@ -72,7 +71,7 @@ function ReviewAndSave() {
       <StepProgress steps={WORKFLOW_B_STEPS} current={3} />
 
       <main className="mx-auto max-w-7xl px-5 py-10">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="mx-auto max-w-3xl">
           <div className="space-y-5">
             <PageHeading
               step="Step 3 of 3"
