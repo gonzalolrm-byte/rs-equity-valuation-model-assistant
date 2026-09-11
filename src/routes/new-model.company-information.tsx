@@ -131,6 +131,28 @@ function CompanyInformation() {
   ];
 
 
+  const isSotpFx = a.selectedSegments.length > 1 && a.businessLineModeling === "sotp";
+
+  const setLineCountryCount = (
+    lineId: string,
+    value: "" | "1" | "2" | "3" | "more",
+  ) => {
+    setAnswer("lineCountryCount", { ...a.lineCountryCount, [lineId]: value });
+    // Trim countries that exceed the new count.
+    const keep = value === "more" ? 3 : value ? Number(value) : 0;
+    const current = a.lineCountries[lineId] ?? [];
+    if (current.length > keep) {
+      setAnswer("lineCountries", { ...a.lineCountries, [lineId]: current.slice(0, keep) });
+    }
+  };
+
+  const setLineCountry = (lineId: string, index: number, country: string) => {
+    const current = [...(a.lineCountries[lineId] ?? [])];
+    while (current.length <= index) current.push({ country: "", currency: "" });
+    current[index] = { country, currency: defaultCurrencyForCountry(country) ?? "" };
+    setAnswer("lineCountries", { ...a.lineCountries, [lineId]: current });
+  };
+
   const customYearsNum = a.projectionYears === "custom" ? Number(a.customYears) : NaN;
   const customYearsError =
     a.projectionYears === "custom" && !Number.isNaN(customYearsNum) && customYearsNum < 10
