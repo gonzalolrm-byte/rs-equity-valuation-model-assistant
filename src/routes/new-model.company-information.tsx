@@ -1302,6 +1302,7 @@ function SegmentMatrix({
 }) {
   const { state, setAnswer } = useApp();
   const a = state.answers;
+  const streamOrder = revenueStreamOptions.map((option) => option.value);
 
   // Sub-sector 1 is always part of the model; repair any saved state where
   // it was left unselected (its checkbox is locked, so it could not be re-added).
@@ -1310,6 +1311,38 @@ function SegmentMatrix({
       setAnswer("selectedSegments", ["segment1", ...a.selectedSegments]);
     }
   }, [a.selectedSegments, setAnswer]);
+
+  // In Multi-Stream mode revenue streams are enabled sequentially:
+  // stream N can only be selected if stream N-1 is selected. Normalize any
+  // saved state that violates this ordering and ensure stream1 is always present.
+  useEffect(() => {
+    let changed = false;
+    const nextStreams = { ...a.revenueStreams };
+    for (const lineId of a.selectedSegments) {
+      if (a.lineStreamMode[lineId] !== "multi") continue;
+      const list = Array.from(new Set(nextStreams[lineId] ?? []));
+      if (!list.includes("stream1")) {
+        list.push("stream1");
+        changed = true;
+      }
+      for (let i = 1; i < streamOrder.length; i++) {
+        if (list.includes(streamOrder[i]!) && !list.includes(streamOrder[i - 1]!)) {
+          for (let j = i; j < streamOrder.length; j++) {
+            const idx = list.indexOf(streamOrder[j]!);
+            if (idx !== -1) {
+              list.splice(idx, 1);
+              changed = true;
+            }
+          }
+          break;
+        }
+      }
+      nextStreams[lineId] = list;
+    }
+    if (changed) {
+      setAnswer("revenueStreams", nextStreams);
+    }
+  }, [a.selectedSegments, a.lineStreamMode, a.revenueStreams, setAnswer, streamOrder]);
 
   const toggleLine = (lineId: string) => {
     // Sub-sector 1 is always selected.
@@ -1346,12 +1379,10 @@ function SegmentMatrix({
       setAnswer("capexBasis", nextCapex);
     } else {
       const current = a.revenueStreams[lineId] ?? [];
-      if (current.length === 0) {
-        // Multi-Stream defaults to Revenue Stream 1 and Revenue Stream 2.
-        setAnswer("revenueStreams", { ...a.revenueStreams, [lineId]: ["stream1", "stream2"] });
-      } else if (lineId === "segment1" && !current.includes("stream2")) {
-        // Sub-sector 1 always includes Revenue Stream 1 and 2 in Multi-Stream mode.
-        setAnswer("revenueStreams", { ...a.revenueStreams, [lineId]: [...current, "stream2"] });
+      // Multi-Stream always starts with Revenue Stream 1; additional streams
+      // must be selected sequentially (stream 2 unlocks 3, 3 unlocks Other).
+      if (current.length === 0 || !current.includes("stream1")) {
+        setAnswer("revenueStreams", { ...a.revenueStreams, [lineId]: ["stream1"] });
       }
       // Default COGS / CapEx segmentation to By sub-sector when entering multi-stream mode.
       if (!a.cogsBasis[lineId]) {
@@ -1364,12 +1395,25 @@ function SegmentMatrix({
   };
 
   const toggleStream = (lineId: string, streamId: string) => {
-    // Revenue Stream 1 under Sub-sector 1 is always selected.
-    if (lineId === "segment1" && streamId === "stream1") return;
+    // Revenue Stream 1 is always selected in Multi-Stream mode.
+    if (streamId === "stream1") return;
     const current = a.revenueStreams[lineId] ?? [];
-    const next = current.includes(streamId)
-      ? current.filter((item) => item !== streamId)
-      : [...current, streamId];
+    const index = streamOrder.indexOf(streamId);
+    if (index <= 0) return;
+    // Streams must be selected in order: stream N can only be toggled if
+    // stream N-1 is already selected.
+    const previous = streamOrder[index - 1]!;
+    if (!current.includes(previous)) return;
+
+    let next: string[];
+    if (current.includes(streamId)) {
+      // Deselecting a stream also removes all later streams.
+      const removeFrom = streamOrder.indexOf(streamId);
+      const toRemove = new Set(streamOrder.slice(removeFrom + 1));
+      next = current.filter((item) => item !== streamId && !toRemove.has(item));
+    } else {
+      next = [...current, streamId];
+    }
     setAnswer("revenueStreams", { ...a.revenueStreams, [lineId]: next });
     if (next.length > 0 && !a.selectedSegments.includes(lineId)) {
       setAnswer("selectedSegments", [...a.selectedSegments, lineId]);
@@ -1455,12 +1499,16 @@ function SegmentMatrix({
 
                 {lineSelected && mode === "multi" && (
                   <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                    {revenueStreamOptions.map((stream) => {
+                    {revenueStreamOptions.map((stream, index) => {
                       const active = streams.includes(stream.value);
+                      const previous = streamOrder[index - 1]!;
+                      const disabled =
+                        index === 0 || !streams.includes(previous);
                       return (
                         <button
                           key={stream.value}
                           type="button"
+                          disabled={disabled}
                           onClick={() => toggleStream(line.value, stream.value)}
                           aria-pressed={active}
                           className={[
@@ -1468,12 +1516,14 @@ function SegmentMatrix({
                             active
                               ? "border-primary bg-primary/10 text-navy"
                               : "border-border bg-card text-navy-soft hover:border-primary/50 hover:bg-secondary/60",
+                            disabled && (active ? "cursor-not-allowed" : "cursor-not-allowed opacity-50 hover:border-border hover:bg-card"),
                           ].join(" ")}
                         >
                           <span
                             className={[
                               "flex size-4.5 shrink-0 items-center justify-center rounded border-2 text-primary-foreground",
                               active ? "border-primary bg-primary" : "border-input",
+                              disabled && !active && "opacity-60",
                             ].join(" ")}
                           >
                             {active && (
