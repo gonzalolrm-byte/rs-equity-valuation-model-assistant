@@ -299,7 +299,7 @@ function CompanyInformation() {
                   {a.countryCount === "1" && (
                     <div className="mt-6">
                       <Question
-                        label="Does the company have material revenues, costs, or investments denominated in foreign currencies as a result of import/export activities?"
+                        label="Does the company have material revenues, costs, or investments in foreign currencies due to import/export activities?"
                         hint="For simplicity, we assume the foreign currency is USD. This choice is disabled when the company operates in more than one country."
                       >
                         <OptionRow
