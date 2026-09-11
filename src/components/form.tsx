@@ -65,7 +65,7 @@ export function Question({
   number?: number;
   label: string;
   required?: boolean;
-  hint?: string;
+  hint?: string | undefined;
   labelAction?: ReactNode;
   children: ReactNode;
 }) {

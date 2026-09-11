@@ -152,9 +152,11 @@ function CompanyInformation() {
     a.selectedSegments
       .filter((lineId) => a.lineStreamMode[lineId] === "multi")
       .every((lineId) => a.capexBasis[lineId]) &&
-    a.projectionYears &&
-    (a.projectionYears !== "custom" || a.customYears.trim()) &&
-    !customYearsError &&
+    (a.selectedSegments.length > 1 && a.businessLineModeling === "sotp"
+      ? a.selectedSegments.every((lineId) => a.projectionYearsByLine[lineId])
+      : a.projectionYears &&
+        (a.projectionYears !== "custom" || a.customYears.trim()) &&
+        !customYearsError) &&
     a.shareClasses &&
     a.liquidityPut &&
     (a.liquidityPut !== "yes" || a.putMechanisms.length > 0) &&
@@ -412,28 +414,80 @@ function CompanyInformation() {
                   </Question>
                 )}
 
-                <Question number={d(2)} label="How many years of projections do you need?" required>
-                  <OptionRow
-                    columns={3}
-                    value={a.projectionYears}
-                    onChange={(value) =>
-                      setAnswer("projectionYears", value as typeof a.projectionYears)
-                    }
-                    options={[
-                      { value: "5", label: "5 years" },
-                      { value: "10", label: "10 years" },
-                      { value: "custom", label: "More than 10 years" },
-                    ]}
-                  />
-                  {a.projectionYears === "custom" && (
-                    <TextField
-                      label="Enter number of years"
-                      value={a.customYears}
-                      onChange={(value) => setAnswer("customYears", value.replace(/\D/g, ""))}
-                      placeholder="e.g. 15"
-                      error={!!customYearsError}
-                      errorMessage={customYearsError}
+                {(() => {
+                  const isSotp = showLineModeling && a.businessLineModeling === "sotp";
+                  const lines = segmentOptions.filter((option) =>
+                    a.selectedSegments.includes(option.value),
+                  );
+                  return (
+                    <>
+                <Question
+                  number={d(2)}
+                  label="How many years of projections do you need?"
+                  required
+                  hint={
+                    isSotp
+                      ? "With Sum-of-the-Parts, the projection horizon is set for each business line."
+                      : undefined
+                  }
+                >
+                  {isSotp ? (
+                    <LineMatrix
+                      lines={lines}
+                      rows={[{ key: "years", label: "Projection horizon" }]}
+                      renderCell={(lineId) => (
+                        <div className="space-y-2">
+                          <SelectField
+                            value={a.projectionYearsByLine[lineId] ?? ""}
+                            onChange={(value) =>
+                              setAnswer("projectionYearsByLine", {
+                                ...a.projectionYearsByLine,
+                                [lineId]: value,
+                              })
+                            }
+                            options={["5 years", "10 years", "More than 10 years"]}
+                            placeholder="Select years"
+                          />
+                          {a.projectionYearsByLine[lineId] === "More than 10 years" && (
+                            <TextField
+                              value={a.customYearsByLine[lineId] ?? ""}
+                              onChange={(value) =>
+                                setAnswer("customYearsByLine", {
+                                  ...a.customYearsByLine,
+                                  [lineId]: value.replace(/\D/g, ""),
+                                })
+                              }
+                              placeholder="e.g. 15"
+                            />
+                          )}
+                        </div>
+                      )}
                     />
+                  ) : (
+                    <>
+                      <OptionRow
+                        columns={3}
+                        value={a.projectionYears}
+                        onChange={(value) =>
+                          setAnswer("projectionYears", value as typeof a.projectionYears)
+                        }
+                        options={[
+                          { value: "5", label: "5 years" },
+                          { value: "10", label: "10 years" },
+                          { value: "custom", label: "More than 10 years" },
+                        ]}
+                      />
+                      {a.projectionYears === "custom" && (
+                        <TextField
+                          label="Enter number of years"
+                          value={a.customYears}
+                          onChange={(value) => setAnswer("customYears", value.replace(/\D/g, ""))}
+                          placeholder="e.g. 15"
+                          error={!!customYearsError}
+                          errorMessage={customYearsError}
+                        />
+                      )}
+                    </>
                   )}
                 </Question>
 
@@ -443,21 +497,68 @@ function CompanyInformation() {
                   hint="Select the historical basis used to derive days for each working capital item, or choose Manual input to enter the number of days directly."
                 >
                   <div className="space-y-4">
-                    <WorkingCapitalGroup title="Assets" items={WORKING_CAPITAL_ASSETS} />
-                    <WorkingCapitalGroup title="Liabilities" items={WORKING_CAPITAL_LIABILITIES} />
+                    {isSotp ? (
+                      <>
+                        <LineWorkingCapitalMatrix
+                          title="Assets"
+                          items={WORKING_CAPITAL_ASSETS}
+                          lines={lines}
+                        />
+                        <LineWorkingCapitalMatrix
+                          title="Liabilities"
+                          items={WORKING_CAPITAL_LIABILITIES}
+                          lines={lines}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <WorkingCapitalGroup title="Assets" items={WORKING_CAPITAL_ASSETS} />
+                        <WorkingCapitalGroup
+                          title="Liabilities"
+                          items={WORKING_CAPITAL_LIABILITIES}
+                        />
+                      </>
+                    )}
                   </div>
                 </Question>
 
                 <Question
                   number={d(4)}
                   label="How many comparable companies (comps) does the company have?"
+                  hint={
+                    isSotp
+                      ? "With Sum-of-the-Parts, comps are identified for each business line."
+                      : undefined
+                  }
                 >
-                  <TextField
-                    value={a.compsCount}
-                    onChange={(value) => setAnswer("compsCount", value.replace(/\D/g, ""))}
-                    placeholder="Enter number of comps"
-                  />
+                  {isSotp ? (
+                    <LineMatrix
+                      lines={lines}
+                      rows={[{ key: "comps", label: "Number of comps" }]}
+                      renderCell={(lineId) => (
+                        <TextField
+                          value={a.compsCountByLine[lineId] ?? ""}
+                          onChange={(value) =>
+                            setAnswer("compsCountByLine", {
+                              ...a.compsCountByLine,
+                              [lineId]: value.replace(/\D/g, ""),
+                            })
+                          }
+                          placeholder="Enter number"
+                        />
+                      )}
+                    />
+                  ) : (
+                    <TextField
+                      value={a.compsCount}
+                      onChange={(value) => setAnswer("compsCount", value.replace(/\D/g, ""))}
+                      placeholder="Enter number of comps"
+                    />
+                  )}
                 </Question>
+                    </>
+                  );
+                })()}
 
                 <Question
                   number={d(5)}
@@ -792,6 +893,115 @@ function WorkingCapitalGroup({ title, items }: { title: string; items: string[] 
         })}
       </div>
     </div>
+  );
+}
+
+/**
+ * Generic matrix with the selected business lines as columns. Used for the
+ * Sum-of-the-Parts breakdown of projection horizon, working capital days and
+ * comparable companies.
+ */
+function LineMatrix({
+  lines,
+  rows,
+  renderCell,
+  title,
+}: {
+  lines: { value: string; label: string }[];
+  rows: { key: string; label: string }[];
+  renderCell: (lineId: string, rowKey: string) => ReactNode;
+  title?: string;
+}) {
+  return (
+    <div className="rounded-xl border border-panel-border bg-panel/60 p-4">
+      {title && <p className="mb-3 text-[15px] font-semibold text-navy">{title}</p>}
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[560px] border-separate border-spacing-x-3 border-spacing-y-2">
+          <thead>
+            <tr>
+              <th className="w-1/4 text-left" />
+              {lines.map((line) => (
+                <th
+                  key={line.value}
+                  className="text-left text-[13px] font-semibold uppercase tracking-wide text-navy-soft"
+                >
+                  {line.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.key}>
+                <td className="align-top pt-2 text-[15px] font-medium text-navy">{row.label}</td>
+                {lines.map((line) => (
+                  <td key={line.value} className="align-top">
+                    {renderCell(line.value, row.key)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Working capital days matrix for Sum-of-the-Parts: line items as rows and the
+ * selected business lines as columns.
+ */
+function LineWorkingCapitalMatrix({
+  title,
+  items,
+  lines,
+}: {
+  title: string;
+  items: string[];
+  lines: { value: string; label: string }[];
+}) {
+  const { state, setAnswer } = useApp();
+  const a = state.answers;
+
+  const update = (lineId: string, item: string, partial: Partial<WorkingCapitalDays>) => {
+    const forLine = a.workingCapitalDaysByLine[lineId] ?? {};
+    const current: WorkingCapitalDays = forLine[item] ?? { basis: "", manualDays: "" };
+    setAnswer("workingCapitalDaysByLine", {
+      ...a.workingCapitalDaysByLine,
+      [lineId]: { ...forLine, [item]: { ...current, ...partial } },
+    });
+  };
+
+  return (
+    <LineMatrix
+      title={title}
+      lines={lines}
+      rows={items.map((item) => ({ key: item, label: item }))}
+      renderCell={(lineId, item) => {
+        const current =
+          a.workingCapitalDaysByLine[lineId]?.[item] ?? { basis: "", manualDays: "" };
+        return (
+          <div className="space-y-2">
+            <SelectField
+              value={current.basis}
+              onChange={(value) => update(lineId, item, { basis: value })}
+              options={WORKING_CAPITAL_BASIS_OPTIONS}
+              placeholder="Select basis"
+            />
+            {current.basis === MANUAL_WORKING_CAPITAL_BASIS && (
+              <TextField
+                value={current.manualDays}
+                onChange={(value) =>
+                  update(lineId, item, { manualDays: value.replace(/\D/g, "") })
+                }
+                placeholder="Days"
+              />
+            )}
+          </div>
+        );
+      }}
+    />
   );
 }
 

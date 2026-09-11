@@ -82,6 +82,14 @@ export type Answers = {
   liquidityPut: "" | "yes" | "no";
   putMechanisms: string[];
   workingCapitalDays: Record<string, WorkingCapitalDays>;
+  /** Per-business-line projection horizon (SOTP only), keyed by segment id. */
+  projectionYearsByLine: Record<string, string>;
+  /** Per-business-line custom projection years (SOTP only), keyed by segment id. */
+  customYearsByLine: Record<string, string>;
+  /** Per-business-line working capital days: segment id -> line item -> days config. */
+  workingCapitalDaysByLine: Record<string, Record<string, WorkingCapitalDays>>;
+  /** Per-business-line comparable company counts, keyed by segment id. */
+  compsCountByLine: Record<string, string>;
 };
 
 export const EMPTY_ANSWERS: Answers = {
@@ -115,6 +123,10 @@ export const EMPTY_ANSWERS: Answers = {
   liquidityPut: "",
   putMechanisms: [],
   workingCapitalDays: {},
+  projectionYearsByLine: {},
+  customYearsByLine: {},
+  workingCapitalDaysByLine: {},
+  compsCountByLine: {},
 };
 
 export type AppState = {
