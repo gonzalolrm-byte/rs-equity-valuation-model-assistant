@@ -1,10 +1,12 @@
 import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, FolderOpen, MessageSquareCode, Settings } from "lucide-react";
 import { IfcLockup } from "@/components/AppHeader";
+import { useApp, type NavigationMode } from "@/lib/store";
 
 export const Route = createFileRoute("/developer")({
   component: DeveloperLayout,
 });
+
 
 function DeveloperLayout() {
   return (
