@@ -351,7 +351,7 @@ function CompanyInformation() {
                     )}
                     {a.countryCount === "more" && (
                       <p className="text-[13px] text-muted-foreground">
-                        Additional countries can be detailed in the supporting documents uploaded in the next step.
+                        For simplicity, additional countries will be grouped into a single category and will use the FX rate of the main country of operations.
                       </p>
                     )}
                   </Question>
