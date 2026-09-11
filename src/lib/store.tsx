@@ -67,8 +67,10 @@ export type Answers = {
   lineStreamMode: Record<string, "single" | "multi">;
   /** Per-segment operational driver measurement units, keyed by segment id. */
   segmentMeasurements: Record<string, SegmentMeasurement>;
-  cogsBasis: "" | "business_line" | "revenue_stream";
-  capexBasis: "" | "business_line" | "revenue_stream";
+  /** COGS segmentation basis per selected business line, keyed by segment id. */
+  cogsBasis: Record<string, "" | "business_line" | "revenue_stream">;
+  /** CapEx segmentation basis per selected business line, keyed by segment id. */
+  capexBasis: Record<string, "" | "business_line" | "revenue_stream">;
   otherDirectCosts: string[];
   projectionYears: "" | "5" | "10" | "custom";
   customYears: string;
@@ -98,8 +100,8 @@ export const EMPTY_ANSWERS: Answers = {
   revenueStreams: { segment1: ["stream1"] },
   lineStreamMode: { segment1: "multi" },
   segmentMeasurements: {},
-  cogsBasis: "",
-  capexBasis: "",
+  cogsBasis: {},
+  capexBasis: {},
   otherDirectCosts: [],
   projectionYears: "",
   customYears: "",
