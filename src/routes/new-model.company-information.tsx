@@ -231,7 +231,7 @@ function CompanyInformation() {
                   hint="Select all COGS categories that should appear in the model. Choosing Aggregate all categories will combine all standard categories into a single aggregate line."
                 >
                   <div className="grid gap-3 sm:grid-cols-2">
-                    {[...COGS_CATEGORIES, "Other Costs", "Aggregate all categories"].map(
+                    {["Aggregate all categories", ...COGS_CATEGORIES, "Other Costs"].map(
                       (category) => {
                         const aggregate = category === "Aggregate all categories";
                         const disabled =
