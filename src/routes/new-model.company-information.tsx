@@ -96,7 +96,6 @@ function CompanyInformation() {
     normalize("capexBasis", a.capexBasis);
   }, [a.cogsBasis, a.capexBasis, a.selectedSegments, setAnswer]);
 
-  const segmentNounLower = "business line";
   const segmentOptions = [
     { value: "segment1", label: "Business Line 1" },
     { value: "segment2", label: "Business Line 2" },
