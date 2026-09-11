@@ -88,6 +88,7 @@ function CompanyInformation() {
 
   const canContinue =
     a.sector &&
+    a.subsector &&
     a.mainCountry.trim() &&
     a.mainCountryCurrency &&
     a.reportingCurrency &&
