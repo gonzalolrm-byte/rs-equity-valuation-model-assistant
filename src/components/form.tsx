@@ -62,7 +62,7 @@ export function Question({
   labelAction,
   children,
 }: {
-  number: number;
+  number?: number;
   label: string;
   required?: boolean;
   hint?: string;
@@ -73,7 +73,7 @@ export function Question({
     <div>
       <div className="flex items-start gap-2">
         <p className="text-[15px] font-semibold text-navy">
-          <span className="mr-1.5 text-navy-soft">{number}.</span>
+          {number !== undefined && <span className="mr-1.5 text-navy-soft">{number}.</span>}
           {label}
           {required && <span className="ml-1 text-destructive">*</span>}
         </p>

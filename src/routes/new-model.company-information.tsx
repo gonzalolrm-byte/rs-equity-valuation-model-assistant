@@ -296,6 +296,22 @@ function CompanyInformation() {
                       { value: "more", label: "More than 3" },
                     ]}
                   />
+                  {a.countryCount === "1" && (
+                    <div className="mt-6">
+                      <Question label="Does the company have material revenues, costs, or investments denominated in a currency other than the local currency?">
+                        <OptionRow
+                          value={a.hasForeignCurrency}
+                          onChange={(value) =>
+                            setAnswer("hasForeignCurrency", value as typeof a.hasForeignCurrency)
+                          }
+                          options={[
+                            { value: "yes", label: "Yes" },
+                            { value: "no", label: "No" },
+                          ]}
+                        />
+                      </Question>
+                    </div>
+                  )}
                 </Question>
 
                 {a.countryCount && (
@@ -357,23 +373,7 @@ function CompanyInformation() {
                   </Question>
                 )}
 
-                <Question
-                  number={3}
-                  label="Does the company have material revenues, costs, or investments denominated in a currency other than the local currency?"
-                >
-                  <OptionRow
-                    value={a.hasForeignCurrency}
-                    onChange={(value) =>
-                      setAnswer("hasForeignCurrency", value as typeof a.hasForeignCurrency)
-                    }
-                    options={[
-                      { value: "yes", label: "Yes" },
-                      { value: "no", label: "No" },
-                    ]}
-                  />
-                </Question>
-
-                <Question number={4} label="What is the company's reporting currency?" required>
+                <Question number={3} label="What is the company's reporting currency?" required>
                   <SelectField
                     value={a.reportingCurrency}
                     onChange={(value) => setAnswer("reportingCurrency", value)}
