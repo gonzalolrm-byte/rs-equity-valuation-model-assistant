@@ -162,11 +162,22 @@ function CompanyInformation() {
   const canContinue =
     a.sector &&
     a.subsector &&
-    a.countryCount &&
-    a.mainCountry.trim() &&
-    ((a.countryCount !== "2" && a.countryCount !== "3" && a.countryCount !== "more") ||
-      a.secondCountry.trim()) &&
-    ((a.countryCount !== "3" && a.countryCount !== "more") || a.thirdCountry.trim()) &&
+    (isSotpFx
+      ? a.selectedSegments.every((lineId) => {
+          const count = a.lineCountryCount[lineId];
+          if (!count) return false;
+          const rows = count === "more" ? 3 : Number(count);
+          const countries = a.lineCountries[lineId] ?? [];
+          return (
+            countries.length >= rows &&
+            countries.slice(0, rows).every((entry) => entry.country.trim())
+          );
+        })
+      : a.countryCount &&
+        a.mainCountry.trim() &&
+        ((a.countryCount !== "2" && a.countryCount !== "3" && a.countryCount !== "more") ||
+          a.secondCountry.trim()) &&
+        ((a.countryCount !== "3" && a.countryCount !== "more") || a.thirdCountry.trim())) &&
     a.reportingCurrency &&
     a.selectedSegments
       .filter((lineId) => a.lineStreamMode[lineId] === "multi")
