@@ -412,28 +412,80 @@ function CompanyInformation() {
                   </Question>
                 )}
 
-                <Question number={d(2)} label="How many years of projections do you need?" required>
-                  <OptionRow
-                    columns={3}
-                    value={a.projectionYears}
-                    onChange={(value) =>
-                      setAnswer("projectionYears", value as typeof a.projectionYears)
-                    }
-                    options={[
-                      { value: "5", label: "5 years" },
-                      { value: "10", label: "10 years" },
-                      { value: "custom", label: "More than 10 years" },
-                    ]}
-                  />
-                  {a.projectionYears === "custom" && (
-                    <TextField
-                      label="Enter number of years"
-                      value={a.customYears}
-                      onChange={(value) => setAnswer("customYears", value.replace(/\D/g, ""))}
-                      placeholder="e.g. 15"
-                      error={!!customYearsError}
-                      errorMessage={customYearsError}
+                {(() => {
+                  const isSotp = showLineModeling && a.businessLineModeling === "sotp";
+                  const lines = segmentOptions.filter((option) =>
+                    a.selectedSegments.includes(option.value),
+                  );
+                  return (
+                    <>
+                <Question
+                  number={d(2)}
+                  label="How many years of projections do you need?"
+                  required
+                  hint={
+                    isSotp
+                      ? "With Sum-of-the-Parts, the projection horizon is set for each business line."
+                      : undefined
+                  }
+                >
+                  {isSotp ? (
+                    <LineMatrix
+                      lines={lines}
+                      rows={[{ key: "years", label: "Projection horizon" }]}
+                      renderCell={(lineId) => (
+                        <div className="space-y-2">
+                          <SelectField
+                            value={a.projectionYearsByLine[lineId] ?? ""}
+                            onChange={(value) =>
+                              setAnswer("projectionYearsByLine", {
+                                ...a.projectionYearsByLine,
+                                [lineId]: value,
+                              })
+                            }
+                            options={["5 years", "10 years", "More than 10 years"]}
+                            placeholder="Select years"
+                          />
+                          {a.projectionYearsByLine[lineId] === "More than 10 years" && (
+                            <TextField
+                              value={a.customYearsByLine[lineId] ?? ""}
+                              onChange={(value) =>
+                                setAnswer("customYearsByLine", {
+                                  ...a.customYearsByLine,
+                                  [lineId]: value.replace(/\D/g, ""),
+                                })
+                              }
+                              placeholder="e.g. 15"
+                            />
+                          )}
+                        </div>
+                      )}
                     />
+                  ) : (
+                    <>
+                      <OptionRow
+                        columns={3}
+                        value={a.projectionYears}
+                        onChange={(value) =>
+                          setAnswer("projectionYears", value as typeof a.projectionYears)
+                        }
+                        options={[
+                          { value: "5", label: "5 years" },
+                          { value: "10", label: "10 years" },
+                          { value: "custom", label: "More than 10 years" },
+                        ]}
+                      />
+                      {a.projectionYears === "custom" && (
+                        <TextField
+                          label="Enter number of years"
+                          value={a.customYears}
+                          onChange={(value) => setAnswer("customYears", value.replace(/\D/g, ""))}
+                          placeholder="e.g. 15"
+                          error={!!customYearsError}
+                          errorMessage={customYearsError}
+                        />
+                      )}
+                    </>
                   )}
                 </Question>
 
@@ -443,21 +495,68 @@ function CompanyInformation() {
                   hint="Select the historical basis used to derive days for each working capital item, or choose Manual input to enter the number of days directly."
                 >
                   <div className="space-y-4">
-                    <WorkingCapitalGroup title="Assets" items={WORKING_CAPITAL_ASSETS} />
-                    <WorkingCapitalGroup title="Liabilities" items={WORKING_CAPITAL_LIABILITIES} />
+                    {isSotp ? (
+                      <>
+                        <LineWorkingCapitalMatrix
+                          title="Assets"
+                          items={WORKING_CAPITAL_ASSETS}
+                          lines={lines}
+                        />
+                        <LineWorkingCapitalMatrix
+                          title="Liabilities"
+                          items={WORKING_CAPITAL_LIABILITIES}
+                          lines={lines}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <WorkingCapitalGroup title="Assets" items={WORKING_CAPITAL_ASSETS} />
+                        <WorkingCapitalGroup
+                          title="Liabilities"
+                          items={WORKING_CAPITAL_LIABILITIES}
+                        />
+                      </>
+                    )}
                   </div>
                 </Question>
 
                 <Question
                   number={d(4)}
                   label="How many comparable companies (comps) does the company have?"
+                  hint={
+                    isSotp
+                      ? "With Sum-of-the-Parts, comps are identified for each business line."
+                      : undefined
+                  }
                 >
-                  <TextField
-                    value={a.compsCount}
-                    onChange={(value) => setAnswer("compsCount", value.replace(/\D/g, ""))}
-                    placeholder="Enter number of comps"
-                  />
+                  {isSotp ? (
+                    <LineMatrix
+                      lines={lines}
+                      rows={[{ key: "comps", label: "Number of comps" }]}
+                      renderCell={(lineId) => (
+                        <TextField
+                          value={a.compsCountByLine[lineId] ?? ""}
+                          onChange={(value) =>
+                            setAnswer("compsCountByLine", {
+                              ...a.compsCountByLine,
+                              [lineId]: value.replace(/\D/g, ""),
+                            })
+                          }
+                          placeholder="Enter number"
+                        />
+                      )}
+                    />
+                  ) : (
+                    <TextField
+                      value={a.compsCount}
+                      onChange={(value) => setAnswer("compsCount", value.replace(/\D/g, ""))}
+                      placeholder="Enter number of comps"
+                    />
+                  )}
                 </Question>
+                    </>
+                  );
+                })()}
 
                 <Question
                   number={d(5)}
