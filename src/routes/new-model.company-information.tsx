@@ -218,60 +218,6 @@ function CompanyInformation() {
 
                 <Question
                   number={2}
-                  label="How do you want COGS and CapEx to be segmented?"
-                  required
-                  hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that COGS and CapEx also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
-                >
-                  <div className="space-y-3">
-                    {segmentOptions
-                      .filter((line) => a.selectedSegments.includes(line.value))
-                      .map((line) => (
-                        <div
-                          key={line.value}
-                          className="space-y-3 rounded-xl border border-panel-border bg-panel/60 p-4"
-                        >
-                          <p className="text-sm font-semibold text-foreground">{line.label}</p>
-                          <SegmentedToggleRow
-                            label="COGS"
-                            value={a.cogsBasis[line.value] ?? ""}
-                            onChange={(value) =>
-                              setAnswer("cogsBasis", {
-                                ...a.cogsBasis,
-                                [line.value]: value as "business_line" | "revenue_stream",
-                              })
-                            }
-                            disabledOptions={
-                              a.selectedSegments.length > 1 ? ["revenue_stream"] : []
-                            }
-                            options={[
-                              { value: "business_line", label: "By business line" },
-                              { value: "revenue_stream", label: "By revenue stream" },
-                            ]}
-                          />
-                          <SegmentedToggleRow
-                            label="CapEx"
-                            value={a.capexBasis[line.value] ?? ""}
-                            onChange={(value) =>
-                              setAnswer("capexBasis", {
-                                ...a.capexBasis,
-                                [line.value]: value as "business_line" | "revenue_stream",
-                              })
-                            }
-                            disabledOptions={
-                              a.selectedSegments.length > 1 ? ["revenue_stream"] : []
-                            }
-                            options={[
-                              { value: "business_line", label: "By business line" },
-                              { value: "revenue_stream", label: "By revenue stream" },
-                            ]}
-                          />
-                        </div>
-                      ))}
-                  </div>
-                </Question>
-
-                <Question
-                  number={3}
                   label='Which standard COGS categories should be combined under "Other Direct Costs"? Select all that apply.'
                   hint="Categories should be aggregated only when data is unavailable or a category is not relevant. Otherwise, keep these categories separate, as this breakdown supports more robust analysis and forecasting."
                 >
