@@ -221,16 +221,17 @@ function CompanyInformation() {
 
                 <Question
                   number={3}
-                  label="Do you want CapEx to be segmented or modeled on an aggregate basis?"
+                  label="How do you want CapEx to be segmented?"
                   required
                   hint={`If operations and revenues are segmented by ${segmentNounLower}, it is recommended that CapEx also be segmented by ${segmentNounLower} to maintain consistency across the model.`}
                 >
                   <OptionRow
                     value={a.capexBasis}
                     onChange={(value) => setAnswer("capexBasis", value as typeof a.capexBasis)}
+                    disabledOptions={a.selectedSegments.length > 1 ? ["revenue_stream"] : []}
                     options={[
-                      { value: "segmented", label: "Segmented" },
-                      { value: "aggregate", label: "Aggregate (company level)" },
+                      { value: "business_line", label: "By business line" },
+                      { value: "revenue_stream", label: "By revenue stream" },
                     ]}
                   />
                 </Question>
