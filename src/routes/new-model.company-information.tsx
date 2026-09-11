@@ -449,9 +449,11 @@ function CurrencyDisplay({ label, value }: { label: string; value: string }) {
 function SegmentMeasurements({
   segmentId,
   segmentLabel,
+  hideHeader = false,
 }: {
   segmentId: string;
   segmentLabel: string;
+  hideHeader?: boolean;
 }) {
   const { state, setAnswer } = useApp();
   const a = state.answers;
@@ -491,11 +493,13 @@ function SegmentMeasurements({
   const needsAnyUnit = needsOutputUnit || needsCapacityUnit;
 
   return (
-    <div className="mt-2 ml-1 rounded-xl border border-panel-border bg-panel/60 p-4">
-      <p className="text-[15px] font-semibold text-navy">
-        {segmentLabel}
-        {needsAnyUnit ? " — measurement units" : " — segment detail"}
-      </p>
+    <div className="mt-2 rounded-xl border border-panel-border bg-panel/60 p-4">
+      {!hideHeader && (
+        <p className="text-[15px] font-semibold text-navy">
+          {segmentLabel}
+          {needsAnyUnit ? " — measurement units" : " — segment detail"}
+        </p>
+      )}
       {needsAnyUnit ? (
         <p className="mt-1 text-[13px] text-muted-foreground">
           Recommended units are pre-selected. Maximum Output and Units Sold (or equivalent)
@@ -826,21 +830,19 @@ function SegmentMatrix({
                     })}
                   </div>
                 )}
+
+                {lineSelected && (
+                  <SegmentMeasurements
+                    segmentId={line.value}
+                    segmentLabel={line.label}
+                    hideHeader
+                  />
+                )}
               </div>
             );
           })}
         </div>
       </div>
-
-      {segmentOptions
-        .filter((line) => a.selectedSegments.includes(line.value))
-        .map((line) => (
-          <SegmentMeasurements
-            key={line.value}
-            segmentId={line.value}
-            segmentLabel={line.label}
-          />
-        ))}
     </div>
   );
 }
