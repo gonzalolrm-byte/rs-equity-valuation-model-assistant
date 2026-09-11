@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Lightbulb } from "lucide-react";
+import { useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button, ButtonLink } from "@/components/Button";
 import { SidePanel } from "@/components/SidePanel";
