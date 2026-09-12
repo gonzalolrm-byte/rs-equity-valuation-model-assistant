@@ -138,9 +138,10 @@ function Resources() {
 
 
 function ResourceRow({ id }: { id: string }) {
-  const { state, replaceResourceFiles, removeResourceFile } = useApp();
+  const { state, replaceResourceFiles, removeResourceFile, deleteResource } = useApp();
   const resource = state.resources.find((item) => item.id === id)!;
   const inputRef = useRef<HTMLInputElement>(null);
+
 
   return (
     <section className="rounded-xl border border-border bg-card p-5 shadow-card">
