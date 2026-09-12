@@ -402,6 +402,28 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
               : resource,
           ),
         })),
+      addResource: ({ name, description, kind }) =>
+        setState((prev) => ({
+          ...prev,
+          resources: [
+            ...prev.resources,
+            {
+              id: `res-custom-${Date.now()}`,
+              name,
+              description,
+              kind,
+              lastUpdated: new Date().toISOString().slice(0, 10),
+              files: [],
+              custom: true,
+            },
+          ],
+        })),
+      deleteResource: (id) =>
+        setState((prev) => ({
+          ...prev,
+          resources: prev.resources.filter((resource) => resource.id !== id),
+        })),
+
       setSubsectorMeasurements: (subsector, setting) =>
         setState((prev) => ({
           ...prev,
