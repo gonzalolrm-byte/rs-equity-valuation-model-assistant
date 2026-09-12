@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileSpreadsheet, Info, Trash2, Upload } from "lucide-react";
-import { useRef } from "react";
+import { FileSpreadsheet, Info, Plus, Trash2, Upload, X } from "lucide-react";
+import { useRef, useState } from "react";
+import type { ResourceKind } from "@/lib/data";
 import { useApp } from "@/lib/store";
+
 
 export const Route = createFileRoute("/developer/resources")({
   head: () => ({
