@@ -1066,9 +1066,14 @@ function SegmentMeasurements({
                 // keep it or pick "Other" to enter a custom measurement.
                 options={[
                   ...new Set(
-                    [outputValue, recommended.output, ...(isFirstSegment ? [] : [OTHER_MEASUREMENT])].filter(
-                      Boolean,
-                    ),
+                    [
+                      outputValue,
+                      recommended.output,
+                      // Extra units configured in the Developer Console are only
+                      // offered when this sub-sector uses multiple revenue streams.
+                      ...(isMultiStream ? recommended.outputOptions : []),
+                      ...(isFirstSegment ? [] : [OTHER_MEASUREMENT]),
+                    ].filter(Boolean),
                   ),
                 ]}
               />
