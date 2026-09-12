@@ -357,16 +357,56 @@ function CompanyInformation() {
                     label="How should the company's different sub-sectors be modeled?"
                     required
                   >
-                    <OptionRow
-                      value={a.businessLineModeling}
-                      onChange={(value) =>
-                        setAnswer("businessLineModeling", value as typeof a.businessLineModeling)
-                      }
-                      options={[
-                        { value: "consolidated", label: "Consolidated Cash Flow" },
-                        { value: "sotp", label: "Sum-of-the-Parts (SOTP)" },
-                      ]}
-                    />
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {[
+                        {
+                          value: "consolidated",
+                          label: "Consolidated Cash Flow",
+                          note: "Under this approach, the template will generate one Master Model tab and one Valuation tab. The Master Model tab will reflect a consolidated model where Revenues, COGS, and CapEx are segmented by subsector and then aggregated, while all other financial accounts and financial statements are calculated on a consolidated basis. The Valuation tab will feed from the Master Model tab and will provide the flexibility to use weighted-average beta and exit multiple assumptions across subsectors, where applicable.",
+                        },
+                        {
+                          value: "sotp",
+                          label: "Sum-of-the-Parts (SOTP)",
+                          note: "Under this approach, the template will generate a dedicated Master Model tab and Valuation tab for each subsector, where financial accounts, financial statements, and valuations are calculated separately at the subsector (or subsidiary, where applicable) level. An additional tab will consolidate the financial information and valuation results across subsectors.",
+                        },
+                      ].map((option) => {
+                        const selected = a.businessLineModeling === option.value;
+                        return (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() =>
+                              setAnswer(
+                                "businessLineModeling",
+                                option.value as typeof a.businessLineModeling,
+                              )
+                            }
+                            className={[
+                              "flex flex-col gap-3 rounded-lg border px-4 py-4 text-left transition-colors",
+                              selected
+                                ? "border-primary bg-panel text-navy"
+                                : "border-border bg-card text-navy-soft hover:border-primary/50 hover:bg-secondary/60",
+                            ].join(" ")}
+                          >
+                            <div className="flex items-center gap-3">
+                              <span
+                                className={[
+                                  "flex size-4.5 shrink-0 items-center justify-center rounded-full border-2",
+                                  selected ? "border-primary" : "border-input",
+                                ].join(" ")}
+                              >
+                                {selected && <span className="size-2 rounded-full bg-primary" />}
+                              </span>
+                              <span className="text-[15px] font-semibold">{option.label}</span>
+                            </div>
+                            <p className="flex gap-2 text-[13px] leading-relaxed text-muted-foreground">
+                              <Lightbulb className="mt-0.5 size-4 shrink-0 text-warning" />
+                              <span>{option.note}</span>
+                            </p>
+                          </button>
+                        );
+                      })}
+                    </div>
                     {a.businessLineModeling === "sotp" && (
                       <div className="mt-4 space-y-3 rounded-lg border border-border bg-muted/40 p-4">
                         <p className="text-sm font-medium text-foreground">
