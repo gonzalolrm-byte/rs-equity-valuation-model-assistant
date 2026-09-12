@@ -66,6 +66,8 @@ function CompanyInformation() {
   const a = state.answers;
   const navigate = useNavigate();
   const [showSegmentationNote, setShowSegmentationNote] = useState(false);
+  const [expandedModelingHint, setExpandedModelingHint] = useState<string | null>(null);
+
 
   // Normalize stale saved answers after the segmentation values changed.
   useEffect(() => {
