@@ -133,13 +133,24 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
               <span className="block text-sm text-muted-foreground">Developer Console</span>
             </span>
           </span>
-          <Link
-            to="/"
-            className="ml-auto inline-flex items-center gap-2 rounded-lg border border-input px-3 py-2 text-sm font-semibold text-navy transition-colors hover:bg-secondary"
-          >
-            <ArrowLeft className="size-4" />
-            Back to User Interface
-          </Link>
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onLock}
+              className="inline-flex items-center gap-2 rounded-lg border border-input px-3 py-2 text-sm font-semibold text-navy transition-colors hover:bg-secondary"
+            >
+              <Lock className="size-4" />
+              Lock Console
+            </button>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 rounded-lg border border-input px-3 py-2 text-sm font-semibold text-navy transition-colors hover:bg-secondary"
+            >
+              <ArrowLeft className="size-4" />
+              Back to User Interface
+            </Link>
+          </div>
+
         </div>
       </header>
 
