@@ -1567,13 +1567,28 @@ function SegmentMatrix({
                   </div>
                 )}
 
-                {lineSelected && (
+                {lineSelected && mode === "single" && (
                   <SegmentMeasurements
                     segmentId={line.value}
                     segmentLabel={line.label}
                     hideHeader
                   />
                 )}
+
+                {lineSelected &&
+                  mode === "multi" &&
+                  revenueStreamOptions
+                    .filter((stream) => streams.includes(stream.value))
+                    .map((stream, streamIndex) => (
+                      <SegmentMeasurements
+                        key={stream.value}
+                        segmentId={line.value}
+                        segmentLabel={`${line.label} — ${stream.label}`}
+                        measurementKey={`${line.value}:${stream.value}`}
+                        isPrimaryStream={streamIndex === 0}
+                      />
+                    ))}
+
 
                 {lineSelected && mode === "multi" && (
                   <div className="mt-3 space-y-3 rounded-lg border border-panel-border bg-card p-3">
