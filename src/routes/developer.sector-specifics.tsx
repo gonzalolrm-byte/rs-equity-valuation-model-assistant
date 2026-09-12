@@ -153,6 +153,7 @@ function SubsectorCard({
   const override = state.sectorSpecifics[subsector];
   const current = {
     output: override?.output || shipped.output,
+    outputOptions: override?.outputOptions ?? [],
     capacityOptions:
       override?.capacityOptions?.length ? override.capacityOptions : shipped.capacityOptions,
   };
@@ -160,6 +161,17 @@ function SubsectorCard({
 
   const setOutput = (output: string) =>
     setSubsectorMeasurements(subsector, { ...current, output });
+
+  // Option 1 / Option 2 are extra output units, only shown to users when the
+  // sub-sector is modeled with multiple revenue streams.
+  const setOutputOption = (index: number, value: string) => {
+    const next = [current.outputOptions[0] ?? "", current.outputOptions[1] ?? ""];
+    next[index] = value;
+    setSubsectorMeasurements(subsector, {
+      ...current,
+      outputOptions: next.filter(Boolean),
+    });
+  };
 
   const toggleCapacity = (unit: string) => {
     const has = current.capacityOptions.includes(unit);
