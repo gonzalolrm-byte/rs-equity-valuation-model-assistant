@@ -173,6 +173,7 @@ function CompanyInformation() {
 
 
   const isSotpFx = a.selectedSegments.length > 1 && a.businessLineModeling === "sotp";
+  const showLineModeling = a.selectedSegments.length > 1;
 
   const setLineCountryCount = (
     lineId: string,
