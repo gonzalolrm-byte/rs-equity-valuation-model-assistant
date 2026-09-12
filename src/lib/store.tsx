@@ -208,6 +208,9 @@ type Ctx = {
   deletePrompt: (id: string) => void;
   replaceResourceFiles: (id: string, files: File[]) => void;
   removeResourceFile: (id: string, fileName: string) => void;
+  addResource: (resource: { name: string; description: string; kind: ResourceKind }) => void;
+  deleteResource: (id: string) => void;
+
   setSubsectorMeasurements: (subsector: string, setting: SubsectorMeasurementSetting) => void;
   resetSubsectorMeasurements: (subsector: string) => void;
   addSubsectorTemplateFiles: (subsector: string, files: File[]) => void;
