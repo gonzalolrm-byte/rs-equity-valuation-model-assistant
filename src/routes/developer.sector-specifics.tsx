@@ -153,6 +153,7 @@ function SubsectorCard({
   const override = state.sectorSpecifics[subsector];
   const current = {
     output: override?.output || shipped.output,
+    outputOptions: override?.outputOptions ?? [],
     capacityOptions:
       override?.capacityOptions?.length ? override.capacityOptions : shipped.capacityOptions,
   };
@@ -160,6 +161,17 @@ function SubsectorCard({
 
   const setOutput = (output: string) =>
     setSubsectorMeasurements(subsector, { ...current, output });
+
+  // Option 1 / Option 2 are extra output units, only shown to users when the
+  // sub-sector is modeled with multiple revenue streams.
+  const setOutputOption = (index: number, value: string) => {
+    const next = [current.outputOptions[0] ?? "", current.outputOptions[1] ?? ""];
+    next[index] = value;
+    setSubsectorMeasurements(subsector, {
+      ...current,
+      outputOptions: next.filter(Boolean),
+    });
+  };
 
   const toggleCapacity = (unit: string) => {
     const has = current.capacityOptions.includes(unit);
@@ -235,6 +247,36 @@ function SubsectorCard({
               </option>
             ))}
           </select>
+
+          {[0, 1].map((index) => (
+            <div key={index} className="mt-3">
+              <label
+                className="block text-[13px] font-semibold text-navy"
+                htmlFor={`output-opt-${index}-${subsector}`}
+              >
+                Maximum Output / Units Sold measurement (Option {index + 1})
+              </label>
+              <select
+                id={`output-opt-${index}-${subsector}`}
+                value={current.outputOptions[index] ?? ""}
+                onChange={(event) => setOutputOption(index, event.target.value)}
+                className="mt-1.5 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm text-navy focus:border-primary focus:outline-none"
+              >
+                <option value="">Not offered</option>
+                {[...new Set([current.outputOptions[index] ?? "", ...OUTPUT_CHOICES])]
+                  .filter((unit) => Boolean(unit) && unit !== current.output)
+                  .map((unit) => (
+                    <option key={unit} value={unit}>
+                      {unit}
+                    </option>
+                  ))}
+              </select>
+            </div>
+          ))}
+          <p className="mt-1.5 text-[12px] text-muted-foreground">
+            Options 1 and 2 only appear in the questionnaire when the sub-sector is set to multiple
+            revenue streams.
+          </p>
         </div>
 
         <div>

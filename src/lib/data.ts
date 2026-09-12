@@ -778,6 +778,11 @@ export const SUBSECTOR_OUTPUT_MEASUREMENTS: Record<string, string> = {
 export type SubsectorMeasurementSetting = {
   /** Default Maximum Output / Units Sold measurement. */
   output: string;
+  /**
+   * Extra Maximum Output / Units Sold measurements (Option 1 / Option 2), only
+   * offered when a sub-sector is modeled with multiple revenue streams.
+   */
+  outputOptions?: string[];
   /** Capacity measurements offered for this subsector template. */
   capacityOptions: string[];
 };
@@ -794,7 +799,7 @@ export function defaultSubsectorMeasurements(
   const capacityOptions =
     SUBSECTOR_CAPACITY_MEASUREMENTS[subsector] ??
     (sectorDefaults?.capacity ? [sectorDefaults.capacity, "Units"] : ["Units"]);
-  return { output, capacityOptions };
+  return { output, outputOptions: [], capacityOptions };
 }
 
 export function recommendedMeasurements(input: {
@@ -803,7 +808,13 @@ export function recommendedMeasurements(input: {
   businessModel?: string;
   /** Developer Console overrides keyed by subsector template. */
   sectorSpecifics?: SectorSpecifics;
-}): { capacity: string; output: string; capacityOptions: string[] } {
+}): {
+  capacity: string;
+  output: string;
+  /** Alternative output units offered for multi-stream sub-sectors. */
+  outputOptions: string[];
+  capacityOptions: string[];
+} {
   const override = input.subsector ? input.sectorSpecifics?.[input.subsector] : undefined;
 
   // The selected subsector template defines the default output unit.
@@ -839,7 +850,11 @@ export function recommendedMeasurements(input: {
   const primaryCapacity = baseOptions[0] ?? "Units";
   const capacity = primaryCapacity === output ? SAME_AS_OUTPUT_MEASUREMENT : primaryCapacity;
 
-  return { capacity, output, capacityOptions };
+  const outputOptions = (override?.outputOptions ?? []).filter(
+    (unit) => Boolean(unit) && unit !== output,
+  );
+
+  return { capacity, output, outputOptions: [...new Set(outputOptions)], capacityOptions };
 }
 
 /** Working capital line items modeled on a days basis (assets vs. liabilities). */

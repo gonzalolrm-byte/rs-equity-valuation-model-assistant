@@ -1012,6 +1012,7 @@ function SegmentMeasurements({
   const needsAnyUnit = needsOutputUnit || needsCapacityUnit;
   const [showUnitNote, setShowUnitNote] = useState(false);
   const isFirstSegment = segmentId === "segment1";
+  const isMultiStream = a.lineStreamMode[segmentId] === "multi";
 
   // Sub-sector 1 cannot use a custom measurement.
   const outputValue =
@@ -1066,9 +1067,14 @@ function SegmentMeasurements({
                 // keep it or pick "Other" to enter a custom measurement.
                 options={[
                   ...new Set(
-                    [outputValue, recommended.output, ...(isFirstSegment ? [] : [OTHER_MEASUREMENT])].filter(
-                      Boolean,
-                    ),
+                    [
+                      outputValue,
+                      recommended.output,
+                      // Extra units configured in the Developer Console are only
+                      // offered when this sub-sector uses multiple revenue streams.
+                      ...(isMultiStream ? recommended.outputOptions : []),
+                      ...(isFirstSegment ? [] : [OTHER_MEASUREMENT]),
+                    ].filter(Boolean),
                   ),
                 ]}
               />
