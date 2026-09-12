@@ -247,6 +247,36 @@ function SubsectorCard({
               </option>
             ))}
           </select>
+
+          {[0, 1].map((index) => (
+            <div key={index} className="mt-3">
+              <label
+                className="block text-[13px] font-semibold text-navy"
+                htmlFor={`output-opt-${index}-${subsector}`}
+              >
+                Maximum Output / Units Sold measurement (Option {index + 1})
+              </label>
+              <select
+                id={`output-opt-${index}-${subsector}`}
+                value={current.outputOptions[index] ?? ""}
+                onChange={(event) => setOutputOption(index, event.target.value)}
+                className="mt-1.5 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm text-navy focus:border-primary focus:outline-none"
+              >
+                <option value="">Not offered</option>
+                {[...new Set([current.outputOptions[index] ?? "", ...OUTPUT_CHOICES])]
+                  .filter((unit) => Boolean(unit) && unit !== current.output)
+                  .map((unit) => (
+                    <option key={unit} value={unit}>
+                      {unit}
+                    </option>
+                  ))}
+              </select>
+            </div>
+          ))}
+          <p className="mt-1.5 text-[12px] text-muted-foreground">
+            Options 1 and 2 only appear in the questionnaire when the sub-sector is set to multiple
+            revenue streams.
+          </p>
         </div>
 
         <div>
