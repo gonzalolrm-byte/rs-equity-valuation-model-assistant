@@ -1012,6 +1012,7 @@ function SegmentMeasurements({
   const needsAnyUnit = needsOutputUnit || needsCapacityUnit;
   const [showUnitNote, setShowUnitNote] = useState(false);
   const isFirstSegment = segmentId === "segment1";
+  const isMultiStream = a.lineStreamMode[segmentId] === "multi";
 
   // Sub-sector 1 cannot use a custom measurement.
   const outputValue =
