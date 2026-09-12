@@ -350,6 +350,82 @@ function CompanyInformation() {
                     </div>
                   </Question>
                 )}
+
+                {showLineModeling && (
+                  <Question
+                    number={3}
+                    label="How should the company's different sub-sectors be modeled?"
+                    required
+                  >
+                    <OptionRow
+                      value={a.businessLineModeling}
+                      onChange={(value) =>
+                        setAnswer("businessLineModeling", value as typeof a.businessLineModeling)
+                      }
+                      options={[
+                        { value: "consolidated", label: "Consolidated Cash Flow" },
+                        { value: "sotp", label: "Sum-of-the-Parts (SOTP)" },
+                      ]}
+                    />
+                    {a.businessLineModeling === "sotp" && (
+                      <div className="mt-4 space-y-3 rounded-lg border border-border bg-muted/40 p-4">
+                        <p className="text-sm font-medium text-foreground">
+                          Valuation method by sub-sector
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {segmentOptions
+                            .filter((option) => a.selectedSegments.includes(option.value))
+                            .map((option) => {
+                              const isLine1 = option.value === "segment1";
+                              const current = isLine1
+                                ? "dcf"
+                                : (a.lineValuationMethod[option.value] ?? "dcf");
+                              return (
+                                <div
+                                  key={option.value}
+                                  className="flex items-center gap-2 rounded-full border border-border bg-card py-1.5 pl-3 pr-1.5"
+                                >
+                                  <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                    {option.label}
+                                  </span>
+                                  <div className="flex rounded-full bg-muted p-0.5">
+                                    {(["dcf", "comps"] as const).map((method) => {
+                                      const selected = current === method;
+                                      return (
+                                        <button
+                                          key={method}
+                                          type="button"
+                                          disabled={isLine1}
+                                          onClick={() =>
+                                            setAnswer("lineValuationMethod", {
+                                              ...a.lineValuationMethod,
+                                              [option.value]: method,
+                                            })
+                                          }
+                                          className={[
+                                            "rounded-full px-3 py-1 text-xs font-medium transition-colors",
+                                            selected
+                                              ? "bg-primary text-primary-foreground"
+                                              : "text-muted-foreground hover:text-foreground",
+                                            isLine1 ? "cursor-not-allowed opacity-70" : "",
+                                          ].join(" ")}
+                                        >
+                                          {method === "dcf" ? "DCF" : "Comps"}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Sub-sector 1 is always valued with DCF.
+                        </p>
+                      </div>
+                    )}
+                  </Question>
+                )}
               </Collapsible>
 
               <Collapsible title="B. Revenue, COGS, and CapEx Key Inputs">
