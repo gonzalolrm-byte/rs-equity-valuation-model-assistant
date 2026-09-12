@@ -165,6 +165,15 @@ function ResourceRow({ id }: { id: string }) {
         </div>
         <button
           type="button"
+          onClick={() => deleteResource(resource.id)}
+          className="inline-flex items-center gap-2 rounded-lg border border-destructive/40 px-3.5 py-2 text-[13px] font-semibold text-destructive transition-colors hover:bg-destructive/10"
+        >
+          <Trash2 className="size-4" />
+          Remove
+        </button>
+        <button
+
+          type="button"
           onClick={() => inputRef.current?.click()}
           className="inline-flex items-center gap-2 rounded-lg border border-primary/40 px-3.5 py-2 text-[13px] font-semibold text-primary transition-colors hover:bg-panel"
         >
