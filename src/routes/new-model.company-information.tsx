@@ -504,234 +504,153 @@ function CompanyInformation() {
 
               <Collapsible title="C. Other Modeling Key Inputs">
                 {(() => {
-                  const showLineModeling = a.selectedSegments.length > 1;
-                  const d = (n: number) => (showLineModeling ? n : n - 1);
-                  return (
-                    <>
-                {showLineModeling && (
-                  <Question
-                    number={1}
-                    label="How should the company's different sub-sectors be modeled?"
-                    required
-                  >
-                    <OptionRow
-                      value={a.businessLineModeling}
-                      onChange={(value) =>
-                        setAnswer("businessLineModeling", value as typeof a.businessLineModeling)
-                      }
-                      options={[
-                        { value: "consolidated", label: "Consolidated Cash Flow" },
-                        { value: "sotp", label: "Sum-of-the-Parts (SOTP)" },
-                      ]}
-                    />
-                    {a.businessLineModeling === "sotp" && (
-                      <div className="mt-4 space-y-3 rounded-lg border border-border bg-muted/40 p-4">
-                        <p className="text-sm font-medium text-foreground">
-                          Valuation method by sub-sector
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {segmentOptions
-                            .filter((option) => a.selectedSegments.includes(option.value))
-                            .map((option) => {
-                              const isLine1 = option.value === "segment1";
-                              const current = isLine1
-                                ? "dcf"
-                                : (a.lineValuationMethod[option.value] ?? "dcf");
-                              return (
-                                <div
-                                  key={option.value}
-                                  className="flex items-center gap-2 rounded-full border border-border bg-card py-1.5 pl-3 pr-1.5"
-                                >
-                                  <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                                    {option.label}
-                                  </span>
-                                  <div className="flex rounded-full bg-muted p-0.5">
-                                    {(["dcf", "comps"] as const).map((method) => {
-                                      const selected = current === method;
-                                      return (
-                                        <button
-                                          key={method}
-                                          type="button"
-                                          disabled={isLine1}
-                                          onClick={() =>
-                                            setAnswer("lineValuationMethod", {
-                                              ...a.lineValuationMethod,
-                                              [option.value]: method,
-                                            })
-                                          }
-                                          className={[
-                                            "rounded-full px-3 py-1 text-xs font-medium transition-colors",
-                                            selected
-                                              ? "bg-primary text-primary-foreground"
-                                              : "text-muted-foreground hover:text-foreground",
-                                            isLine1 ? "cursor-not-allowed opacity-70" : "",
-                                          ].join(" ")}
-                                        >
-                                          {method === "dcf" ? "DCF" : "Comps"}
-                                        </button>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          Sub-sector 1 is always valued with DCF.
-                        </p>
-                      </div>
-                    )}
-                  </Question>
-                )}
-
-                {(() => {
                   const isSotp = showLineModeling && a.businessLineModeling === "sotp";
                   const lines = segmentOptions.filter((option) =>
                     a.selectedSegments.includes(option.value),
                   );
                   return (
                     <>
-                <Question
-                  number={d(2)}
-                  label="How many years of projections do you need?"
-                  required
-                  hint={
-                    isSotp
-                      ? "With Sum-of-the-Parts, the projection horizon is set for each sub-sector."
-                      : undefined
-                  }
-                >
-                  {isSotp ? (
-                    <LineMatrix
-                      lines={lines}
-                      rows={[{ key: "years", label: "Projection horizon" }]}
-                      renderCell={(lineId) => (
-                        <div className="space-y-2">
-                          <SelectField
-                            value={a.projectionYearsByLine[lineId] ?? ""}
-                            onChange={(value) =>
-                              setAnswer("projectionYearsByLine", {
-                                ...a.projectionYearsByLine,
-                                [lineId]: value,
-                              })
-                            }
-                            options={["5 years", "10 years", "More than 10 years"]}
-                            placeholder="Select years"
+                      <Question
+                        number={1}
+                        label="How many years of projections do you need?"
+                        required
+                        hint={
+                          isSotp
+                            ? "With Sum-of-the-Parts, the projection horizon is set for each sub-sector."
+                            : undefined
+                        }
+                      >
+                        {isSotp ? (
+                          <LineMatrix
+                            lines={lines}
+                            rows={[{ key: "years", label: "Projection horizon" }]}
+                            renderCell={(lineId) => (
+                              <div className="space-y-2">
+                                <SelectField
+                                  value={a.projectionYearsByLine[lineId] ?? ""}
+                                  onChange={(value) =>
+                                    setAnswer("projectionYearsByLine", {
+                                      ...a.projectionYearsByLine,
+                                      [lineId]: value,
+                                    })
+                                  }
+                                  options={["5 years", "10 years", "More than 10 years"]}
+                                  placeholder="Select years"
+                                />
+                                {a.projectionYearsByLine[lineId] === "More than 10 years" && (
+                                  <TextField
+                                    value={a.customYearsByLine[lineId] ?? ""}
+                                    onChange={(value) =>
+                                      setAnswer("customYearsByLine", {
+                                        ...a.customYearsByLine,
+                                        [lineId]: value.replace(/\D/g, ""),
+                                      })
+                                    }
+                                    placeholder="e.g. 15"
+                                  />
+                                )}
+                              </div>
+                            )}
                           />
-                          {a.projectionYearsByLine[lineId] === "More than 10 years" && (
-                            <TextField
-                              value={a.customYearsByLine[lineId] ?? ""}
+                        ) : (
+                          <>
+                            <OptionRow
+                              columns={3}
+                              value={a.projectionYears}
                               onChange={(value) =>
-                                setAnswer("customYearsByLine", {
-                                  ...a.customYearsByLine,
-                                  [lineId]: value.replace(/\D/g, ""),
-                                })
+                                setAnswer("projectionYears", value as typeof a.projectionYears)
                               }
-                              placeholder="e.g. 15"
+                              options={[
+                                { value: "5", label: "5 years" },
+                                { value: "10", label: "10 years" },
+                                { value: "custom", label: "More than 10 years" },
+                              ]}
                             />
+                            {a.projectionYears === "custom" && (
+                              <TextField
+                                label="Enter number of years"
+                                value={a.customYears}
+                                onChange={(value) => setAnswer("customYears", value.replace(/\D/g, ""))}
+                                placeholder="e.g. 15"
+                                error={!!customYearsError}
+                                errorMessage={customYearsError}
+                              />
+                            )}
+                          </>
+                        )}
+                      </Question>
+
+                      <Question
+                        number={2}
+                        label="Working capital — how should days be modeled for each line item?"
+                        hint="Select the historical basis used to derive days for each working capital item, or choose Manual input to enter the number of days directly."
+                      >
+                        <div className="space-y-4">
+                          {isSotp ? (
+                            <>
+                              <LineWorkingCapitalMatrix
+                                title="Assets"
+                                items={WORKING_CAPITAL_ASSETS}
+                                lines={lines}
+                              />
+                              <LineWorkingCapitalMatrix
+                                title="Liabilities"
+                                items={WORKING_CAPITAL_LIABILITIES}
+                                lines={lines}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <WorkingCapitalGroup title="Assets" items={WORKING_CAPITAL_ASSETS} />
+                              <WorkingCapitalGroup
+                                title="Liabilities"
+                                items={WORKING_CAPITAL_LIABILITIES}
+                              />
+                            </>
                           )}
                         </div>
-                      )}
-                    />
-                  ) : (
-                    <>
-                      <OptionRow
-                        columns={3}
-                        value={a.projectionYears}
-                        onChange={(value) =>
-                          setAnswer("projectionYears", value as typeof a.projectionYears)
+                      </Question>
+
+                      <Question
+                        number={3}
+                        label="How many comparable companies (comps) does the company have?"
+                        hint={
+                          isSotp
+                            ? "With Sum-of-the-Parts, comps are identified for each sub-sector."
+                            : undefined
                         }
-                        options={[
-                          { value: "5", label: "5 years" },
-                          { value: "10", label: "10 years" },
-                          { value: "custom", label: "More than 10 years" },
-                        ]}
-                      />
-                      {a.projectionYears === "custom" && (
-                        <TextField
-                          label="Enter number of years"
-                          value={a.customYears}
-                          onChange={(value) => setAnswer("customYears", value.replace(/\D/g, ""))}
-                          placeholder="e.g. 15"
-                          error={!!customYearsError}
-                          errorMessage={customYearsError}
-                        />
-                      )}
-                    </>
-                  )}
-                </Question>
-
-                <Question
-                  number={d(3)}
-                  label="Working capital — how should days be modeled for each line item?"
-                  hint="Select the historical basis used to derive days for each working capital item, or choose Manual input to enter the number of days directly."
-                >
-                  <div className="space-y-4">
-                    {isSotp ? (
-                      <>
-                        <LineWorkingCapitalMatrix
-                          title="Assets"
-                          items={WORKING_CAPITAL_ASSETS}
-                          lines={lines}
-                        />
-                        <LineWorkingCapitalMatrix
-                          title="Liabilities"
-                          items={WORKING_CAPITAL_LIABILITIES}
-                          lines={lines}
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <WorkingCapitalGroup title="Assets" items={WORKING_CAPITAL_ASSETS} />
-                        <WorkingCapitalGroup
-                          title="Liabilities"
-                          items={WORKING_CAPITAL_LIABILITIES}
-                        />
-                      </>
-                    )}
-                  </div>
-                </Question>
-
-                <Question
-                  number={d(4)}
-                  label="How many comparable companies (comps) does the company have?"
-                  hint={
-                    isSotp
-                      ? "With Sum-of-the-Parts, comps are identified for each sub-sector."
-                      : undefined
-                  }
-                >
-                  {isSotp ? (
-                    <LineMatrix
-                      lines={lines}
-                      rows={[{ key: "comps", label: "Number of comps" }]}
-                      renderCell={(lineId) => (
-                        <TextField
-                          value={a.compsCountByLine[lineId] ?? ""}
-                          onChange={(value) =>
-                            setAnswer("compsCountByLine", {
-                              ...a.compsCountByLine,
-                              [lineId]: value.replace(/\D/g, ""),
-                            })
-                          }
-                          placeholder="Enter number"
-                        />
-                      )}
-                    />
-                  ) : (
-                    <TextField
-                      value={a.compsCount}
-                      onChange={(value) => setAnswer("compsCount", value.replace(/\D/g, ""))}
-                      placeholder="Enter number of comps"
-                    />
-                  )}
-                </Question>
+                      >
+                        {isSotp ? (
+                          <LineMatrix
+                            lines={lines}
+                            rows={[{ key: "comps", label: "Number of comps" }]}
+                            renderCell={(lineId) => (
+                              <TextField
+                                value={a.compsCountByLine[lineId] ?? ""}
+                                onChange={(value) =>
+                                  setAnswer("compsCountByLine", {
+                                    ...a.compsCountByLine,
+                                    [lineId]: value.replace(/\D/g, ""),
+                                  })
+                                }
+                                placeholder="Enter number"
+                              />
+                            )}
+                          />
+                        ) : (
+                          <TextField
+                            value={a.compsCount}
+                            onChange={(value) => setAnswer("compsCount", value.replace(/\D/g, ""))}
+                            placeholder="Enter number of comps"
+                          />
+                        )}
+                      </Question>
                     </>
                   );
                 })()}
 
                 <Question
-                  number={d(5)}
+                  number={4}
                   label="Does IFC have common shares or preferred shares?"
                   required
                 >
@@ -757,7 +676,7 @@ function CompanyInformation() {
                   )}
                 </Question>
 
-                <Question number={d(6)} label="Does the company have a liquidity put?" required>
+                <Question number={5} label="Does the company have a liquidity put?" required>
                   <OptionRow
                     value={a.liquidityPut}
                     onChange={(value) => setAnswer("liquidityPut", value as typeof a.liquidityPut)}
@@ -787,9 +706,6 @@ function CompanyInformation() {
                     </div>
                   )}
                 </Question>
-                    </>
-                  );
-                })()}
               </Collapsible>
 
               <Collapsible title="D. FX Key Inputs">
