@@ -1,14 +1,123 @@
 import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
-import { ArrowLeft, FolderOpen, MessageSquareCode, Settings, SlidersHorizontal } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { useEffect, useState } from "react";
+import { ArrowLeft, FolderOpen, KeyRound, Lock, MessageSquareCode, Settings, SlidersHorizontal } from "lucide-react";
 import { IfcLockup } from "@/components/AppHeader";
 import { useApp, type NavigationMode } from "@/lib/store";
+import {
+  isDeveloperUnlocked,
+  lockDeveloper,
+  unlockDeveloper,
+} from "@/lib/developer-gate.functions";
 
 export const Route = createFileRoute("/developer")({
-  component: DeveloperLayout,
+  component: DeveloperGate,
 });
 
+/** Passcode gate in front of the Developer Console. */
+function DeveloperGate() {
+  const checkUnlocked = useServerFn(isDeveloperUnlocked);
+  const unlock = useServerFn(unlockDeveloper);
+  const lock = useServerFn(lockDeveloper);
+  const [unlocked, setUnlocked] = useState<boolean | null>(null);
+  const [passcode, setPasscode] = useState("");
+  const [error, setError] = useState(false);
+  const [busy, setBusy] = useState(false);
 
-function DeveloperLayout() {
+  useEffect(() => {
+    let active = true;
+    checkUnlocked()
+      .then((r) => active && setUnlocked(r.unlocked))
+      .catch(() => active && setUnlocked(false));
+    return () => {
+      active = false;
+    };
+  }, [checkUnlocked]);
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setBusy(true);
+    setError(false);
+    try {
+      const { ok } = await unlock({ data: { passcode } });
+      if (ok) {
+        setUnlocked(true);
+        setPasscode("");
+      } else {
+        setError(true);
+      }
+    } catch {
+      setError(true);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (unlocked === null) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background text-[15px] text-muted-foreground">
+        Checking access…
+      </div>
+    );
+  }
+
+  if (!unlocked) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-5">
+        <form
+          onSubmit={submit}
+          className="w-full max-w-sm rounded-2xl border border-panel-border bg-card p-7 shadow-card"
+        >
+          <span className="flex size-11 items-center justify-center rounded-full bg-panel">
+            <Lock className="size-5 text-primary" />
+          </span>
+          <h1 className="mt-4 font-heading text-xl font-bold text-navy">Developer Only</h1>
+          <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+            Enter the passcode to open the Developer Console.
+          </p>
+          <input
+            type="password"
+            autoFocus
+            autoComplete="current-password"
+            value={passcode}
+            onChange={(e) => setPasscode(e.target.value)}
+            placeholder="Passcode"
+            className="mt-4 h-11 w-full rounded-lg border border-input bg-card px-3 text-[15px] text-navy outline-none focus:border-primary"
+          />
+          {error && (
+            <p className="mt-2 text-[13px] font-medium text-destructive">Incorrect passcode.</p>
+          )}
+          <button
+            type="submit"
+            disabled={busy || passcode.length === 0}
+            className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary text-[15px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+          >
+            <KeyRound className="size-4" />
+            {busy ? "Checking…" : "Unlock"}
+          </button>
+          <Link
+            to="/"
+            className="mt-3 block text-center text-[13px] font-semibold text-primary hover:underline"
+          >
+            Back to User Interface
+          </Link>
+        </form>
+      </div>
+    );
+  }
+
+  return (
+    <DeveloperLayout
+      onLock={async () => {
+        await lock({ data: undefined });
+        setUnlocked(false);
+      }}
+    />
+  );
+}
+
+function DeveloperLayout({ onLock }: { onLock: () => void }) {
+
   const { state, patch } = useApp();
   return (
     <div className="min-h-screen bg-background">
