@@ -164,6 +164,10 @@ export type AppState = {
   sectorSpecifics: SectorSpecifics;
   /** Uploaded template file names per subsector template (prototype: names only). */
   subsectorTemplates: Record<string, string[]>;
+  /** Developer-added subsector templates per sector. */
+  customSubsectors: Record<string, string[]>;
+  /** Shipped subsector templates hidden by the developer, per sector. */
+  removedSubsectors: Record<string, string[]>;
 };
 
 
@@ -182,6 +186,8 @@ const INITIAL_STATE: AppState = {
   resources: INITIAL_RESOURCES,
   sectorSpecifics: {},
   subsectorTemplates: {},
+  customSubsectors: {},
+  removedSubsectors: {},
 
 };
 
@@ -206,6 +212,8 @@ type Ctx = {
   resetSubsectorMeasurements: (subsector: string) => void;
   addSubsectorTemplateFiles: (subsector: string, files: File[]) => void;
   removeSubsectorTemplateFile: (subsector: string, fileName: string) => void;
+  addCustomSubsector: (sector: string, name: string) => void;
+  deleteSubsector: (sector: string, name: string) => void;
 
   saveProgress: () => void;
   reset: () => void;
@@ -416,6 +424,45 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             ),
           },
         })),
+      addCustomSubsector: (sector, name) =>
+        setState((prev) => {
+          const trimmed = name.trim();
+          if (!trimmed) return prev;
+          const existing = prev.customSubsectors[sector] ?? [];
+          if (existing.includes(trimmed)) return prev;
+          // Re-adding a shipped template simply un-hides it.
+          const removed = (prev.removedSubsectors[sector] ?? []).filter((item) => item !== trimmed);
+          return {
+            ...prev,
+            customSubsectors: { ...prev.customSubsectors, [sector]: [...existing, trimmed] },
+            removedSubsectors: { ...prev.removedSubsectors, [sector]: removed },
+          };
+        }),
+      deleteSubsector: (sector, name) =>
+        setState((prev) => {
+          const isCustom = (prev.customSubsectors[sector] ?? []).includes(name);
+          const sectorSpecifics = { ...prev.sectorSpecifics };
+          delete sectorSpecifics[name];
+          const subsectorTemplates = { ...prev.subsectorTemplates };
+          delete subsectorTemplates[name];
+          return {
+            ...prev,
+            sectorSpecifics,
+            subsectorTemplates,
+            customSubsectors: isCustom
+              ? {
+                  ...prev.customSubsectors,
+                  [sector]: (prev.customSubsectors[sector] ?? []).filter((item) => item !== name),
+                }
+              : prev.customSubsectors,
+            removedSubsectors: isCustom
+              ? prev.removedSubsectors
+              : {
+                  ...prev.removedSubsectors,
+                  [sector]: [...new Set([...(prev.removedSubsectors[sector] ?? []), name])],
+                },
+          };
+        }),
       saveProgress: () => setState((prev) => ({ ...prev, savedAt: new Date().toISOString() })),
       reset: () =>
         setState((prev) => ({
@@ -424,6 +471,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           sectorSpecifics: prev.sectorSpecifics,
           subsectorTemplates: prev.subsectorTemplates,
           resources: prev.resources,
+          customSubsectors: prev.customSubsectors,
+          removedSubsectors: prev.removedSubsectors,
 
         })),
     }),
