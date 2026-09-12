@@ -66,6 +66,8 @@ function CompanyInformation() {
   const a = state.answers;
   const navigate = useNavigate();
   const [showSegmentationNote, setShowSegmentationNote] = useState(false);
+  const [expandedModelingHint, setExpandedModelingHint] = useState<string | null>(null);
+
 
   // Normalize stale saved answers after the segmentation values changed.
   useEffect(() => {
@@ -371,24 +373,27 @@ function CompanyInformation() {
                         },
                       ].map((option) => {
                         const selected = a.businessLineModeling === option.value;
+                        const hintOpen = expandedModelingHint === option.value;
                         return (
-                          <button
+                          <div
                             key={option.value}
-                            type="button"
-                            onClick={() =>
-                              setAnswer(
-                                "businessLineModeling",
-                                option.value as typeof a.businessLineModeling,
-                              )
-                            }
                             className={[
-                              "flex flex-col gap-3 rounded-lg border px-4 py-4 text-left transition-colors",
+                              "relative flex flex-col gap-3 rounded-lg border px-4 py-4 text-left transition-colors",
                               selected
                                 ? "border-primary bg-panel text-navy"
                                 : "border-border bg-card text-navy-soft hover:border-primary/50 hover:bg-secondary/60",
                             ].join(" ")}
                           >
-                            <div className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setAnswer(
+                                  "businessLineModeling",
+                                  option.value as typeof a.businessLineModeling,
+                                )
+                              }
+                              className="flex items-center gap-3 text-left"
+                            >
                               <span
                                 className={[
                                   "flex size-4.5 shrink-0 items-center justify-center rounded-full border-2",
@@ -398,15 +403,30 @@ function CompanyInformation() {
                                 {selected && <span className="size-2 rounded-full bg-primary" />}
                               </span>
                               <span className="text-[15px] font-semibold">{option.label}</span>
-                            </div>
-                            <p className="flex gap-2 text-[13px] leading-relaxed text-muted-foreground">
-                              <Lightbulb className="mt-0.5 size-4 shrink-0 text-warning" />
-                              <span>{option.note}</span>
-                            </p>
-                          </button>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setExpandedModelingHint(hintOpen ? null : option.value);
+                              }}
+                              aria-expanded={hintOpen}
+                              aria-label={hintOpen ? `Hide guidance for ${option.label}` : `Show guidance for ${option.label}`}
+                              className="flex items-center gap-2 self-start rounded-lg py-1 text-[13px] font-medium text-warning transition-colors hover:bg-warning-soft"
+                            >
+                              <Lightbulb className="size-4" />
+                              <span>{hintOpen ? "Hide guidance" : "What does this mean?"}</span>
+                            </button>
+                            {hintOpen && (
+                              <p className="text-[13px] leading-relaxed text-muted-foreground">
+                                {option.note}
+                              </p>
+                            )}
+                          </div>
                         );
                       })}
                     </div>
+
                     {a.businessLineModeling === "sotp" && (
                       <div className="mt-4 space-y-3 rounded-lg border border-border bg-muted/40 p-4">
                         <p className="text-sm font-medium text-foreground">
