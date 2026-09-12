@@ -381,7 +381,10 @@ export type DeveloperResource = {
   sector?: string;
   lastUpdated: string;
   files: string[];
+  /** True for entries created by a developer in the console (deletable). */
+  custom?: boolean;
 };
+
 
 export const INITIAL_RESOURCES: DeveloperResource[] = [
   {
