@@ -85,11 +85,44 @@ function SectorSpecifics() {
             </option>
           ))}
         </select>
+
+        <label className="mt-4 block text-[13px] font-semibold text-navy" htmlFor="new-subsector">
+          Add sub-sector template
+        </label>
+        <div className="mt-1.5 flex gap-2">
+          <input
+            id="new-subsector"
+            value={newSubsector}
+            onChange={(event) => setNewSubsector(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                addSubsector();
+              }
+            }}
+            placeholder="e.g. Specialty Chemicals"
+            className="w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm text-navy focus:border-primary focus:outline-none"
+          />
+          <button
+            type="button"
+            onClick={addSubsector}
+            disabled={!newSubsector.trim()}
+            className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary px-3.5 py-2.5 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-secondary disabled:text-muted-foreground"
+          >
+            <Plus className="size-4" />
+            Add
+          </button>
+        </div>
       </div>
 
       <div className="mt-6 space-y-4">
         {subsectors.map((subsector) => (
-          <SubsectorCard key={subsector} sector={sector} subsector={subsector} />
+          <SubsectorCard
+            key={subsector}
+            sector={sector}
+            subsector={subsector}
+            deletable={!GENERIC_TEMPLATES.includes(subsector)}
+          />
         ))}
       </div>
 
@@ -105,8 +138,17 @@ function SectorSpecifics() {
   );
 }
 
-function SubsectorCard({ sector, subsector }: { sector: string; subsector: string }) {
-  const { state, setSubsectorMeasurements, resetSubsectorMeasurements } = useApp();
+function SubsectorCard({
+  sector,
+  subsector,
+  deletable = false,
+}: {
+  sector: string;
+  subsector: string;
+  deletable?: boolean;
+}) {
+  const { state, setSubsectorMeasurements, resetSubsectorMeasurements, deleteSubsector } =
+    useApp();
   const shipped = defaultSubsectorMeasurements(subsector, sector);
   const override = state.sectorSpecifics[subsector];
   const current = {
@@ -144,16 +186,33 @@ function SubsectorCard({ sector, subsector }: { sector: string; subsector: strin
             Shipped default: {shipped.output}
           </p>
         </div>
-        {edited && (
-          <button
-            type="button"
-            onClick={() => resetSubsectorMeasurements(subsector)}
-            className="inline-flex items-center gap-2 rounded-lg border border-input px-3 py-2 text-[13px] font-semibold text-navy transition-colors hover:bg-secondary"
-          >
-            <RotateCcw className="size-4" />
-            Reset
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {edited && (
+            <button
+              type="button"
+              onClick={() => resetSubsectorMeasurements(subsector)}
+              className="inline-flex items-center gap-2 rounded-lg border border-input px-3 py-2 text-[13px] font-semibold text-navy transition-colors hover:bg-secondary"
+            >
+              <RotateCcw className="size-4" />
+              Reset
+            </button>
+          )}
+          {deletable && (
+            <button
+              type="button"
+              onClick={() => {
+                if (window.confirm(`Delete the "${subsector}" sub-sector template?`)) {
+                  deleteSubsector(sector, subsector);
+                }
+              }}
+              className="inline-flex items-center gap-2 rounded-lg border border-destructive/30 px-3 py-2 text-[13px] font-semibold text-destructive transition-colors hover:bg-destructive/10"
+              aria-label={`Delete ${subsector}`}
+            >
+              <Trash2 className="size-4" />
+              Delete
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="mt-4 grid gap-5 md:grid-cols-2">
