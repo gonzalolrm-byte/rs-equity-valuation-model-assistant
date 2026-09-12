@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileSpreadsheet, Info, RotateCcw, Trash2, Upload } from "lucide-react";
+import { FileSpreadsheet, Info, Plus, RotateCcw, Trash2, Upload } from "lucide-react";
 import { useRef, useState } from "react";
 
 import {
@@ -42,8 +42,23 @@ const CAPACITY_CHOICES = CAPACITY_MEASUREMENTS.filter(
 const OUTPUT_CHOICES = OUTPUT_MEASUREMENTS.filter((unit) => unit !== OTHER_MEASUREMENT);
 
 function SectorSpecifics() {
+  const { state, addCustomSubsector } = useApp();
   const [sector, setSector] = useState<string>(SECTORS[0]);
-  const subsectors = [...(SUBSECTORS[sector] ?? []), ...GENERIC_TEMPLATES];
+  const [newSubsector, setNewSubsector] = useState("");
+  const removed = state.removedSubsectors[sector] ?? [];
+  const custom = state.customSubsectors[sector] ?? [];
+  const subsectors = [
+    ...(SUBSECTORS[sector] ?? []).filter((item) => !removed.includes(item)),
+    ...custom,
+    ...GENERIC_TEMPLATES,
+  ];
+
+  const addSubsector = () => {
+    const name = newSubsector.trim();
+    if (!name) return;
+    addCustomSubsector(sector, name);
+    setNewSubsector("");
+  };
 
   return (
     <div>
