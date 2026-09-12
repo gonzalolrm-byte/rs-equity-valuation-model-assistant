@@ -19,6 +19,8 @@ import {
   INITIAL_RESOURCES,
   type DeveloperResource,
   type PromptAction,
+  type ResourceKind,
+
   type SectorSpecifics,
   type SubsectorMeasurementSetting,
 } from "./data";
