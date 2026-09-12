@@ -205,9 +205,10 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
             </div>
           </div>
           <p className="rounded-xl border border-border bg-card p-4 text-[12px] leading-relaxed text-muted-foreground">
-            Prototype access control: this console is unprotected in this build. Role-based
-            authorization is added with the backend in the next phase.
+            This console is protected by a shared passcode. Individual accounts and role-based
+            authorization are added with the backend in the next phase.
           </p>
+
         </aside>
 
         <main>
