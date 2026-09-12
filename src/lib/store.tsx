@@ -257,13 +257,20 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           ...savedPrompts.filter((item) => !registryIds.has(item.id) && item.custom === true),
         ];
         // Reconcile the developer resource registry: keep uploaded files for
-        // resources that still exist, adopt newly shipped resources, and drop
-        // resources removed from the registry.
+        // resources that still exist, adopt newly shipped resources, drop
+        // resources removed from the registry, and keep developer-created ones.
         const savedResources = saved.resources ?? [];
-        const resources: DeveloperResource[] = INITIAL_RESOURCES.map((resource) => {
-          const savedResource = savedResources.find((item) => item.id === resource.id);
-          return savedResource ? { ...resource, files: savedResource.files } : resource;
-        });
+        const resourceRegistryIds = new Set(INITIAL_RESOURCES.map((item) => item.id));
+        const resources: DeveloperResource[] = [
+          ...INITIAL_RESOURCES.map((resource) => {
+            const savedResource = savedResources.find((item) => item.id === resource.id);
+            return savedResource ? { ...resource, files: savedResource.files } : resource;
+          }),
+          ...savedResources.filter(
+            (item) => !resourceRegistryIds.has(item.id) && item.custom === true,
+          ),
+        ];
+
         setState({
           ...INITIAL_STATE,
           ...saved,
