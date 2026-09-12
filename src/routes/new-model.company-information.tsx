@@ -962,14 +962,21 @@ function SegmentMeasurements({
   segmentId,
   segmentLabel,
   hideHeader = false,
+  measurementKey,
+  isPrimaryStream = true,
 }: {
   segmentId: string;
   segmentLabel: string;
   hideHeader?: boolean;
+  /** Storage key — defaults to the sub-sector, or `${segmentId}:${streamId}`. */
+  measurementKey?: string;
+  /** Revenue Stream 1 of Sub-sector 1 keeps the locked recommended unit. */
+  isPrimaryStream?: boolean;
 }) {
   const { state, setAnswer } = useApp();
   const a = state.answers;
-  const saved = a.segmentMeasurements[segmentId];
+  const storageKey = measurementKey ?? segmentId;
+  const saved = a.segmentMeasurements[storageKey];
 
   // Each sub-sector card is linked to its own A.2 subsector template selection.
   const lineSubsector =
@@ -999,7 +1006,7 @@ function SegmentMeasurements({
   const update = (partial: Partial<SegmentMeasurement>) => {
     setAnswer("segmentMeasurements", {
       ...a.segmentMeasurements,
-      [segmentId]: { ...current, ...partial },
+      [storageKey]: { ...current, ...partial },
     });
   };
 
@@ -1011,7 +1018,7 @@ function SegmentMeasurements({
   const needsCapacityUnit = !isPercentageBased;
   const needsAnyUnit = needsOutputUnit || needsCapacityUnit;
   const [showUnitNote, setShowUnitNote] = useState(false);
-  const isFirstSegment = segmentId === "segment1";
+  const isFirstSegment = segmentId === "segment1" && isPrimaryStream;
   const isMultiStream = a.lineStreamMode[segmentId] === "multi";
 
   // Sub-sector 1 cannot use a custom measurement.
@@ -1019,6 +1026,7 @@ function SegmentMeasurements({
     isFirstSegment && current.output === OTHER_MEASUREMENT
       ? recommended.output
       : current.output;
+
 
   return (
     <div className="mt-2 rounded-xl border border-panel-border bg-panel/60 p-4">
