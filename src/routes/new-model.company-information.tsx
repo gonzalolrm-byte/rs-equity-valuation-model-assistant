@@ -326,7 +326,11 @@ function CompanyInformation() {
                               }
                             }}
                             options={[
-                              ...(SUBSECTORS[a.sector] ?? []),
+                              ...(SUBSECTORS[a.sector] ?? []).filter(
+                                (option) =>
+                                  !(state.removedSubsectors[a.sector] ?? []).includes(option),
+                              ),
+                              ...(state.customSubsectors[a.sector] ?? []),
                               "Generic - Unit Economics",
                               "Generic - Percentage Based",
                             ].filter((option) => {
