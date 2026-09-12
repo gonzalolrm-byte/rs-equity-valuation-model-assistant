@@ -778,6 +778,11 @@ export const SUBSECTOR_OUTPUT_MEASUREMENTS: Record<string, string> = {
 export type SubsectorMeasurementSetting = {
   /** Default Maximum Output / Units Sold measurement. */
   output: string;
+  /**
+   * Extra Maximum Output / Units Sold measurements (Option 1 / Option 2), only
+   * offered when a sub-sector is modeled with multiple revenue streams.
+   */
+  outputOptions?: string[];
   /** Capacity measurements offered for this subsector template. */
   capacityOptions: string[];
 };
