@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileSpreadsheet, Info, Trash2, Upload } from "lucide-react";
-import { useRef } from "react";
+import { FileSpreadsheet, Info, Plus, Trash2, Upload, X } from "lucide-react";
+import { useRef, useState } from "react";
+import type { ResourceKind } from "@/lib/data";
 import { useApp } from "@/lib/store";
+
 
 export const Route = createFileRoute("/developer/resources")({
   head: () => ({
@@ -23,7 +25,24 @@ export const Route = createFileRoute("/developer/resources")({
 });
 
 function Resources() {
-  const { state } = useApp();
+  const { state, addResource } = useApp();
+  const [adding, setAdding] = useState(false);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [kind, setKind] = useState<ResourceKind>("template");
+
+  const submit = () => {
+    if (!name.trim()) return;
+    addResource({
+      name: name.trim(),
+      description: description.trim() || "No description provided.",
+      kind,
+    });
+    setName("");
+    setDescription("");
+    setKind("template");
+    setAdding(false);
+  };
 
   return (
     <div>
@@ -39,6 +58,72 @@ function Resources() {
         ))}
       </div>
 
+      {adding ? (
+        <section className="mt-4 rounded-xl border border-primary/40 bg-panel p-5">
+          <div className="flex items-center justify-between">
+            <h2 className="font-heading text-[16px] font-bold">New entry</h2>
+            <button
+              type="button"
+              onClick={() => setAdding(false)}
+              className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-secondary"
+              aria-label="Cancel new entry"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <label className="text-[13px] font-semibold text-navy">
+              Name
+              <input
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="e.g. Country Risk Premium Report"
+                className="mt-1.5 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm font-normal text-navy outline-none focus:border-primary"
+              />
+            </label>
+            <label className="text-[13px] font-semibold text-navy">
+              Type
+              <select
+                value={kind}
+                onChange={(event) => setKind(event.target.value as ResourceKind)}
+                className="mt-1.5 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm font-normal text-navy outline-none focus:border-primary"
+              >
+                <option value="template">Template</option>
+                <option value="reference">Reference data</option>
+              </select>
+            </label>
+            <label className="text-[13px] font-semibold text-navy sm:col-span-2">
+              Description
+              <textarea
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                rows={2}
+                placeholder="What this file is used for."
+                className="mt-1.5 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm font-normal text-navy outline-none focus:border-primary"
+              />
+            </label>
+          </div>
+          <button
+            type="button"
+            onClick={submit}
+            disabled={!name.trim()}
+            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+          >
+            <Plus className="size-4" />
+            Add entry
+          </button>
+        </section>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setAdding(true)}
+          className="mt-4 inline-flex items-center gap-2 rounded-lg border border-dashed border-primary/50 px-4 py-2.5 text-[13px] font-semibold text-primary transition-colors hover:bg-panel"
+        >
+          <Plus className="size-4" />
+          Add new entry
+        </button>
+      )}
+
       <div className="mt-6 flex gap-3 rounded-xl border border-panel-border bg-panel p-5">
         <Info className="mt-0.5 size-4 shrink-0 text-primary" />
         <p className="text-[13px] leading-relaxed text-navy-soft">
@@ -51,10 +136,12 @@ function Resources() {
   );
 }
 
+
 function ResourceRow({ id }: { id: string }) {
-  const { state, replaceResourceFiles, removeResourceFile } = useApp();
+  const { state, replaceResourceFiles, removeResourceFile, deleteResource } = useApp();
   const resource = state.resources.find((item) => item.id === id)!;
   const inputRef = useRef<HTMLInputElement>(null);
+
 
   return (
     <section className="rounded-xl border border-border bg-card p-5 shadow-card">
@@ -77,6 +164,15 @@ function ResourceRow({ id }: { id: string }) {
           </p>
         </div>
         <button
+          type="button"
+          onClick={() => deleteResource(resource.id)}
+          className="inline-flex items-center gap-2 rounded-lg border border-destructive/40 px-3.5 py-2 text-[13px] font-semibold text-destructive transition-colors hover:bg-destructive/10"
+        >
+          <Trash2 className="size-4" />
+          Remove
+        </button>
+        <button
+
           type="button"
           onClick={() => inputRef.current?.click()}
           className="inline-flex items-center gap-2 rounded-lg border border-primary/40 px-3.5 py-2 text-[13px] font-semibold text-primary transition-colors hover:bg-panel"

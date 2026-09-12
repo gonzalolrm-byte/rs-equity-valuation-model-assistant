@@ -19,6 +19,8 @@ import {
   INITIAL_RESOURCES,
   type DeveloperResource,
   type PromptAction,
+  type ResourceKind,
+
   type SectorSpecifics,
   type SubsectorMeasurementSetting,
 } from "./data";
@@ -208,6 +210,9 @@ type Ctx = {
   deletePrompt: (id: string) => void;
   replaceResourceFiles: (id: string, files: File[]) => void;
   removeResourceFile: (id: string, fileName: string) => void;
+  addResource: (resource: { name: string; description: string; kind: ResourceKind }) => void;
+  deleteResource: (id: string) => void;
+
   setSubsectorMeasurements: (subsector: string, setting: SubsectorMeasurementSetting) => void;
   resetSubsectorMeasurements: (subsector: string) => void;
   addSubsectorTemplateFiles: (subsector: string, files: File[]) => void;
@@ -257,13 +262,20 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           ...savedPrompts.filter((item) => !registryIds.has(item.id) && item.custom === true),
         ];
         // Reconcile the developer resource registry: keep uploaded files for
-        // resources that still exist, adopt newly shipped resources, and drop
-        // resources removed from the registry.
+        // resources that still exist, adopt newly shipped resources, drop
+        // resources removed from the registry, and keep developer-created ones.
         const savedResources = saved.resources ?? [];
-        const resources: DeveloperResource[] = INITIAL_RESOURCES.map((resource) => {
-          const savedResource = savedResources.find((item) => item.id === resource.id);
-          return savedResource ? { ...resource, files: savedResource.files } : resource;
-        });
+        const resourceRegistryIds = new Set(INITIAL_RESOURCES.map((item) => item.id));
+        const resources: DeveloperResource[] = [
+          ...INITIAL_RESOURCES.map((resource) => {
+            const savedResource = savedResources.find((item) => item.id === resource.id);
+            return savedResource ? { ...resource, files: savedResource.files } : resource;
+          }),
+          ...savedResources.filter(
+            (item) => !resourceRegistryIds.has(item.id) && item.custom === true,
+          ),
+        ];
+
         setState({
           ...INITIAL_STATE,
           ...saved,
@@ -390,6 +402,28 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
               : resource,
           ),
         })),
+      addResource: ({ name, description, kind }) =>
+        setState((prev) => ({
+          ...prev,
+          resources: [
+            ...prev.resources,
+            {
+              id: `res-custom-${Date.now()}`,
+              name,
+              description,
+              kind,
+              lastUpdated: new Date().toISOString().slice(0, 10),
+              files: [],
+              custom: true,
+            },
+          ],
+        })),
+      deleteResource: (id) =>
+        setState((prev) => ({
+          ...prev,
+          resources: prev.resources.filter((resource) => resource.id !== id),
+        })),
+
       setSubsectorMeasurements: (subsector, setting) =>
         setState((prev) => ({
           ...prev,
