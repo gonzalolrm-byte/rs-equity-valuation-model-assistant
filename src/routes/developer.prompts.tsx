@@ -472,6 +472,8 @@ function PromptUpload({
   const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [showText, setShowText] = useState(false);
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
 
   const load = async (list: FileList | null) => {
     const file = list?.[0];
@@ -484,6 +486,10 @@ function PromptUpload({
         setError("No readable text was found in that file.");
       } else {
         onChange(result.text, result.fileName);
+        setFileUrl((previous) => {
+          if (previous) URL.revokeObjectURL(previous);
+          return URL.createObjectURL(file);
+        });
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not read that file.");
@@ -491,6 +497,7 @@ function PromptUpload({
       setBusy(false);
     }
   };
+
 
   return (
     <div className="block">
