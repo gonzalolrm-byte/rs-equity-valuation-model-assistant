@@ -399,6 +399,16 @@ function PromptEditor({
             placeholder="Enter category name"
           />
 
+          <label className="block">
+            <span className="mb-1.5 block text-sm text-muted-foreground">Description</span>
+            <textarea
+              value={draft.description ?? ""}
+              onChange={(event) => setDraft({ ...draft, description: event.target.value })}
+              placeholder="Brief description of what this prompt does"
+              rows={3}
+              className="w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+            />
+          </label>
 
           <PromptUpload
             promptText={draft.promptText}
