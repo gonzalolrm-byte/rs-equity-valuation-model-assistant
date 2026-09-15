@@ -370,12 +370,11 @@ function PromptEditor({
             />
           </div>
 
-          <SelectField
+          <TextField
             label="Category"
             value={draft.category}
             onChange={(value) => setDraft({ ...draft, category: value })}
-            options={PROMPT_CATEGORIES}
-            placeholder="Select category"
+            placeholder="Enter category name"
           />
 
           <TextField
