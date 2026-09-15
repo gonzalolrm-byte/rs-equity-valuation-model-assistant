@@ -135,7 +135,7 @@ function WorkflowSection({
 }) {
   const { state, togglePromptStatus, deletePrompt, movePrompt } = useApp();
   const [editing, setEditing] = useState<PromptAction | null>(null);
-  const [editing, setEditing] = useState<PromptAction | null>(null);
+
   const [creating, setCreating] = useState(false);
 
   const workflowPrompts = useMemo(
