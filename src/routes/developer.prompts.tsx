@@ -558,9 +558,6 @@ function PromptUpload({
               <Trash2 className="size-4" />
             </button>
           </div>
-          <pre className="max-h-64 overflow-auto whitespace-pre-wrap px-3.5 py-3 font-mono text-[12px] leading-relaxed text-navy-soft">
-            {promptText}
-          </pre>
         </div>
       )}
     </div>
