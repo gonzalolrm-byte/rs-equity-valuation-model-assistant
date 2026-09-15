@@ -212,6 +212,24 @@ function WorkflowSection({
                     <div className="flex items-center gap-1">
                       <button
                         type="button"
+                        onClick={() => movePrompt(prompt.id, "up")}
+                        disabled={orderIndex <= 0}
+                        className="rounded-md p-1.5 text-navy-soft transition-colors hover:bg-secondary disabled:opacity-30"
+                        aria-label={`Move ${prompt.id} up`}
+                      >
+                        <ArrowUp className="size-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => movePrompt(prompt.id, "down")}
+                        disabled={orderIndex < 0 || orderIndex >= workflowPrompts.length - 1}
+                        className="rounded-md p-1.5 text-navy-soft transition-colors hover:bg-secondary disabled:opacity-30"
+                        aria-label={`Move ${prompt.id} down`}
+                      >
+                        <ArrowDown className="size-4" />
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => setEditing(prompt)}
                         className="rounded-md p-1.5 text-primary transition-colors hover:bg-panel"
                         aria-label={`Edit ${prompt.id}`}
