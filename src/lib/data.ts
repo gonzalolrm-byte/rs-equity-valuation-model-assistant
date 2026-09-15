@@ -439,6 +439,8 @@ export type PromptAction = {
   status: PromptStatus;
   lastUpdated: string;
   promptText: string;
+  /** Short developer-written summary of what the prompt does. */
+  description?: string | undefined;
   /** Name of the Word/PDF document the prompt text was uploaded from, when applicable. */
   promptFileName?: string | undefined;
   /** The original uploaded document, stored as a base64 data URL so it can be downloaded again. */
