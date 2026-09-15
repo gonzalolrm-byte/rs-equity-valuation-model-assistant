@@ -8,7 +8,6 @@ import { testPrompt } from "@/lib/services/claudeService";
 import { extractPromptText } from "@/lib/services/documentTextService";
 import { useApp } from "@/lib/store";
 
-const PAGE_SIZE = 8;
 
 const WORKFLOWS = [
   {
@@ -50,6 +49,9 @@ function Prompts() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("");
+  const [activeWorkflow, setActiveWorkflow] = useState<string>(WORKFLOWS[0].key);
+
+  const workflow = WORKFLOWS.find((item) => item.key === activeWorkflow) ?? WORKFLOWS[0];
 
   return (
     <div>
@@ -62,7 +64,26 @@ function Prompts() {
         </p>
       </div>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-6 inline-flex rounded-xl border border-border bg-card p-1 shadow-card">
+        {WORKFLOWS.map((item) => (
+          <button
+            key={item.key}
+            type="button"
+            onClick={() => setActiveWorkflow(item.key)}
+            aria-pressed={item.key === activeWorkflow}
+            className={[
+              "rounded-lg px-4 py-2 text-sm font-semibold transition-colors",
+              item.key === activeWorkflow
+                ? "bg-primary text-primary-foreground"
+                : "text-navy-soft hover:bg-secondary",
+            ].join(" ")}
+          >
+            {item.key}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <label className="relative block">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
@@ -86,20 +107,19 @@ function Prompts() {
         />
       </div>
 
-      <div className="mt-8 space-y-10">
-        {WORKFLOWS.map((workflow) => (
-          <WorkflowSection
-            key={workflow.key}
-            workflow={workflow}
-            search={search}
-            category={category}
-            status={status}
-          />
-        ))}
+      <div className="mt-8">
+        <WorkflowSection
+          key={workflow.key}
+          workflow={workflow}
+          search={search}
+          category={category}
+          status={status}
+        />
       </div>
     </div>
   );
 }
+
 
 function WorkflowSection({
   workflow,
@@ -113,8 +133,8 @@ function WorkflowSection({
   status: string;
 }) {
   const { state, togglePromptStatus, deletePrompt, movePrompt } = useApp();
-  const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<PromptAction | null>(null);
+
   const [creating, setCreating] = useState(false);
 
   const workflowPrompts = useMemo(
@@ -141,9 +161,8 @@ function WorkflowSection({
     });
   }, [workflowPrompts, search, category, status]);
 
-  const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const current = Math.min(page, pages);
-  const rows = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
+  const rows = filtered;
+
 
   let digits = 2;
   const maxNumber = state.prompts.reduce((max, prompt) => {
@@ -271,29 +290,10 @@ function WorkflowSection({
             </tbody>
           </table>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-3 text-[13px] text-muted-foreground">
-          <span>
-            {filtered.length} action(s) · page {current} of {pages}
-          </span>
-          <div className="flex gap-2">
-            <Button
-              variant="secondary"
-              disabled={current <= 1}
-              onClick={() => setPage(current - 1)}
-              className="px-3 py-1.5"
-            >
-              Previous
-            </Button>
-            <Button
-              variant="secondary"
-              disabled={current >= pages}
-              onClick={() => setPage(current + 1)}
-              className="px-3 py-1.5"
-            >
-              Next
-            </Button>
-          </div>
+        <div className="border-t border-border px-4 py-3 text-[13px] text-muted-foreground">
+          <span>{filtered.length} action(s)</span>
         </div>
+
       </div>
 
       {(editing || creating) && (
