@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileText, Pencil, Play, Plus, Power, Search, Trash2, UploadCloud, X } from "lucide-react";
+import { ArrowDown, ArrowUp, FileText, Pencil, Play, Plus, Power, Search, Trash2, UploadCloud, X } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { Button } from "@/components/Button";
 import { SelectField, TextField } from "@/components/form";
@@ -112,7 +112,7 @@ function WorkflowSection({
   category: string;
   status: string;
 }) {
-  const { state, togglePromptStatus, deletePrompt } = useApp();
+  const { state, togglePromptStatus, deletePrompt, movePrompt } = useApp();
   const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<PromptAction | null>(null);
   const [creating, setCreating] = useState(false);
@@ -187,7 +187,9 @@ function WorkflowSection({
               </tr>
             </thead>
             <tbody>
-              {rows.map((prompt) => (
+              {rows.map((prompt) => {
+                const orderIndex = workflowPrompts.findIndex((item) => item.id === prompt.id);
+                return (
                 <tr key={prompt.id} className="border-t border-border">
                   <td className="whitespace-nowrap px-4 py-3 font-mono text-[12px] font-semibold text-primary">
                     {prompt.id}
@@ -208,6 +210,24 @@ function WorkflowSection({
                   <td className="px-4 py-3 text-muted-foreground">{prompt.lastUpdated}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => movePrompt(prompt.id, "up")}
+                        disabled={orderIndex <= 0}
+                        className="rounded-md p-1.5 text-navy-soft transition-colors hover:bg-secondary disabled:opacity-30"
+                        aria-label={`Move ${prompt.id} up`}
+                      >
+                        <ArrowUp className="size-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => movePrompt(prompt.id, "down")}
+                        disabled={orderIndex < 0 || orderIndex >= workflowPrompts.length - 1}
+                        className="rounded-md p-1.5 text-navy-soft transition-colors hover:bg-secondary disabled:opacity-30"
+                        aria-label={`Move ${prompt.id} down`}
+                      >
+                        <ArrowDown className="size-4" />
+                      </button>
                       <button
                         type="button"
                         onClick={() => setEditing(prompt)}
@@ -239,7 +259,8 @@ function WorkflowSection({
                     </div>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
               {rows.length === 0 && (
                 <tr className="border-t border-border">
                   <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">

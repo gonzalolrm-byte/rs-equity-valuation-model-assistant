@@ -208,6 +208,7 @@ type Ctx = {
   addPrompt: (prompt: PromptAction) => void;
   togglePromptStatus: (id: string) => void;
   deletePrompt: (id: string) => void;
+  movePrompt: (id: string, direction: "up" | "down") => void;
   replaceResourceFiles: (id: string, files: File[]) => void;
   removeResourceFile: (id: string, fileName: string) => void;
   addResource: (resource: { name: string; description: string; kind: ResourceKind }) => void;
@@ -380,6 +381,32 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           prompts: prev.prompts.filter((item) => item.id !== id),
           selectedActions: prev.selectedActions.filter((item) => item !== id),
         })),
+      movePrompt: (id, direction) =>
+        setState((prev) => {
+          const prefix = id.split("-")[0] ?? "";
+          const siblings = prev.prompts
+            .filter((item) => item.id.startsWith(`${prefix}-`))
+            .slice()
+            .sort((a, b) => a.id.localeCompare(b.id));
+          const index = siblings.findIndex((item) => item.id === id);
+          if (index < 0) return prev;
+          const neighborIndex = direction === "up" ? index - 1 : index + 1;
+          if (neighborIndex < 0 || neighborIndex >= siblings.length) return prev;
+          const current = siblings[index];
+          const neighbor = siblings[neighborIndex];
+          if (!current || !neighbor) return prev;
+          // Swap the IDs so the two actions trade places in the ID-ordered list.
+          return {
+            ...prev,
+            prompts: prev.prompts.map((item) =>
+              item.id === current.id
+                ? { ...item, id: neighbor.id }
+                : item.id === neighbor.id && item.step === neighbor.step
+                  ? { ...item, id: current.id }
+                  : item,
+            ),
+          };
+        }),
       replaceResourceFiles: (id, files) =>
         setState((prev) => ({
           ...prev,
