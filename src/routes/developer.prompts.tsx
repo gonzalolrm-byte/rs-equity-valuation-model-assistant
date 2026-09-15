@@ -396,8 +396,14 @@ function PromptEditor({
           <PromptUpload
             promptText={draft.promptText}
             fileName={draft.promptFileName}
-            onChange={(text, fileName) =>
-              setDraft({ ...draft, promptText: text, promptFileName: fileName })
+            fileData={draft.promptFileData}
+            onChange={(text, fileName, fileData) =>
+              setDraft({
+                ...draft,
+                promptText: text,
+                promptFileName: fileName,
+                promptFileData: fileData,
+              })
             }
           />
 
