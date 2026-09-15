@@ -561,15 +561,16 @@ function PromptUpload({
               >
                 {showText ? "Hide text" : "View text"}
               </button>
-              {fileUrl && (
-                <a
-                  href={fileUrl}
-                  download={fileName ?? "prompt"}
-                  className="rounded-md px-2 py-1 text-[12px] font-semibold text-primary transition-colors hover:bg-panel"
-                >
-                  Download file
-                </a>
-              )}
+              <a
+                href={
+                  fileUrl ??
+                  `data:text/plain;charset=utf-8,${encodeURIComponent(promptText)}`
+                }
+                download={fileUrl ? (fileName ?? "prompt") : `${fileName ?? "prompt"}.txt`}
+                className="rounded-md px-2 py-1 text-[12px] font-semibold text-primary transition-colors hover:bg-panel"
+              >
+                Download file
+              </a>
               <button
                 type="button"
                 onClick={() => {
