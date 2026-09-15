@@ -187,7 +187,9 @@ function WorkflowSection({
               </tr>
             </thead>
             <tbody>
-              {rows.map((prompt) => (
+              {rows.map((prompt) => {
+                const orderIndex = workflowPrompts.findIndex((item) => item.id === prompt.id);
+                return (
                 <tr key={prompt.id} className="border-t border-border">
                   <td className="whitespace-nowrap px-4 py-3 font-mono text-[12px] font-semibold text-primary">
                     {prompt.id}
