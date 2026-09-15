@@ -50,6 +50,9 @@ function Prompts() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("");
+  const [activeWorkflow, setActiveWorkflow] = useState<string>(WORKFLOWS[0].key);
+
+  const workflow = WORKFLOWS.find((item) => item.key === activeWorkflow) ?? WORKFLOWS[0];
 
   return (
     <div>
@@ -62,7 +65,26 @@ function Prompts() {
         </p>
       </div>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-6 inline-flex rounded-xl border border-border bg-card p-1 shadow-card">
+        {WORKFLOWS.map((item) => (
+          <button
+            key={item.key}
+            type="button"
+            onClick={() => setActiveWorkflow(item.key)}
+            aria-pressed={item.key === activeWorkflow}
+            className={[
+              "rounded-lg px-4 py-2 text-sm font-semibold transition-colors",
+              item.key === activeWorkflow
+                ? "bg-primary text-primary-foreground"
+                : "text-navy-soft hover:bg-secondary",
+            ].join(" ")}
+          >
+            {item.key}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <label className="relative block">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
@@ -86,20 +108,19 @@ function Prompts() {
         />
       </div>
 
-      <div className="mt-8 space-y-10">
-        {WORKFLOWS.map((workflow) => (
-          <WorkflowSection
-            key={workflow.key}
-            workflow={workflow}
-            search={search}
-            category={category}
-            status={status}
-          />
-        ))}
+      <div className="mt-8">
+        <WorkflowSection
+          key={workflow.key}
+          workflow={workflow}
+          search={search}
+          category={category}
+          status={status}
+        />
       </div>
     </div>
   );
 }
+
 
 function WorkflowSection({
   workflow,
