@@ -439,6 +439,8 @@ export type PromptAction = {
   status: PromptStatus;
   lastUpdated: string;
   promptText: string;
+  /** Name of the Word/PDF document the prompt text was uploaded from, when applicable. */
+  promptFileName?: string | undefined;
   requiredResources: string[];
   /** True for actions created by a developer in the console (not shipped in the registry). */
   custom?: boolean;
