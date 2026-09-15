@@ -541,11 +541,8 @@ function PromptUpload({
 
       {promptText && (
         <div className="mt-3 rounded-xl border border-border bg-card">
-          <div className="flex items-center gap-3 border-b border-border px-3.5 py-2.5">
+          <div className="flex items-center gap-3 px-3.5 py-2.5">
             <FileText className="size-4 shrink-0 text-primary" />
-            <span className="min-w-0 flex-1 truncate text-[13px] font-semibold text-navy">
-              {fileName ?? "Prompt instruction"}
-            </span>
             <span className="hidden text-[12px] text-muted-foreground sm:block">
               {promptText.length.toLocaleString()} characters
             </span>
@@ -558,6 +555,11 @@ function PromptUpload({
               <Trash2 className="size-4" />
             </button>
           </div>
+          {fileName && (
+            <p className="truncate border-t border-border px-3.5 py-2 text-[13px] font-semibold text-navy">
+              {fileName}
+            </p>
+          )}
         </div>
       )}
     </div>
