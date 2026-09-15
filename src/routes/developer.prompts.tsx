@@ -465,8 +465,8 @@ function PromptUpload({
   onChange,
 }: {
   promptText: string;
-  fileName?: string;
-  onChange: (text: string, fileName?: string) => void;
+  fileName?: string | undefined;
+  onChange: (text: string, fileName?: string | undefined) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
