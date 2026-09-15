@@ -441,17 +441,19 @@ function PromptEditor({
             Cancel
           </Button>
           <Button
-            disabled={!draft.id.trim() || !draft.title.trim()}
+            disabled={!draft.id.trim()}
             onClick={() => {
               if (isNew)
                 addPrompt({
                   ...draft,
+                  title: draft.title.trim() || draft.id,
                   custom: true,
                   lastUpdated: new Date().toISOString().slice(0, 10),
                 });
               else savePrompt(draft);
               onClose();
             }}
+
           >
             {isNew ? "Add Action" : "Save Prompt"}
           </Button>
