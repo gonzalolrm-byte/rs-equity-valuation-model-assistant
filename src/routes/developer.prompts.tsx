@@ -162,9 +162,8 @@ function WorkflowSection({
     });
   }, [workflowPrompts, search, category, status]);
 
-  const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const current = Math.min(page, pages);
-  const rows = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
+  const rows = filtered;
+
 
   let digits = 2;
   const maxNumber = state.prompts.reduce((max, prompt) => {
