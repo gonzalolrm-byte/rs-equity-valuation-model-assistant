@@ -392,18 +392,13 @@ function PromptEditor({
             placeholder="e.g. {{company_name}}, {{primary_sector}}"
           />
 
-          <label className="block">
-            <span className="mb-1.5 block text-sm text-muted-foreground">
-              AI Prompt / Instruction
-            </span>
-            <textarea
-              value={draft.promptText}
-              onChange={(event) => setDraft({ ...draft, promptText: event.target.value })}
-              rows={14}
-              className="w-full rounded-lg border border-input bg-secondary/40 px-3.5 py-3 font-mono text-[13px] leading-relaxed text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-ring/25"
-              placeholder="Exact instruction this action contributes to model generation…"
-            />
-          </label>
+          <PromptUpload
+            promptText={draft.promptText}
+            fileName={draft.promptFileName}
+            onChange={(text, fileName) =>
+              setDraft({ ...draft, promptText: text, promptFileName: fileName })
+            }
+          />
 
           <p className="text-[12px] text-muted-foreground">
             Last updated: <span className="font-semibold text-navy">{draft.lastUpdated}</span>
