@@ -457,3 +457,111 @@ function PromptEditor({
     </div>
   );
 }
+
+function PromptUpload({
+  promptText,
+  fileName,
+  onChange,
+}: {
+  promptText: string;
+  fileName?: string;
+  onChange: (text: string, fileName?: string) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [dragging, setDragging] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  const load = async (list: FileList | null) => {
+    const file = list?.[0];
+    if (!file) return;
+    setBusy(true);
+    setError("");
+    try {
+      const result = await extractPromptText(file);
+      if (!result.text) {
+        setError("No readable text was found in that file.");
+      } else {
+        onChange(result.text, result.fileName);
+      }
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not read that file.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="block">
+      <span className="mb-1.5 block text-sm text-muted-foreground">AI Prompt / Instruction</span>
+
+      <div
+        onDragOver={(event) => {
+          event.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(event) => {
+          event.preventDefault();
+          setDragging(false);
+          void load(event.dataTransfer.files);
+        }}
+        onClick={() => inputRef.current?.click()}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") inputRef.current?.click();
+        }}
+        className={[
+          "cursor-pointer rounded-xl border-2 border-dashed px-5 py-7 text-center transition-colors",
+          dragging ? "border-primary bg-panel" : "border-input bg-secondary/40 hover:border-primary/60",
+        ].join(" ")}
+      >
+        <UploadCloud className="mx-auto size-6 text-primary" />
+        <p className="mt-2 text-sm font-semibold text-navy">
+          {busy ? "Reading document…" : "Upload the prompt document"}
+        </p>
+        <p className="mt-1 text-[12px] text-muted-foreground">
+          Drag and drop or click to browse · Word (.docx), PDF or plain text
+        </p>
+        <input
+          ref={inputRef}
+          type="file"
+          accept=".docx,.pdf,.txt,.md"
+          className="hidden"
+          onChange={(event) => {
+            void load(event.target.files);
+            event.target.value = "";
+          }}
+        />
+      </div>
+
+      {error && <p className="mt-2 text-[12px] font-semibold text-destructive">{error}</p>}
+
+      {promptText && (
+        <div className="mt-3 rounded-xl border border-border bg-card">
+          <div className="flex items-center gap-3 border-b border-border px-3.5 py-2.5">
+            <FileText className="size-4 shrink-0 text-primary" />
+            <span className="min-w-0 flex-1 truncate text-[13px] font-semibold text-navy">
+              {fileName ?? "Prompt instruction"}
+            </span>
+            <span className="hidden text-[12px] text-muted-foreground sm:block">
+              {promptText.length.toLocaleString()} characters
+            </span>
+            <button
+              type="button"
+              onClick={() => onChange("", undefined)}
+              className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+              aria-label="Remove uploaded prompt"
+            >
+              <Trash2 className="size-4" />
+            </button>
+          </div>
+          <pre className="max-h-64 overflow-auto whitespace-pre-wrap px-3.5 py-3 font-mono text-[12px] leading-relaxed text-navy-soft">
+            {promptText}
+          </pre>
+        </div>
+      )}
+    </div>
+  );
+}
