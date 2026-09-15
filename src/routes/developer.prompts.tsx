@@ -291,29 +291,10 @@ function WorkflowSection({
             </tbody>
           </table>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-3 text-[13px] text-muted-foreground">
-          <span>
-            {filtered.length} action(s) · page {current} of {pages}
-          </span>
-          <div className="flex gap-2">
-            <Button
-              variant="secondary"
-              disabled={current <= 1}
-              onClick={() => setPage(current - 1)}
-              className="px-3 py-1.5"
-            >
-              Previous
-            </Button>
-            <Button
-              variant="secondary"
-              disabled={current >= pages}
-              onClick={() => setPage(current + 1)}
-              className="px-3 py-1.5"
-            >
-              Next
-            </Button>
-          </div>
+        <div className="border-t border-border px-4 py-3 text-[13px] text-muted-foreground">
+          <span>{filtered.length} action(s)</span>
         </div>
+
       </div>
 
       {(editing || creating) && (
