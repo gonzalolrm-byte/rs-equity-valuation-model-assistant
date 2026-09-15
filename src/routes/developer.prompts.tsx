@@ -378,20 +378,6 @@ function PromptEditor({
             placeholder="Enter category name"
           />
 
-          <TextField
-            label="Questionnaire Variable(s)"
-            value={(draft.variables ?? []).join(", ")}
-            onChange={(value) =>
-              setDraft({
-                ...draft,
-                variables: value
-                  .split(",")
-                  .map((item) => item.trim())
-                  .filter(Boolean),
-              })
-            }
-            placeholder="e.g. {{company_name}}, {{primary_sector}}"
-          />
 
           <PromptUpload
             promptText={draft.promptText}
