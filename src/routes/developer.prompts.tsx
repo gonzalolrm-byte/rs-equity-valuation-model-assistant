@@ -8,7 +8,6 @@ import { testPrompt } from "@/lib/services/claudeService";
 import { extractPromptText } from "@/lib/services/documentTextService";
 import { useApp } from "@/lib/store";
 
-const PAGE_SIZE = 8;
 
 const WORKFLOWS = [
   {
