@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Pencil, Play, Plus, Power, Search, Trash2, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { FileText, Pencil, Play, Plus, Power, Search, Trash2, UploadCloud, X } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
 import { Button } from "@/components/Button";
 import { SelectField, TextField } from "@/components/form";
 import { PROMPT_CATEGORIES, PROMPT_STEPS, type PromptAction } from "@/lib/data";
 import { testPrompt } from "@/lib/services/claudeService";
+import { extractPromptText } from "@/lib/services/documentTextService";
 import { useApp } from "@/lib/store";
 
 const PAGE_SIZE = 8;
