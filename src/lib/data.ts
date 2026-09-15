@@ -441,6 +441,8 @@ export type PromptAction = {
   promptText: string;
   /** Name of the Word/PDF document the prompt text was uploaded from, when applicable. */
   promptFileName?: string | undefined;
+  /** The original uploaded document, stored as a base64 data URL so it can be downloaded again. */
+  promptFileData?: string | undefined;
   requiredResources: string[];
   /** True for actions created by a developer in the console (not shipped in the registry). */
   custom?: boolean;

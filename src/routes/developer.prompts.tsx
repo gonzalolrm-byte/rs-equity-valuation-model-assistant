@@ -396,8 +396,14 @@ function PromptEditor({
           <PromptUpload
             promptText={draft.promptText}
             fileName={draft.promptFileName}
-            onChange={(text, fileName) =>
-              setDraft({ ...draft, promptText: text, promptFileName: fileName })
+            fileData={draft.promptFileData}
+            onChange={(text, fileName, fileData) =>
+              setDraft({
+                ...draft,
+                promptText: text,
+                promptFileName: fileName,
+                promptFileData: fileData,
+              })
             }
           />
 
@@ -462,18 +468,23 @@ function PromptEditor({
 function PromptUpload({
   promptText,
   fileName,
+  fileData,
   onChange,
 }: {
   promptText: string;
   fileName?: string | undefined;
-  onChange: (text: string, fileName?: string | undefined) => void;
+  fileData?: string | undefined;
+  onChange: (
+    text: string,
+    fileName?: string | undefined,
+    fileData?: string | undefined,
+  ) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [showText, setShowText] = useState(false);
-  const [fileUrl, setFileUrl] = useState<string | null>(null);
 
   const load = async (list: FileList | null) => {
     const file = list?.[0];
@@ -485,11 +496,14 @@ function PromptUpload({
       if (!result.text) {
         setError("No readable text was found in that file.");
       } else {
-        onChange(result.text, result.fileName);
-        setFileUrl((previous) => {
-          if (previous) URL.revokeObjectURL(previous);
-          return URL.createObjectURL(file);
+        const dataUrl = await new Promise<string | undefined>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () =>
+            resolve(typeof reader.result === "string" ? reader.result : undefined);
+          reader.onerror = () => resolve(undefined);
+          reader.readAsDataURL(file);
         });
+        onChange(result.text, result.fileName, dataUrl);
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not read that file.");
@@ -497,6 +511,7 @@ function PromptUpload({
       setBusy(false);
     }
   };
+
 
 
   return (
@@ -563,10 +578,10 @@ function PromptUpload({
               </button>
               <a
                 href={
-                  fileUrl ??
+                  fileData ??
                   `data:text/plain;charset=utf-8,${encodeURIComponent(promptText)}`
                 }
-                download={fileUrl ? (fileName ?? "prompt") : `${fileName ?? "prompt"}.txt`}
+                download={fileData ? (fileName ?? "prompt") : `${fileName ?? "prompt"}.txt`}
                 className="rounded-md px-2 py-1 text-[12px] font-semibold text-primary transition-colors hover:bg-panel"
               >
                 Download file
@@ -574,10 +589,8 @@ function PromptUpload({
               <button
                 type="button"
                 onClick={() => {
-                  if (fileUrl) URL.revokeObjectURL(fileUrl);
-                  setFileUrl(null);
                   setShowText(false);
-                  onChange("", undefined);
+                  onChange("", undefined, undefined);
                 }}
                 className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                 aria-label="Remove uploaded prompt"
