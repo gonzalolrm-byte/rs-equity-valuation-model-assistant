@@ -15,6 +15,7 @@ import { Route as DeveloperRouteImport } from './routes/developer'
 import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as DeveloperIndexRouteImport } from './routes/developer.index'
+import { Route as DeveloperGovernanceRouteImport } from './routes/developer.governance'
 import { Route as DeveloperPromptsRouteImport } from './routes/developer.prompts'
 import { Route as DeveloperResourcesRouteImport } from './routes/developer.resources'
 import { Route as DeveloperSectorSpecificsRouteImport } from './routes/developer.sector-specifics'
@@ -53,6 +54,11 @@ const HelpRoute = HelpRouteImport.update({
 const DeveloperIndexRoute = DeveloperIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => DeveloperRoute,
+} as any)
+const DeveloperGovernanceRoute = DeveloperGovernanceRouteImport.update({
+  id: '/governance',
+  path: '/governance',
   getParentRoute: () => DeveloperRoute,
 } as any)
 const DeveloperPromptsRoute = DeveloperPromptsRouteImport.update({
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/developer': typeof DeveloperRouteWithChildren
   '/guidelines': typeof GuidelinesRoute
   '/help': typeof HelpRoute
+  '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
   '/developer/resources': typeof DeveloperResourcesRoute
   '/developer/sector-specifics': typeof DeveloperSectorSpecificsRoute
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/guidelines': typeof GuidelinesRoute
   '/help': typeof HelpRoute
+  '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
   '/developer/resources': typeof DeveloperResourcesRoute
   '/developer/sector-specifics': typeof DeveloperSectorSpecificsRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/developer': typeof DeveloperRouteWithChildren
   '/guidelines': typeof GuidelinesRoute
   '/help': typeof HelpRoute
+  '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
   '/developer/resources': typeof DeveloperResourcesRoute
   '/developer/sector-specifics': typeof DeveloperSectorSpecificsRoute
@@ -162,6 +171,7 @@ export interface FileRouteTypes {
     | '/developer'
     | '/guidelines'
     | '/help'
+    | '/developer/governance'
     | '/developer/prompts'
     | '/developer/resources'
     | '/developer/sector-specifics'
@@ -178,6 +188,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/guidelines'
     | '/help'
+    | '/developer/governance'
     | '/developer/prompts'
     | '/developer/resources'
     | '/developer/sector-specifics'
@@ -195,6 +206,7 @@ export interface FileRouteTypes {
     | '/developer'
     | '/guidelines'
     | '/help'
+    | '/developer/governance'
     | '/developer/prompts'
     | '/developer/resources'
     | '/developer/sector-specifics'
@@ -265,6 +277,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DeveloperIndexRouteImport
       parentRoute: typeof DeveloperRoute
     }
+    '/developer/governance': {
+      id: '/developer/governance'
+      path: '/governance'
+      fullPath: '/developer/governance'
+      preLoaderRoute: typeof DeveloperGovernanceRouteImport
+      parentRoute: typeof DeveloperRoute
+    }
     '/developer/prompts': {
       id: '/developer/prompts'
       path: '/prompts'
@@ -332,6 +351,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface DeveloperRouteChildren {
+  DeveloperGovernanceRoute: typeof DeveloperGovernanceRoute
   DeveloperPromptsRoute: typeof DeveloperPromptsRoute
   DeveloperResourcesRoute: typeof DeveloperResourcesRoute
   DeveloperSectorSpecificsRoute: typeof DeveloperSectorSpecificsRoute
@@ -339,6 +359,7 @@ interface DeveloperRouteChildren {
 }
 
 const DeveloperRouteChildren: DeveloperRouteChildren = {
+  DeveloperGovernanceRoute: DeveloperGovernanceRoute,
   DeveloperPromptsRoute: DeveloperPromptsRoute,
   DeveloperResourcesRoute: DeveloperResourcesRoute,
   DeveloperSectorSpecificsRoute: DeveloperSectorSpecificsRoute,
