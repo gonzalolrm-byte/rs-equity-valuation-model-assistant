@@ -553,22 +553,51 @@ function PromptUpload({
             <span className="hidden text-[12px] text-muted-foreground sm:block">
               {promptText.length.toLocaleString()} characters
             </span>
-            <button
-              type="button"
-              onClick={() => onChange("", undefined)}
-              className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-              aria-label="Remove uploaded prompt"
-            >
-              <Trash2 className="size-4" />
-            </button>
+            <div className="ml-auto flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setShowText((value) => !value)}
+                className="rounded-md px-2 py-1 text-[12px] font-semibold text-primary transition-colors hover:bg-panel"
+              >
+                {showText ? "Hide text" : "View text"}
+              </button>
+              {fileUrl && (
+                <a
+                  href={fileUrl}
+                  download={fileName ?? "prompt"}
+                  className="rounded-md px-2 py-1 text-[12px] font-semibold text-primary transition-colors hover:bg-panel"
+                >
+                  Download file
+                </a>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  if (fileUrl) URL.revokeObjectURL(fileUrl);
+                  setFileUrl(null);
+                  setShowText(false);
+                  onChange("", undefined);
+                }}
+                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                aria-label="Remove uploaded prompt"
+              >
+                <Trash2 className="size-4" />
+              </button>
+            </div>
           </div>
           {fileName && (
             <p className="truncate border-t border-border px-3.5 py-2 text-[13px] font-semibold text-navy">
               {fileName}
             </p>
           )}
+          {showText && (
+            <pre className="max-h-72 overflow-auto whitespace-pre-wrap border-t border-border px-3.5 py-3 font-mono text-[12px] leading-relaxed text-navy-soft">
+              {promptText}
+            </pre>
+          )}
         </div>
       )}
     </div>
   );
 }
+
