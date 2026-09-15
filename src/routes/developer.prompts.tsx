@@ -468,18 +468,23 @@ function PromptEditor({
 function PromptUpload({
   promptText,
   fileName,
+  fileData,
   onChange,
 }: {
   promptText: string;
   fileName?: string | undefined;
-  onChange: (text: string, fileName?: string | undefined) => void;
+  fileData?: string | undefined;
+  onChange: (
+    text: string,
+    fileName?: string | undefined,
+    fileData?: string | undefined,
+  ) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [showText, setShowText] = useState(false);
-  const [fileUrl, setFileUrl] = useState<string | null>(null);
 
   const load = async (list: FileList | null) => {
     const file = list?.[0];
@@ -491,11 +496,14 @@ function PromptUpload({
       if (!result.text) {
         setError("No readable text was found in that file.");
       } else {
-        onChange(result.text, result.fileName);
-        setFileUrl((previous) => {
-          if (previous) URL.revokeObjectURL(previous);
-          return URL.createObjectURL(file);
+        const dataUrl = await new Promise<string | undefined>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () =>
+            resolve(typeof reader.result === "string" ? reader.result : undefined);
+          reader.onerror = () => resolve(undefined);
+          reader.readAsDataURL(file);
         });
+        onChange(result.text, result.fileName, dataUrl);
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not read that file.");
@@ -503,6 +511,7 @@ function PromptUpload({
       setBusy(false);
     }
   };
+
 
 
   return (
