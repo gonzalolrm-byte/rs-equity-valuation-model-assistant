@@ -578,10 +578,10 @@ function PromptUpload({
               </button>
               <a
                 href={
-                  fileUrl ??
+                  fileData ??
                   `data:text/plain;charset=utf-8,${encodeURIComponent(promptText)}`
                 }
-                download={fileUrl ? (fileName ?? "prompt") : `${fileName ?? "prompt"}.txt`}
+                download={fileData ? (fileName ?? "prompt") : `${fileName ?? "prompt"}.txt`}
                 className="rounded-md px-2 py-1 text-[12px] font-semibold text-primary transition-colors hover:bg-panel"
               >
                 Download file
@@ -589,10 +589,8 @@ function PromptUpload({
               <button
                 type="button"
                 onClick={() => {
-                  if (fileUrl) URL.revokeObjectURL(fileUrl);
-                  setFileUrl(null);
                   setShowText(false);
-                  onChange("", undefined);
+                  onChange("", undefined, undefined);
                 }}
                 className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                 aria-label="Remove uploaded prompt"
