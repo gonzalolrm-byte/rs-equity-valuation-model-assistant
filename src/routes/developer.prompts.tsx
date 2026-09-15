@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileText, Pencil, Play, Plus, Power, Search, Trash2, UploadCloud, X } from "lucide-react";
+import { ArrowDown, ArrowUp, FileText, Pencil, Play, Plus, Power, Search, Trash2, UploadCloud, X } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { Button } from "@/components/Button";
 import { SelectField, TextField } from "@/components/form";
@@ -112,7 +112,7 @@ function WorkflowSection({
   category: string;
   status: string;
 }) {
-  const { state, togglePromptStatus, deletePrompt } = useApp();
+  const { state, togglePromptStatus, deletePrompt, movePrompt } = useApp();
   const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<PromptAction | null>(null);
   const [creating, setCreating] = useState(false);
