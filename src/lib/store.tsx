@@ -170,6 +170,8 @@ export type AppState = {
   customSubsectors: Record<string, string[]>;
   /** Shipped subsector templates hidden by the developer, per sector. */
   removedSubsectors: Record<string, string[]>;
+  /** Registry (shipped) prompt ids the developer deleted, so hydration does not resurrect them. */
+  deletedRegistryPromptIds: string[];
 };
 
 
@@ -190,6 +192,7 @@ const INITIAL_STATE: AppState = {
   subsectorTemplates: {},
   customSubsectors: {},
   removedSubsectors: {},
+  deletedRegistryPromptIds: [],
 
 };
 
