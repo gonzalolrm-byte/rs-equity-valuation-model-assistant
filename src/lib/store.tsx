@@ -605,10 +605,14 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           delete sectorSpecifics[name];
           const subsectorTemplates = { ...prev.subsectorTemplates };
           delete subsectorTemplates[name];
+          const subsectorDefaultTemplates = { ...(prev.subsectorDefaultTemplates ?? {}) };
+          delete subsectorDefaultTemplates[name];
           return {
             ...prev,
             sectorSpecifics,
             subsectorTemplates,
+            subsectorDefaultTemplates,
+
             customSubsectors: isCustom
               ? {
                   ...prev.customSubsectors,
