@@ -1,9 +1,10 @@
-import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
+import { Link, Outlet, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { ArrowLeft, FolderOpen, KeyRound, Lock, MessageSquareCode, Settings, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, FolderOpen, KeyRound, Lock, MessageSquareCode, Pencil, Settings, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { IfcLockup } from "@/components/AppHeader";
 import { useApp, type NavigationMode } from "@/lib/store";
+import { useUiContent } from "@/lib/ui-content";
 import {
   isDeveloperUnlocked,
   lockDeveloper,
