@@ -17,11 +17,14 @@ export type UploadSlot = {
 export function UploadCard({
   group,
   slot,
+  onMove,
 }: {
   group: "newFiles" | "updateFiles";
   slot: UploadSlot;
+  onMove?: (direction: "up" | "down") => void;
 }) {
   const { state, addFiles, removeFile } = useApp();
+  const ui = useUiContentSafe();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const files: UploadedFile[] = state[group][slot.key] ?? [];
