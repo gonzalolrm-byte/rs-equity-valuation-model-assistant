@@ -166,6 +166,12 @@ export type AppState = {
   sectorSpecifics: SectorSpecifics;
   /** Uploaded template file names per subsector template (prototype: names only). */
   subsectorTemplates: Record<string, string[]>;
+  /**
+   * Default templates generated per subsector from a generic template plus a
+   * developer prompt. Prototype: metadata only, no workbook is produced.
+   */
+  subsectorDefaultTemplates: Record<string, SubsectorDefaultTemplate>;
+
   /** Developer-added subsector templates per sector. */
   customSubsectors: Record<string, string[]>;
   /** Shipped subsector templates hidden by the developer, per sector. */
