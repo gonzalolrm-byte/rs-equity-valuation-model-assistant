@@ -247,6 +247,17 @@ type Ctx = {
   resetSubsectorMeasurements: (subsector: string) => void;
   addSubsectorTemplateFiles: (subsector: string, files: File[]) => void;
   removeSubsectorTemplateFile: (subsector: string, fileName: string) => void;
+  generateSubsectorDefaultTemplate: (
+    subsector: string,
+    input: {
+      baseTemplate: string;
+      prompt: string;
+      outputMeasurement: string;
+      capacityMeasurements: string[];
+    },
+  ) => void;
+  clearSubsectorDefaultTemplate: (subsector: string) => void;
+
   addCustomSubsector: (sector: string, name: string) => void;
   deleteSubsector: (sector: string, name: string) => void;
 
