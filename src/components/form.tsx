@@ -59,7 +59,9 @@ export function Collapsible({
         aria-expanded={open}
         className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-secondary/60"
       >
-        <h2 className="font-heading text-lg font-bold">{title}</h2>
+        <EditableText as="h2" className="font-heading text-lg font-bold" group="Section title">
+          {title}
+        </EditableText>
         <ChevronDown
           className={`size-5 shrink-0 text-navy-soft transition-transform ${open ? "rotate-180" : ""}`}
         />
@@ -89,7 +91,7 @@ export function Question({
       <div className="flex items-start gap-2">
         <p className="text-[15px] font-semibold text-navy">
           {number !== undefined && <span className="mr-1.5 text-navy-soft">{number}.</span>}
-          {label}
+          <EditableText group="Question">{label}</EditableText>
           {required && <span className="ml-1 text-destructive">*</span>}
         </p>
         {labelAction}
@@ -98,7 +100,7 @@ export function Question({
       {hint && (
         <p className="mt-3 flex gap-2 rounded-lg bg-panel px-3 py-2 text-[13px] leading-relaxed text-navy-soft">
           <Info className="mt-0.5 size-4 shrink-0 text-primary" />
-          <span>{hint}</span>
+          <EditableText group="Question hint">{hint}</EditableText>
         </p>
       )}
     </div>
