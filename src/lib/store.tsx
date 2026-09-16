@@ -381,11 +381,34 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           ),
         })),
       deletePrompt: (id) =>
-        setState((prev) => ({
-          ...prev,
-          prompts: prev.prompts.filter((item) => item.id !== id),
-          selectedActions: prev.selectedActions.filter((item) => item !== id),
-        })),
+        setState((prev) => {
+          const prefix = id.split("-")[0] ?? "";
+          // Renumber the remaining actions in this workflow so the IDs stay a
+          // gapless sequence (A-01, A-02, ...) after a deletion.
+          const siblings = prev.prompts
+            .filter((item) => item.id !== id && item.id.startsWith(`${prefix}-`))
+            .sort((a, b) => a.id.localeCompare(b.id));
+          const digits = Math.max(2, ...siblings.map((item) => (item.id.split("-")[1] ?? "").length));
+          const renumbered = new Map(
+            siblings.map((item, index) => [
+              item.id,
+              `${prefix}-${String(index + 1).padStart(digits, "0")}`,
+            ]),
+          );
+          const remap = (value: string) => renumbered.get(value) ?? value;
+          const isRegistryId = INITIAL_PROMPTS.some((prompt) => prompt.id === id);
+          return {
+            ...prev,
+            prompts: prev.prompts
+              .filter((item) => item.id !== id)
+              .map((item) => ({ ...item, id: remap(item.id) })),
+            selectedActions: prev.selectedActions.filter((item) => item !== id).map(remap),
+            deletedRegistryPromptIds:
+              isRegistryId && !prev.deletedRegistryPromptIds.includes(id)
+                ? [...prev.deletedRegistryPromptIds, id]
+                : prev.deletedRegistryPromptIds,
+          };
+        }),
       movePrompt: (id, direction) =>
         setState((prev) => {
           const prefix = id.split("-")[0] ?? "";
