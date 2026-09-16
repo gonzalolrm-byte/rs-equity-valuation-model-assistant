@@ -1,6 +1,7 @@
-import { CheckCircle2, FileText, Trash2, UploadCloud } from "lucide-react";
+import { ArrowDown, ArrowUp, CheckCircle2, FileText, Trash2, UploadCloud } from "lucide-react";
 import { useRef, useState } from "react";
 import { useApp, type UploadedFile } from "@/lib/store";
+import { EditableText, useUiContentSafe } from "@/lib/ui-content";
 
 export type UploadSlot = {
   key: string;
