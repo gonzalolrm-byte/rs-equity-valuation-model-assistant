@@ -214,6 +214,8 @@ const INITIAL_STATE: AppState = {
   resources: INITIAL_RESOURCES,
   sectorSpecifics: {},
   subsectorTemplates: {},
+  subsectorDefaultTemplates: {},
+
   customSubsectors: {},
   removedSubsectors: {},
   deletedRegistryPromptIds: [],
