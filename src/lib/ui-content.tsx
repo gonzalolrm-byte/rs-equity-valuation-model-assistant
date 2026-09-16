@@ -24,10 +24,10 @@ import {
 } from "react";
 
 export type UiOverride = {
-  text?: string;
-  fontSize?: string;
-  fontWeight?: string;
-  align?: "left" | "center" | "right";
+  text?: string | undefined;
+  fontSize?: string | undefined;
+  fontWeight?: string | undefined;
+  align?: "left" | "center" | "right" | undefined;
 };
 
 export type UiContentMap = Record<string, UiOverride>;
