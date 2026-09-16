@@ -148,6 +148,21 @@ export const EMPTY_ANSWERS: Answers = {
 
 export type NavigationMode = "required" | "free";
 
+/**
+ * A default subsector template derived from a generic DCF template.
+ * PROTOTYPE: no workbook is produced; this records the developer's instructions
+ * so the future generation service can act on them.
+ */
+export type SubsectorDefaultTemplate = {
+  fileName: string;
+  baseTemplate: string;
+  prompt: string;
+  generatedAt: string;
+  outputMeasurement: string;
+  capacityMeasurements: string[];
+};
+
+
 export type AppState = {
   workflow: "" | "new" | "update";
   /** Developer setting: "required" enforces field validation, "free" unlocks navigation for demos. */
