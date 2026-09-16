@@ -635,6 +635,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           deletedRegistryPromptIds: prev.deletedRegistryPromptIds,
           sectorSpecifics: prev.sectorSpecifics,
           subsectorTemplates: prev.subsectorTemplates,
+          subsectorDefaultTemplates: prev.subsectorDefaultTemplates,
+
           resources: prev.resources,
           customSubsectors: prev.customSubsectors,
           removedSubsectors: prev.removedSubsectors,
