@@ -170,7 +170,10 @@ export type AppState = {
   customSubsectors: Record<string, string[]>;
   /** Shipped subsector templates hidden by the developer, per sector. */
   removedSubsectors: Record<string, string[]>;
-  /** Registry (shipped) prompt ids the developer deleted, so hydration does not resurrect them. */
+  /**
+   * Titles of registry (shipped) prompts the developer deleted, so hydration does
+   * not resurrect them. Titles are used because IDs get renumbered on delete.
+   */
   deletedRegistryPromptIds: string[];
 };
 
