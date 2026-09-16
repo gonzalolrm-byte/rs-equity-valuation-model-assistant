@@ -19,11 +19,9 @@ function extensionOf(name: string) {
 }
 
 async function extractDocx(file: File) {
-  const mammoth = (await import(/* @vite-ignore */ "mammoth/mammoth.browser.js")) as unknown;
+  const mammoth = (await import("mammoth")) as { extractRawText: (o: { arrayBuffer: ArrayBuffer }) => Promise<{ value: string }> };
   const buffer = await file.arrayBuffer();
-  const result = await (
-    mammoth as { extractRawText: (o: { arrayBuffer: ArrayBuffer }) => Promise<{ value: string }> }
-  ).extractRawText({ arrayBuffer: buffer });
+  const result = await mammoth.extractRawText({ arrayBuffer: buffer });
   return result.value;
 }
 
