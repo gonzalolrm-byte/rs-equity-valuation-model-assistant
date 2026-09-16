@@ -256,7 +256,9 @@ export function SegmentedToggleRow({
 }) {
   return (
     <div className={["flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between", disabled ? "opacity-60" : ""].join(" ")}>
-      <span className="text-[15px] font-semibold text-navy">{label}</span>
+      <EditableText as="span" className="text-[15px] font-semibold text-navy" group="Question">
+        {label}
+      </EditableText>
       <div className="flex shrink-0 gap-2 rounded-lg border border-border bg-card p-1">
         {options.map((option) => {
           const selected = value === option.value;
@@ -325,9 +327,17 @@ export function CheckItem({
         )}
       </span>
       <span>
-        <span className="block text-[15px] text-navy">{label}</span>
+        <EditableText as="span" className="block text-[15px] text-navy" group="Option label">
+          {label}
+        </EditableText>
         {description && (
-          <span className="mt-1 block text-[13px] text-muted-foreground">{description}</span>
+          <EditableText
+            as="span"
+            className="mt-1 block text-[13px] text-muted-foreground"
+            group="Option description"
+          >
+            {description}
+          </EditableText>
         )}
       </span>
     </button>
