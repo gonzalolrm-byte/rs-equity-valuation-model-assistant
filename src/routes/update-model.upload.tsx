@@ -6,6 +6,7 @@ import { StepProgress } from "@/components/StepProgress";
 import { PageHeading } from "@/components/form";
 import { UploadCard, type UploadSlot } from "@/components/UploadCard";
 import { useApp } from "@/lib/store";
+import { useUiContentSafe, useUiOrder } from "@/lib/ui-content";
 
 export const WORKFLOW_B_STEPS = [
   "Populate Template",
@@ -75,6 +76,9 @@ export const Route = createFileRoute("/update-model/upload")({
 function UpdateUpload() {
   const { state, saveProgress } = useApp();
   const navigate = useNavigate();
+  const ui = useUiContentSafe();
+  const slotIds = UPDATE_MODEL_SLOTS.map((slot) => slot.key);
+  const orderedIds = useUiOrder("update-model-upload", slotIds);
   const ready =
     state.navigationMode === "free" ||
     UPDATE_MODEL_SLOTS.filter((slot) => slot.required).every(
@@ -96,9 +100,20 @@ function UpdateUpload() {
             />
 
             <div className="space-y-5">
-              {UPDATE_MODEL_SLOTS.map((slot) => (
-                <UploadCard key={slot.key} group="updateFiles" slot={slot} />
-              ))}
+              {orderedIds.map((id) => {
+                const slot = UPDATE_MODEL_SLOTS.find((item) => item.key === id);
+                if (!slot) return null;
+                return (
+                  <UploadCard
+                    key={slot.key}
+                    group="updateFiles"
+                    slot={slot}
+                    onMove={(direction) =>
+                      ui?.moveInOrder("update-model-upload", slotIds, slot.key, direction)
+                    }
+                  />
+                );
+              })}
             </div>
 
             <div className="mt-8 flex flex-wrap items-center justify-between gap-3">

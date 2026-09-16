@@ -1,9 +1,10 @@
-import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
+import { Link, Outlet, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { ArrowLeft, FolderOpen, KeyRound, Lock, MessageSquareCode, Settings, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, FolderOpen, KeyRound, Lock, MessageSquareCode, Pencil, Settings, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { IfcLockup } from "@/components/AppHeader";
 import { useApp, type NavigationMode } from "@/lib/store";
+import { useUiContent } from "@/lib/ui-content";
 import {
   isDeveloperUnlocked,
   lockDeveloper,
@@ -119,6 +120,12 @@ function DeveloperGate() {
 function DeveloperLayout({ onLock }: { onLock: () => void }) {
 
   const { state, patch } = useApp();
+  const ui = useUiContent();
+  const navigate = useNavigate();
+  const startUiEditing = () => {
+    ui.startEditing();
+    navigate({ to: "/" });
+  };
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
@@ -134,6 +141,14 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
             </span>
           </span>
           <div className="ml-auto flex items-center gap-2">
+            <button
+              type="button"
+              onClick={startUiEditing}
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              <Pencil className="size-4" />
+              Edit User Interface
+            </button>
             <button
               type="button"
               onClick={onLock}

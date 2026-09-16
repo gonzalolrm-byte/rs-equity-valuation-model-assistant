@@ -1,6 +1,7 @@
-import { CheckCircle2, FileText, Trash2, UploadCloud } from "lucide-react";
+import { ArrowDown, ArrowUp, CheckCircle2, FileText, Trash2, UploadCloud } from "lucide-react";
 import { useRef, useState } from "react";
 import { useApp, type UploadedFile } from "@/lib/store";
+import { EditableText, useUiContentSafe } from "@/lib/ui-content";
 
 export type UploadSlot = {
   key: string;
@@ -16,11 +17,14 @@ export type UploadSlot = {
 export function UploadCard({
   group,
   slot,
+  onMove,
 }: {
   group: "newFiles" | "updateFiles";
   slot: UploadSlot;
+  onMove?: (direction: "up" | "down") => void;
 }) {
   const { state, addFiles, removeFile } = useApp();
+  const ui = useUiContentSafe();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const files: UploadedFile[] = state[group][slot.key] ?? [];
@@ -39,16 +43,40 @@ export function UploadCard({
         </span>
         <div className="min-w-0 flex-1">
           <h3 className="font-heading text-[16px] font-bold">
-            {slot.title}
+            <EditableText group="Upload step">{slot.title}</EditableText>
             {slot.required && <span className="ml-1 text-destructive">*</span>}
           </h3>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+          <EditableText
+            as="p"
+            className="mt-1.5 block text-[13px] leading-relaxed text-muted-foreground"
+            group="Upload step"
+          >
             {slot.description}
-          </p>
+          </EditableText>
           <p className="mt-1 text-[12px] text-muted-foreground">
             Accepted formats: {slot.formats}
           </p>
         </div>
+        {ui?.editing && onMove && (
+          <span className="flex shrink-0 gap-1">
+            <button
+              type="button"
+              onClick={() => onMove("up")}
+              className="rounded-md border border-input p-1.5 text-navy-soft hover:bg-secondary"
+              aria-label={`Move ${slot.title} up`}
+            >
+              <ArrowUp className="size-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onMove("down")}
+              className="rounded-md border border-input p-1.5 text-navy-soft hover:bg-secondary"
+              aria-label={`Move ${slot.title} down`}
+            >
+              <ArrowDown className="size-3.5" />
+            </button>
+          </span>
+        )}
         {files.length > 0 && (
           <span className="flex items-center gap-1.5 rounded-full bg-success-soft px-2.5 py-1 text-[12px] font-semibold text-success">
             <CheckCircle2 className="size-3.5" />

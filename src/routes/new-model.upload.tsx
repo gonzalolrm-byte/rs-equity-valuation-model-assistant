@@ -6,6 +6,7 @@ import { StepProgress } from "@/components/StepProgress";
 import { PageHeading } from "@/components/form";
 import { UploadCard, type UploadSlot } from "@/components/UploadCard";
 import { useApp } from "@/lib/store";
+import { useUiContentSafe, useUiOrder } from "@/lib/ui-content";
 import { WORKFLOW_A_STEPS } from "./new-model.company-information";
 
 export const NEW_MODEL_SLOTS: UploadSlot[] = [
@@ -70,6 +71,9 @@ export const Route = createFileRoute("/new-model/upload")({
 function UploadStep() {
   const { state, saveProgress } = useApp();
   const navigate = useNavigate();
+  const ui = useUiContentSafe();
+  const slotIds = NEW_MODEL_SLOTS.map((slot) => slot.key);
+  const orderedIds = useUiOrder("new-model-upload", slotIds);
   const ready =
     state.navigationMode === "free" ||
     NEW_MODEL_SLOTS.filter((slot) => slot.required).every(
@@ -91,9 +95,20 @@ function UploadStep() {
             />
 
             <div className="space-y-5">
-              {NEW_MODEL_SLOTS.map((slot) => (
-                <UploadCard key={slot.key} group="newFiles" slot={slot} />
-              ))}
+              {orderedIds.map((id) => {
+                const slot = NEW_MODEL_SLOTS.find((item) => item.key === id);
+                if (!slot) return null;
+                return (
+                  <UploadCard
+                    key={slot.key}
+                    group="newFiles"
+                    slot={slot}
+                    onMove={(direction) =>
+                      ui?.moveInOrder("new-model-upload", slotIds, slot.key, direction)
+                    }
+                  />
+                );
+              })}
             </div>
 
             <div className="mt-8 flex flex-wrap items-center justify-between gap-3">

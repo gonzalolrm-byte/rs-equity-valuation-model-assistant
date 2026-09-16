@@ -1,5 +1,6 @@
 import { ChevronDown, Info } from "lucide-react";
 import { useState, type ReactNode } from "react";
+import { EditableText } from "@/lib/ui-content";
 
 export function PageHeading({
   step,
@@ -14,9 +15,23 @@ export function PageHeading({
 }) {
   return (
     <div className="mb-8">
-      <p className="eyebrow">{step}</p>
-      <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">{title}</h1>
-      <p className="mt-3 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">{intro}</p>
+      <EditableText as="p" className="eyebrow" group="Page heading">
+        {step}
+      </EditableText>
+      <EditableText
+        as="h1"
+        className="mt-2 block text-3xl font-extrabold sm:text-4xl"
+        group="Page heading"
+      >
+        {title}
+      </EditableText>
+      <EditableText
+        as="p"
+        className="mt-3 block max-w-3xl text-[15px] leading-relaxed text-muted-foreground"
+        group="Page heading"
+      >
+        {intro}
+      </EditableText>
       {required && (
         <p className="mt-2 text-sm text-muted-foreground">
           <span className="text-destructive">*</span> Required field
@@ -44,7 +59,9 @@ export function Collapsible({
         aria-expanded={open}
         className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-secondary/60"
       >
-        <h2 className="font-heading text-lg font-bold">{title}</h2>
+        <EditableText as="h2" className="font-heading text-lg font-bold" group="Section title">
+          {title}
+        </EditableText>
         <ChevronDown
           className={`size-5 shrink-0 text-navy-soft transition-transform ${open ? "rotate-180" : ""}`}
         />
@@ -74,7 +91,7 @@ export function Question({
       <div className="flex items-start gap-2">
         <p className="text-[15px] font-semibold text-navy">
           {number !== undefined && <span className="mr-1.5 text-navy-soft">{number}.</span>}
-          {label}
+          <EditableText group="Question">{label}</EditableText>
           {required && <span className="ml-1 text-destructive">*</span>}
         </p>
         {labelAction}
@@ -83,7 +100,7 @@ export function Question({
       {hint && (
         <p className="mt-3 flex gap-2 rounded-lg bg-panel px-3 py-2 text-[13px] leading-relaxed text-navy-soft">
           <Info className="mt-0.5 size-4 shrink-0 text-primary" />
-          <span>{hint}</span>
+          <EditableText group="Question hint">{hint}</EditableText>
         </p>
       )}
     </div>
@@ -107,7 +124,11 @@ export function TextField({
 }) {
   return (
     <label className="block">
-      {label && <span className="mb-1.5 block text-sm text-muted-foreground">{label}</span>}
+      {label && (
+        <EditableText as="span" className="mb-1.5 block text-sm text-muted-foreground" group="Field label">
+          {label}
+        </EditableText>
+      )}
       <input
         value={value}
         placeholder={placeholder}
@@ -142,7 +163,7 @@ export function SelectField({
       {label && (
         <span className="mb-1.5 flex items-center gap-2 text-sm text-muted-foreground">
           {labelAction}
-          {label}
+          <EditableText group="Field label">{label}</EditableText>
         </span>
       )}
       <div className="relative">
@@ -235,7 +256,9 @@ export function SegmentedToggleRow({
 }) {
   return (
     <div className={["flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between", disabled ? "opacity-60" : ""].join(" ")}>
-      <span className="text-[15px] font-semibold text-navy">{label}</span>
+      <EditableText as="span" className="text-[15px] font-semibold text-navy" group="Question">
+        {label}
+      </EditableText>
       <div className="flex shrink-0 gap-2 rounded-lg border border-border bg-card p-1">
         {options.map((option) => {
           const selected = value === option.value;
@@ -304,9 +327,17 @@ export function CheckItem({
         )}
       </span>
       <span>
-        <span className="block text-[15px] text-navy">{label}</span>
+        <EditableText as="span" className="block text-[15px] text-navy" group="Option label">
+          {label}
+        </EditableText>
         {description && (
-          <span className="mt-1 block text-[13px] text-muted-foreground">{description}</span>
+          <EditableText
+            as="span"
+            className="mt-1 block text-[13px] text-muted-foreground"
+            group="Option description"
+          >
+            {description}
+          </EditableText>
         )}
       </span>
     </button>
