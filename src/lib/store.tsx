@@ -397,16 +397,20 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           );
           const remap = (value: string) => renumbered.get(value) ?? value;
           const isRegistryId = INITIAL_PROMPTS.some((prompt) => prompt.id === id);
+          const nextPrompts = prev.prompts
+            .filter((item) => item.id !== id)
+            .map((item) => ({ ...item, id: remap(item.id) }));
+          const idsInUse = new Set(nextPrompts.map((item) => item.id));
           return {
             ...prev,
-            prompts: prev.prompts
-              .filter((item) => item.id !== id)
-              .map((item) => ({ ...item, id: remap(item.id) })),
+            prompts: nextPrompts,
             selectedActions: prev.selectedActions.filter((item) => item !== id).map(remap),
-            deletedRegistryPromptIds:
-              isRegistryId && !prev.deletedRegistryPromptIds.includes(id)
-                ? [...prev.deletedRegistryPromptIds, id]
-                : prev.deletedRegistryPromptIds,
+            deletedRegistryPromptIds: [
+              // A renumbered action may now occupy a previously deleted ID;
+              // only keep deleted IDs that are no longer in use.
+              ...prev.deletedRegistryPromptIds,
+              ...(isRegistryId ? [id] : []),
+            ].filter((value, index, all) => all.indexOf(value) === index && !idsInUse.has(value)),
           };
         }),
       movePrompt: (id, direction) =>
