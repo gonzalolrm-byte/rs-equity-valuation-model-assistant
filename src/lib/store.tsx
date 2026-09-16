@@ -259,7 +259,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         const registryIds = new Set(INITIAL_PROMPTS.map((prompt) => prompt.id));
         const prompts: PromptAction[] = [
           // Registry prompts the developer deleted stay deleted across reloads.
-          ...INITIAL_PROMPTS.filter((prompt) => !deletedRegistry.has(prompt.id)).map((prompt) => {
+          ...INITIAL_PROMPTS.filter((prompt) => !deletedRegistry.has(prompt.title)).map((prompt) => {
             const savedPrompt = savedPrompts.find((item) => item.id === prompt.id);
             // Only keep developer edits when the shipped action at this ID is
             // still the same action; otherwise the renumbered registry wins.
