@@ -3,6 +3,8 @@ import { ArrowRight, CheckCircle2, FileText, TrendingUp } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/Button";
 import { useApp } from "@/lib/store";
+import { EditableText } from "@/lib/ui-content";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -34,10 +36,21 @@ function Home() {
       <AppHeader />
       <main className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
         <div className="text-center">
-          <p className="eyebrow">Welcome to Real Sector – Equity Valuation Model Assistant</p>
-          <h1 className="mt-3 text-4xl font-extrabold sm:text-5xl">What would you like to do?</h1>
-          <p className="mt-3 text-lg text-muted-foreground">Select one option to get started.</p>
+          <EditableText as="p" className="eyebrow" group="Page heading">
+            Welcome to Real Sector – Equity Valuation Model Assistant
+          </EditableText>
+          <EditableText
+            as="h1"
+            className="mt-3 text-4xl font-extrabold sm:text-5xl"
+            group="Page heading"
+          >
+            What would you like to do?
+          </EditableText>
+          <EditableText as="p" className="mt-3 text-lg text-muted-foreground" group="Page heading">
+            Select one option to get started.
+          </EditableText>
         </div>
+
 
         <div className="mt-10 grid gap-6 lg:grid-cols-2">
           <OptionCard
@@ -139,8 +152,20 @@ function OptionCard({
         </span>
       </div>
 
-      <h2 className="mt-6 font-heading text-2xl font-bold leading-snug">{title}</h2>
-      <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">{description}</p>
+      <EditableText
+        as="h2"
+        className="mt-6 font-heading text-2xl font-bold leading-snug"
+        group="Option title"
+      >
+        {title}
+      </EditableText>
+      <EditableText
+        as="p"
+        className="mt-3 text-[15px] leading-relaxed text-muted-foreground"
+        group="Option description"
+      >
+        {description}
+      </EditableText>
 
       <ul
         className={[
@@ -151,10 +176,11 @@ function OptionCard({
         {benefits.map((benefit) => (
           <li key={benefit} className="flex items-center gap-2.5 text-sm text-navy">
             <CheckCircle2 className={`size-4.5 shrink-0 ${check}`} />
-            {benefit}
+            <EditableText group="Option benefit">{benefit}</EditableText>
           </li>
         ))}
       </ul>
+
     </button>
   );
 }
