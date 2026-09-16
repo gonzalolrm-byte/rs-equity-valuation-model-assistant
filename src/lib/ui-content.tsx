@@ -36,6 +36,7 @@ export type UiOrderMap = Record<string, string[]>;
 export type UiRegistryEntry = { key: string; defaultText: string; group: string };
 
 const STORAGE_KEY = "ifc-ui-content-v1";
+const SESSION_KEY = "ifc-ui-edit-session-v1";
 
 export const FONT_SIZES = [
   { value: "", label: "Default" },
@@ -124,6 +125,25 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
     } catch {
       /* ignore corrupt local state */
     }
+    // Edit mode and unsaved edits survive page reloads within the same tab so
+    // the developer can browse every user-facing page while editing.
+    try {
+      const rawSession = sessionStorage.getItem(SESSION_KEY);
+      if (rawSession) {
+        const session = JSON.parse(rawSession) as {
+          editing?: boolean;
+          draft?: UiContentMap;
+          draftOrder?: UiOrderMap;
+        };
+        if (session.editing) {
+          setEditing(true);
+          setDraft(session.draft ?? {});
+          setDraftOrder(session.draftOrder ?? {});
+        }
+      }
+    } catch {
+      /* ignore corrupt session state */
+    }
     setHydrated(true);
   }, []);
 
@@ -131,10 +151,11 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
     if (!hydrated) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ content, order }));
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ editing, draft, draftOrder }));
     } catch {
       /* storage unavailable */
     }
-  }, [content, order, hydrated]);
+  }, [content, order, editing, draft, draftOrder, hydrated]);
 
   const register = useCallback((entry: UiRegistryEntry) => {
     setRegistry((prev) =>
