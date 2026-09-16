@@ -291,6 +291,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           prompts,
           resources,
           deletedRegistryPromptIds: [...deletedRegistry],
+          subsectorDefaultTemplates: saved.subsectorDefaultTemplates ?? {},
+
 
           // merge answers field-by-field so saved state from an older question
           // set never leaves newly added fields undefined
