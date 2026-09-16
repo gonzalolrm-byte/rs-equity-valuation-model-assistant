@@ -170,6 +170,8 @@ export type AppState = {
   customSubsectors: Record<string, string[]>;
   /** Shipped subsector templates hidden by the developer, per sector. */
   removedSubsectors: Record<string, string[]>;
+  /** Registry (shipped) prompt ids the developer deleted, so hydration does not resurrect them. */
+  deletedRegistryPromptIds: string[];
 };
 
 
@@ -190,6 +192,7 @@ const INITIAL_STATE: AppState = {
   subsectorTemplates: {},
   customSubsectors: {},
   removedSubsectors: {},
+  deletedRegistryPromptIds: [],
 
 };
 
@@ -249,9 +252,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         // still exist, adopt any newly shipped actions, and drop actions that
         // were removed from the registry (while keeping developer-created ones).
         const savedPrompts = saved.prompts ?? [];
+        const deletedRegistry = new Set(saved.deletedRegistryPromptIds ?? []);
         const registryIds = new Set(INITIAL_PROMPTS.map((prompt) => prompt.id));
         const prompts: PromptAction[] = [
-          ...INITIAL_PROMPTS.map((prompt) => {
+          // Registry prompts the developer deleted stay deleted across reloads.
+          ...INITIAL_PROMPTS.filter((prompt) => !deletedRegistry.has(prompt.id)).map((prompt) => {
             const savedPrompt = savedPrompts.find((item) => item.id === prompt.id);
             // Only keep developer edits when the shipped action at this ID is
             // still the same action; otherwise the renumbered registry wins.
@@ -376,11 +381,38 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           ),
         })),
       deletePrompt: (id) =>
-        setState((prev) => ({
-          ...prev,
-          prompts: prev.prompts.filter((item) => item.id !== id),
-          selectedActions: prev.selectedActions.filter((item) => item !== id),
-        })),
+        setState((prev) => {
+          const prefix = id.split("-")[0] ?? "";
+          // Renumber the remaining actions in this workflow so the IDs stay a
+          // gapless sequence (A-01, A-02, ...) after a deletion.
+          const siblings = prev.prompts
+            .filter((item) => item.id !== id && item.id.startsWith(`${prefix}-`))
+            .sort((a, b) => a.id.localeCompare(b.id));
+          const digits = Math.max(2, ...siblings.map((item) => (item.id.split("-")[1] ?? "").length));
+          const renumbered = new Map(
+            siblings.map((item, index) => [
+              item.id,
+              `${prefix}-${String(index + 1).padStart(digits, "0")}`,
+            ]),
+          );
+          const remap = (value: string) => renumbered.get(value) ?? value;
+          const isRegistryId = INITIAL_PROMPTS.some((prompt) => prompt.id === id);
+          const nextPrompts = prev.prompts
+            .filter((item) => item.id !== id)
+            .map((item) => ({ ...item, id: remap(item.id) }));
+          const idsInUse = new Set(nextPrompts.map((item) => item.id));
+          return {
+            ...prev,
+            prompts: nextPrompts,
+            selectedActions: prev.selectedActions.filter((item) => item !== id).map(remap),
+            deletedRegistryPromptIds: [
+              // A renumbered action may now occupy a previously deleted ID;
+              // only keep deleted IDs that are no longer in use.
+              ...prev.deletedRegistryPromptIds,
+              ...(isRegistryId ? [id] : []),
+            ].filter((value, index, all) => all.indexOf(value) === index && !idsInUse.has(value)),
+          };
+        }),
       movePrompt: (id, direction) =>
         setState((prev) => {
           const prefix = id.split("-")[0] ?? "";
@@ -529,6 +561,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         setState((prev) => ({
           ...INITIAL_STATE,
           prompts: prev.prompts,
+          deletedRegistryPromptIds: prev.deletedRegistryPromptIds,
           sectorSpecifics: prev.sectorSpecifics,
           subsectorTemplates: prev.subsectorTemplates,
           resources: prev.resources,
