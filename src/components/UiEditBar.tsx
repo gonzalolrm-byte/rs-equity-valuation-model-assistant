@@ -105,7 +105,10 @@ export function UiEditBar() {
               value={override.align ?? ""}
               options={ALIGNMENTS}
               onChange={(value) =>
-                ui.setDraftOverride(selected, { align: value as UiOverride["align"] })
+                ui.setDraftOverride(
+                  selected,
+                  value ? { align: value as "left" | "center" | "right" } : { align: undefined },
+                )
               }
             />
           </div>
