@@ -170,7 +170,10 @@ export type AppState = {
   customSubsectors: Record<string, string[]>;
   /** Shipped subsector templates hidden by the developer, per sector. */
   removedSubsectors: Record<string, string[]>;
-  /** Registry (shipped) prompt ids the developer deleted, so hydration does not resurrect them. */
+  /**
+   * Titles of registry (shipped) prompts the developer deleted, so hydration does
+   * not resurrect them. Titles are used because IDs get renumbered on delete.
+   */
   deletedRegistryPromptIds: string[];
 };
 
@@ -256,7 +259,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         const registryIds = new Set(INITIAL_PROMPTS.map((prompt) => prompt.id));
         const prompts: PromptAction[] = [
           // Registry prompts the developer deleted stay deleted across reloads.
-          ...INITIAL_PROMPTS.filter((prompt) => !deletedRegistry.has(prompt.id)).map((prompt) => {
+          ...INITIAL_PROMPTS.filter((prompt) => !deletedRegistry.has(prompt.title)).map((prompt) => {
             const savedPrompt = savedPrompts.find((item) => item.id === prompt.id);
             // Only keep developer edits when the shipped action at this ID is
             // still the same action; otherwise the renumbered registry wins.
@@ -398,22 +401,26 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             ]),
           );
           const remap = (value: string) => renumbered.get(value) ?? value;
-          const isRegistryId = INITIAL_PROMPTS.some((prompt) => prompt.id === id);
+          const deleted = prev.prompts.find((item) => item.id === id);
+          // Registry actions are remembered by title: IDs get renumbered, so an
+          // ID is not a stable identity for "this shipped action was deleted".
+          const deletedTitle =
+            deleted && INITIAL_PROMPTS.some((prompt) => prompt.title === deleted.title)
+              ? deleted.title
+              : null;
           const nextPrompts = prev.prompts
             .filter((item) => item.id !== id)
             .map((item) => ({ ...item, id: remap(item.id) }));
-          const idsInUse = new Set(nextPrompts.map((item) => item.id));
           return {
             ...prev,
             prompts: nextPrompts,
             selectedActions: prev.selectedActions.filter((item) => item !== id).map(remap),
             deletedRegistryPromptIds: [
-              // A renumbered action may now occupy a previously deleted ID;
-              // only keep deleted IDs that are no longer in use.
               ...prev.deletedRegistryPromptIds,
-              ...(isRegistryId ? [id] : []),
-            ].filter((value, index, all) => all.indexOf(value) === index && !idsInUse.has(value)),
+              ...(deletedTitle ? [deletedTitle] : []),
+            ].filter((value, index, all) => all.indexOf(value) === index),
           };
+
         }),
       movePrompt: (id, direction) =>
         setState((prev) => {
