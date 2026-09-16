@@ -562,6 +562,28 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             ),
           },
         })),
+      generateSubsectorDefaultTemplate: (subsector, input) =>
+        setState((prev) => ({
+          ...prev,
+          subsectorDefaultTemplates: {
+            ...(prev.subsectorDefaultTemplates ?? {}),
+            [subsector]: {
+              fileName: `Default_Template_${subsector.replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_|_$/g, "")}.xlsx`,
+              baseTemplate: input.baseTemplate,
+              prompt: input.prompt,
+              generatedAt: new Date().toISOString(),
+              outputMeasurement: input.outputMeasurement,
+              capacityMeasurements: input.capacityMeasurements,
+            },
+          },
+        })),
+      clearSubsectorDefaultTemplate: (subsector) =>
+        setState((prev) => {
+          const next = { ...(prev.subsectorDefaultTemplates ?? {}) };
+          delete next[subsector];
+          return { ...prev, subsectorDefaultTemplates: next };
+        }),
+
       addCustomSubsector: (sector, name) =>
         setState((prev) => {
           const trimmed = name.trim();
