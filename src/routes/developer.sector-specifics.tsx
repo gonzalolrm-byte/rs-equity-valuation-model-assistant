@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileSpreadsheet, Info, Plus, RotateCcw, Trash2, Upload } from "lucide-react";
+import { FileSpreadsheet, Info, Plus, RotateCcw, Trash2, Upload, Wand2 } from "lucide-react";
 import { useRef, useState } from "react";
 
 import {
@@ -308,10 +308,143 @@ function SubsectorCard({
         </div>
       </div>
 
+      <DefaultTemplateGenerator
+        subsector={subsector}
+        outputMeasurement={current.output}
+        capacityMeasurements={current.capacityOptions}
+      />
+
       <TemplateUpload subsector={subsector} />
     </section>
   );
 }
+
+/**
+ * Generates a default template for the sub-sector from a generic DCF template
+ * plus a developer prompt describing measurement units and other specifics.
+ * PROTOTYPE: records the instruction set only; no workbook is produced.
+ */
+function DefaultTemplateGenerator({
+  subsector,
+  outputMeasurement,
+  capacityMeasurements,
+}: {
+  subsector: string;
+  outputMeasurement: string;
+  capacityMeasurements: string[];
+}) {
+  const { state, generateSubsectorDefaultTemplate, clearSubsectorDefaultTemplate } = useApp();
+  const existing = (state.subsectorDefaultTemplates ?? {})[subsector];
+  const [base, setBase] = useState(existing?.baseTemplate ?? GENERIC_TEMPLATES[0]!);
+  const [prompt, setPrompt] = useState(existing?.prompt ?? "");
+  const [open, setOpen] = useState(false);
+
+  const defaultPrompt = `Adapt the ${base} template for ${subsector}. Set the Maximum Output / Units Sold measurement to "${outputMeasurement}" and offer these capacity measurements: ${capacityMeasurements.join(", ") || "none"}. Keep all formulas, tabs and links intact.`;
+
+  const generate = () => {
+    generateSubsectorDefaultTemplate(subsector, {
+      baseTemplate: base,
+      prompt: prompt.trim() || defaultPrompt,
+      outputMeasurement,
+      capacityMeasurements,
+    });
+    setOpen(false);
+  };
+
+  return (
+    <div className="mt-5 border-t border-border pt-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="text-[13px] font-semibold text-navy">Default template</p>
+          <p className="mt-1 text-[12px] text-muted-foreground">
+            {existing
+              ? `${existing.fileName} · based on ${existing.baseTemplate} · generated ${new Date(existing.generatedAt).toLocaleString()}`
+              : "Generate a default template from a generic DCF template and adapt it with a prompt."}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          className="inline-flex items-center gap-2 rounded-lg border border-primary/40 px-3.5 py-2 text-[13px] font-semibold text-primary transition-colors hover:bg-panel"
+        >
+          <Wand2 className="size-4" />
+          {existing ? "Regenerate" : "Generate default template"}
+        </button>
+        {existing && (
+          <button
+            type="button"
+            onClick={() => clearSubsectorDefaultTemplate(subsector)}
+            className="inline-flex items-center gap-2 rounded-lg border border-destructive/30 px-3.5 py-2 text-[13px] font-semibold text-destructive transition-colors hover:bg-destructive/10"
+          >
+            <Trash2 className="size-4" />
+            Remove
+          </button>
+        )}
+      </div>
+
+      {existing && !open && (
+        <p className="mt-3 rounded-lg border border-border bg-secondary/40 px-3 py-2.5 text-[12px] leading-relaxed text-navy-soft">
+          {existing.prompt}
+        </p>
+      )}
+
+      {open && (
+        <div className="mt-3 grid gap-3 rounded-lg border border-primary/30 bg-panel p-4">
+          <label className="text-[13px] font-semibold text-navy">
+            Base generic template
+            <select
+              value={base}
+              onChange={(event) => setBase(event.target.value)}
+              className="mt-1.5 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm font-normal text-navy focus:border-primary focus:outline-none"
+            >
+              {GENERIC_TEMPLATES.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="text-[13px] font-semibold text-navy">
+            Prompt — measurement units and other specifics
+            <textarea
+              value={prompt}
+              onChange={(event) => setPrompt(event.target.value)}
+              rows={4}
+              placeholder={defaultPrompt}
+              className="mt-1.5 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm font-normal leading-relaxed text-navy focus:border-primary focus:outline-none"
+            />
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setPrompt(defaultPrompt)}
+              className="inline-flex items-center gap-2 rounded-lg border border-input px-3.5 py-2 text-[13px] font-semibold text-navy transition-colors hover:bg-secondary"
+            >
+              <RotateCcw className="size-4" />
+              Use suggested prompt
+            </button>
+            <button
+              type="button"
+              onClick={generate}
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              <Wand2 className="size-4" />
+              Generate
+            </button>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-[13px] font-semibold text-navy-soft transition-colors hover:bg-secondary"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 function TemplateUpload({ subsector }: { subsector: string }) {
   const { state, addSubsectorTemplateFiles, removeSubsectorTemplateFile } = useApp();

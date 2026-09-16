@@ -148,6 +148,21 @@ export const EMPTY_ANSWERS: Answers = {
 
 export type NavigationMode = "required" | "free";
 
+/**
+ * A default subsector template derived from a generic DCF template.
+ * PROTOTYPE: no workbook is produced; this records the developer's instructions
+ * so the future generation service can act on them.
+ */
+export type SubsectorDefaultTemplate = {
+  fileName: string;
+  baseTemplate: string;
+  prompt: string;
+  generatedAt: string;
+  outputMeasurement: string;
+  capacityMeasurements: string[];
+};
+
+
 export type AppState = {
   workflow: "" | "new" | "update";
   /** Developer setting: "required" enforces field validation, "free" unlocks navigation for demos. */
@@ -166,6 +181,12 @@ export type AppState = {
   sectorSpecifics: SectorSpecifics;
   /** Uploaded template file names per subsector template (prototype: names only). */
   subsectorTemplates: Record<string, string[]>;
+  /**
+   * Default templates generated per subsector from a generic template plus a
+   * developer prompt. Prototype: metadata only, no workbook is produced.
+   */
+  subsectorDefaultTemplates: Record<string, SubsectorDefaultTemplate>;
+
   /** Developer-added subsector templates per sector. */
   customSubsectors: Record<string, string[]>;
   /** Shipped subsector templates hidden by the developer, per sector. */
@@ -193,6 +214,8 @@ const INITIAL_STATE: AppState = {
   resources: INITIAL_RESOURCES,
   sectorSpecifics: {},
   subsectorTemplates: {},
+  subsectorDefaultTemplates: {},
+
   customSubsectors: {},
   removedSubsectors: {},
   deletedRegistryPromptIds: [],
@@ -224,6 +247,17 @@ type Ctx = {
   resetSubsectorMeasurements: (subsector: string) => void;
   addSubsectorTemplateFiles: (subsector: string, files: File[]) => void;
   removeSubsectorTemplateFile: (subsector: string, fileName: string) => void;
+  generateSubsectorDefaultTemplate: (
+    subsector: string,
+    input: {
+      baseTemplate: string;
+      prompt: string;
+      outputMeasurement: string;
+      capacityMeasurements: string[];
+    },
+  ) => void;
+  clearSubsectorDefaultTemplate: (subsector: string) => void;
+
   addCustomSubsector: (sector: string, name: string) => void;
   deleteSubsector: (sector: string, name: string) => void;
 
@@ -291,6 +325,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           prompts,
           resources,
           deletedRegistryPromptIds: [...deletedRegistry],
+          subsectorDefaultTemplates: saved.subsectorDefaultTemplates ?? {},
+
 
           // merge answers field-by-field so saved state from an older question
           // set never leaves newly added fields undefined
@@ -526,6 +562,28 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             ),
           },
         })),
+      generateSubsectorDefaultTemplate: (subsector, input) =>
+        setState((prev) => ({
+          ...prev,
+          subsectorDefaultTemplates: {
+            ...(prev.subsectorDefaultTemplates ?? {}),
+            [subsector]: {
+              fileName: `Default_Template_${subsector.replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_|_$/g, "")}.xlsx`,
+              baseTemplate: input.baseTemplate,
+              prompt: input.prompt,
+              generatedAt: new Date().toISOString(),
+              outputMeasurement: input.outputMeasurement,
+              capacityMeasurements: input.capacityMeasurements,
+            },
+          },
+        })),
+      clearSubsectorDefaultTemplate: (subsector) =>
+        setState((prev) => {
+          const next = { ...(prev.subsectorDefaultTemplates ?? {}) };
+          delete next[subsector];
+          return { ...prev, subsectorDefaultTemplates: next };
+        }),
+
       addCustomSubsector: (sector, name) =>
         setState((prev) => {
           const trimmed = name.trim();
@@ -547,10 +605,14 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           delete sectorSpecifics[name];
           const subsectorTemplates = { ...prev.subsectorTemplates };
           delete subsectorTemplates[name];
+          const subsectorDefaultTemplates = { ...(prev.subsectorDefaultTemplates ?? {}) };
+          delete subsectorDefaultTemplates[name];
           return {
             ...prev,
             sectorSpecifics,
             subsectorTemplates,
+            subsectorDefaultTemplates,
+
             customSubsectors: isCustom
               ? {
                   ...prev.customSubsectors,
@@ -573,6 +635,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           deletedRegistryPromptIds: prev.deletedRegistryPromptIds,
           sectorSpecifics: prev.sectorSpecifics,
           subsectorTemplates: prev.subsectorTemplates,
+          subsectorDefaultTemplates: prev.subsectorDefaultTemplates,
+
           resources: prev.resources,
           customSubsectors: prev.customSubsectors,
           removedSubsectors: prev.removedSubsectors,
