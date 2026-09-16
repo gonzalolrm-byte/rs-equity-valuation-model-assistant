@@ -401,22 +401,26 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             ]),
           );
           const remap = (value: string) => renumbered.get(value) ?? value;
-          const isRegistryId = INITIAL_PROMPTS.some((prompt) => prompt.id === id);
+          const deleted = prev.prompts.find((item) => item.id === id);
+          // Registry actions are remembered by title: IDs get renumbered, so an
+          // ID is not a stable identity for "this shipped action was deleted".
+          const deletedTitle =
+            deleted && INITIAL_PROMPTS.some((prompt) => prompt.title === deleted.title)
+              ? deleted.title
+              : null;
           const nextPrompts = prev.prompts
             .filter((item) => item.id !== id)
             .map((item) => ({ ...item, id: remap(item.id) }));
-          const idsInUse = new Set(nextPrompts.map((item) => item.id));
           return {
             ...prev,
             prompts: nextPrompts,
             selectedActions: prev.selectedActions.filter((item) => item !== id).map(remap),
             deletedRegistryPromptIds: [
-              // A renumbered action may now occupy a previously deleted ID;
-              // only keep deleted IDs that are no longer in use.
               ...prev.deletedRegistryPromptIds,
-              ...(isRegistryId ? [id] : []),
-            ].filter((value, index, all) => all.indexOf(value) === index && !idsInUse.has(value)),
+              ...(deletedTitle ? [deletedTitle] : []),
+            ].filter((value, index, all) => all.indexOf(value) === index),
           };
+
         }),
       movePrompt: (id, direction) =>
         setState((prev) => {
