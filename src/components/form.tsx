@@ -124,7 +124,11 @@ export function TextField({
 }) {
   return (
     <label className="block">
-      {label && <span className="mb-1.5 block text-sm text-muted-foreground">{label}</span>}
+      {label && (
+        <EditableText as="span" className="mb-1.5 block text-sm text-muted-foreground" group="Field label">
+          {label}
+        </EditableText>
+      )}
       <input
         value={value}
         placeholder={placeholder}
@@ -159,7 +163,7 @@ export function SelectField({
       {label && (
         <span className="mb-1.5 flex items-center gap-2 text-sm text-muted-foreground">
           {labelAction}
-          {label}
+          <EditableText group="Field label">{label}</EditableText>
         </span>
       )}
       <div className="relative">
