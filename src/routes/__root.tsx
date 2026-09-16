@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppStateProvider } from "@/lib/store";
+import { UiContentProvider } from "@/lib/ui-content";
+import { UiEditBar, UiEditBarSpacer } from "@/components/UiEditBar";
 
 function NotFoundComponent() {
   return (
@@ -129,10 +131,14 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppStateProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-      </AppStateProvider>
+      <UiContentProvider>
+        <AppStateProvider>
+          <UiEditBar />
+          <UiEditBarSpacer />
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </AppStateProvider>
+      </UiContentProvider>
     </QueryClientProvider>
   );
 }
