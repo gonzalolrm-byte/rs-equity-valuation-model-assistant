@@ -100,9 +100,20 @@ function UpdateUpload() {
             />
 
             <div className="space-y-5">
-              {UPDATE_MODEL_SLOTS.map((slot) => (
-                <UploadCard key={slot.key} group="updateFiles" slot={slot} />
-              ))}
+              {orderedIds.map((id) => {
+                const slot = UPDATE_MODEL_SLOTS.find((item) => item.key === id);
+                if (!slot) return null;
+                return (
+                  <UploadCard
+                    key={slot.key}
+                    group="updateFiles"
+                    slot={slot}
+                    onMove={(direction) =>
+                      ui?.moveInOrder("update-model-upload", slotIds, slot.key, direction)
+                    }
+                  />
+                );
+              })}
             </div>
 
             <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
