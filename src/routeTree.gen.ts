@@ -15,6 +15,7 @@ import { Route as DeveloperRouteImport } from './routes/developer'
 import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as DeveloperIndexRouteImport } from './routes/developer.index'
+import { Route as DeveloperGenericTemplatesRouteImport } from './routes/developer.generic-templates'
 import { Route as DeveloperGovernanceRouteImport } from './routes/developer.governance'
 import { Route as DeveloperPromptsRouteImport } from './routes/developer.prompts'
 import { Route as DeveloperResourcesRouteImport } from './routes/developer.resources'
@@ -56,6 +57,12 @@ const DeveloperIndexRoute = DeveloperIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DeveloperRoute,
 } as any)
+const DeveloperGenericTemplatesRoute =
+  DeveloperGenericTemplatesRouteImport.update({
+    id: '/generic-templates',
+    path: '/generic-templates',
+    getParentRoute: () => DeveloperRoute,
+  } as any)
 const DeveloperGovernanceRoute = DeveloperGovernanceRouteImport.update({
   id: '/governance',
   path: '/governance',
@@ -115,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/developer': typeof DeveloperRouteWithChildren
   '/guidelines': typeof GuidelinesRoute
   '/help': typeof HelpRoute
+  '/developer/generic-templates': typeof DeveloperGenericTemplatesRoute
   '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
   '/developer/resources': typeof DeveloperResourcesRoute
@@ -132,6 +140,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/guidelines': typeof GuidelinesRoute
   '/help': typeof HelpRoute
+  '/developer/generic-templates': typeof DeveloperGenericTemplatesRoute
   '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
   '/developer/resources': typeof DeveloperResourcesRoute
@@ -151,6 +160,7 @@ export interface FileRoutesById {
   '/developer': typeof DeveloperRouteWithChildren
   '/guidelines': typeof GuidelinesRoute
   '/help': typeof HelpRoute
+  '/developer/generic-templates': typeof DeveloperGenericTemplatesRoute
   '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
   '/developer/resources': typeof DeveloperResourcesRoute
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/developer'
     | '/guidelines'
     | '/help'
+    | '/developer/generic-templates'
     | '/developer/governance'
     | '/developer/prompts'
     | '/developer/resources'
@@ -188,6 +199,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/guidelines'
     | '/help'
+    | '/developer/generic-templates'
     | '/developer/governance'
     | '/developer/prompts'
     | '/developer/resources'
@@ -206,6 +218,7 @@ export interface FileRouteTypes {
     | '/developer'
     | '/guidelines'
     | '/help'
+    | '/developer/generic-templates'
     | '/developer/governance'
     | '/developer/prompts'
     | '/developer/resources'
@@ -275,6 +288,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/developer/'
       preLoaderRoute: typeof DeveloperIndexRouteImport
+      parentRoute: typeof DeveloperRoute
+    }
+    '/developer/generic-templates': {
+      id: '/developer/generic-templates'
+      path: '/generic-templates'
+      fullPath: '/developer/generic-templates'
+      preLoaderRoute: typeof DeveloperGenericTemplatesRouteImport
       parentRoute: typeof DeveloperRoute
     }
     '/developer/governance': {
@@ -351,6 +371,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface DeveloperRouteChildren {
+  DeveloperGenericTemplatesRoute: typeof DeveloperGenericTemplatesRoute
   DeveloperGovernanceRoute: typeof DeveloperGovernanceRoute
   DeveloperPromptsRoute: typeof DeveloperPromptsRoute
   DeveloperResourcesRoute: typeof DeveloperResourcesRoute
@@ -359,6 +380,7 @@ interface DeveloperRouteChildren {
 }
 
 const DeveloperRouteChildren: DeveloperRouteChildren = {
+  DeveloperGenericTemplatesRoute: DeveloperGenericTemplatesRoute,
   DeveloperGovernanceRoute: DeveloperGovernanceRoute,
   DeveloperPromptsRoute: DeveloperPromptsRoute,
   DeveloperResourcesRoute: DeveloperResourcesRoute,
