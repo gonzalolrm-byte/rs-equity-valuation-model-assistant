@@ -1,5 +1,6 @@
 import { ChevronDown, Info } from "lucide-react";
 import { useState, type ReactNode } from "react";
+import { EditableText } from "@/lib/ui-content";
 
 export function PageHeading({
   step,
@@ -14,9 +15,23 @@ export function PageHeading({
 }) {
   return (
     <div className="mb-8">
-      <p className="eyebrow">{step}</p>
-      <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">{title}</h1>
-      <p className="mt-3 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">{intro}</p>
+      <EditableText as="p" className="eyebrow" group="Page heading">
+        {step}
+      </EditableText>
+      <EditableText
+        as="h1"
+        className="mt-2 block text-3xl font-extrabold sm:text-4xl"
+        group="Page heading"
+      >
+        {title}
+      </EditableText>
+      <EditableText
+        as="p"
+        className="mt-3 block max-w-3xl text-[15px] leading-relaxed text-muted-foreground"
+        group="Page heading"
+      >
+        {intro}
+      </EditableText>
       {required && (
         <p className="mt-2 text-sm text-muted-foreground">
           <span className="text-destructive">*</span> Required field
