@@ -1,7 +1,7 @@
 import { Link, Outlet, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { ArrowLeft, FolderOpen, KeyRound, Lock, MessageSquareCode, Pencil, Settings, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, FileSpreadsheet, FolderOpen, KeyRound, Lock, MessageSquareCode, Pencil, Settings, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { IfcLockup } from "@/components/AppHeader";
 import { useApp, type NavigationMode } from "@/lib/store";
 import { useUiContent } from "@/lib/ui-content";
@@ -182,10 +182,16 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
           </div>
           <nav className="space-y-1.5">
             <NavItem
+              to="/developer/generic-templates"
+              icon={<FileSpreadsheet className="size-4" />}
+              label="Generic DCF Templates"
+            />
+            <NavItem
               to="/developer/sector-specifics"
               icon={<SlidersHorizontal className="size-4" />}
               label="Sector Specifics"
             />
+
             <NavItem
               to="/developer/resources"
               icon={<FolderOpen className="size-4" />}
