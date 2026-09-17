@@ -371,6 +371,26 @@ function DefaultTemplateGenerator({
           {existing ? "Regenerate" : "Generate default template"}
         </button>
         {existing && (
+          <>
+            <button
+              type="button"
+              onClick={() => openGenerated(existing.fileName, existing.content ?? "")}
+              className="inline-flex items-center gap-2 rounded-lg border border-input px-3.5 py-2 text-[13px] font-semibold text-navy transition-colors hover:bg-secondary"
+            >
+              <ExternalLink className="size-4" />
+              Open
+            </button>
+            <button
+              type="button"
+              onClick={() => downloadGenerated(existing.fileName, existing.content ?? "")}
+              className="inline-flex items-center gap-2 rounded-lg border border-input px-3.5 py-2 text-[13px] font-semibold text-navy transition-colors hover:bg-secondary"
+            >
+              <Download className="size-4" />
+              Download
+            </button>
+          </>
+        )}
+        {existing && (
           <button
             type="button"
             onClick={() => clearSubsectorDefaultTemplate(subsector)}
