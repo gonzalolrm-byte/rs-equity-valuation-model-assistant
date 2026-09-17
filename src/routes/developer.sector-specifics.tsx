@@ -1,5 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileSpreadsheet, Info, Plus, RotateCcw, Trash2, Upload, Wand2 } from "lucide-react";
+import {
+  Download,
+  ExternalLink,
+  FileSpreadsheet,
+  Info,
+  Plus,
+  RotateCcw,
+  Trash2,
+  Upload,
+  Wand2,
+} from "lucide-react";
 import { useRef, useState } from "react";
 
 import {
