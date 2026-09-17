@@ -51,6 +51,26 @@ const CAPACITY_CHOICES = CAPACITY_MEASUREMENTS.filter(
 
 const OUTPUT_CHOICES = OUTPUT_MEASUREMENTS.filter((unit) => unit !== OTHER_MEASUREMENT);
 
+/** Saved generated templates are plain text, so they can be viewed or saved locally. */
+function generatedUrl(content: string) {
+  return URL.createObjectURL(new Blob([content], { type: "text/csv;charset=utf-8" }));
+}
+
+function openGenerated(fileName: string, content: string) {
+  const url = generatedUrl(content || fileName);
+  window.open(url, "_blank", "noopener,noreferrer");
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
+function downloadGenerated(fileName: string, content: string) {
+  const url = generatedUrl(content || fileName);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
 function SectorSpecifics() {
   const { state, addCustomSubsector } = useApp();
   const [sector, setSector] = useState<string>(SECTORS[0]);
