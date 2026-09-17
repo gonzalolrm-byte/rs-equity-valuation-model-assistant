@@ -1,5 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileSpreadsheet, Info, Plus, RotateCcw, Trash2, Upload, Wand2 } from "lucide-react";
+import {
+  Download,
+  ExternalLink,
+  FileSpreadsheet,
+  Info,
+  Plus,
+  RotateCcw,
+  Trash2,
+  Upload,
+  Wand2,
+} from "lucide-react";
 import { useRef, useState } from "react";
 
 import {
@@ -40,6 +50,26 @@ const CAPACITY_CHOICES = CAPACITY_MEASUREMENTS.filter(
 );
 
 const OUTPUT_CHOICES = OUTPUT_MEASUREMENTS.filter((unit) => unit !== OTHER_MEASUREMENT);
+
+/** Saved generated templates are plain text, so they can be viewed or saved locally. */
+function generatedUrl(content: string) {
+  return URL.createObjectURL(new Blob([content], { type: "text/csv;charset=utf-8" }));
+}
+
+function openGenerated(fileName: string, content: string) {
+  const url = generatedUrl(content || fileName);
+  window.open(url, "_blank", "noopener,noreferrer");
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
+function downloadGenerated(fileName: string, content: string) {
+  const url = generatedUrl(content || fileName);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
 
 function SectorSpecifics() {
   const { state, addCustomSubsector } = useApp();
@@ -370,6 +400,26 @@ function DefaultTemplateGenerator({
           <Wand2 className="size-4" />
           {existing ? "Regenerate" : "Generate default template"}
         </button>
+        {existing && (
+          <>
+            <button
+              type="button"
+              onClick={() => openGenerated(existing.fileName, existing.content ?? "")}
+              className="inline-flex items-center gap-2 rounded-lg border border-input px-3.5 py-2 text-[13px] font-semibold text-navy transition-colors hover:bg-secondary"
+            >
+              <ExternalLink className="size-4" />
+              Open
+            </button>
+            <button
+              type="button"
+              onClick={() => downloadGenerated(existing.fileName, existing.content ?? "")}
+              className="inline-flex items-center gap-2 rounded-lg border border-input px-3.5 py-2 text-[13px] font-semibold text-navy transition-colors hover:bg-secondary"
+            >
+              <Download className="size-4" />
+              Download
+            </button>
+          </>
+        )}
         {existing && (
           <button
             type="button"

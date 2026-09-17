@@ -160,6 +160,8 @@ export type SubsectorDefaultTemplate = {
   generatedAt: string;
   outputMeasurement: string;
   capacityMeasurements: string[];
+  /** The generated file body, kept so the developer can open or download it later. */
+  content?: string;
 };
 
 
@@ -563,20 +565,36 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           },
         })),
       generateSubsectorDefaultTemplate: (subsector, input) =>
-        setState((prev) => ({
-          ...prev,
-          subsectorDefaultTemplates: {
-            ...(prev.subsectorDefaultTemplates ?? {}),
-            [subsector]: {
-              fileName: `Default_Template_${subsector.replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_|_$/g, "")}.xlsx`,
-              baseTemplate: input.baseTemplate,
-              prompt: input.prompt,
-              generatedAt: new Date().toISOString(),
-              outputMeasurement: input.outputMeasurement,
-              capacityMeasurements: input.capacityMeasurements,
+        setState((prev) => {
+          const generatedAt = new Date().toISOString();
+          const slug = subsector.replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_|_$/g, "");
+          const rows = [
+            ["Default template (prototype)", subsector],
+            ["Base generic template", input.baseTemplate],
+            ["Generated at", generatedAt],
+            ["Maximum Output / Units Sold measurement", input.outputMeasurement],
+            ["Capacity measurements offered", input.capacityMeasurements.join("; ")],
+            ["Adaptation prompt", input.prompt],
+          ];
+          const content = rows
+            .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+            .join("\r\n");
+          return {
+            ...prev,
+            subsectorDefaultTemplates: {
+              ...(prev.subsectorDefaultTemplates ?? {}),
+              [subsector]: {
+                fileName: `Default_Template_${slug}.csv`,
+                baseTemplate: input.baseTemplate,
+                prompt: input.prompt,
+                generatedAt,
+                outputMeasurement: input.outputMeasurement,
+                capacityMeasurements: input.capacityMeasurements,
+                content,
+              },
             },
-          },
-        })),
+          };
+        }),
       clearSubsectorDefaultTemplate: (subsector) =>
         setState((prev) => {
           const next = { ...(prev.subsectorDefaultTemplates ?? {}) };
