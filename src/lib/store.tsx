@@ -160,6 +160,8 @@ export type SubsectorDefaultTemplate = {
   generatedAt: string;
   outputMeasurement: string;
   capacityMeasurements: string[];
+  /** The generated file body, kept so the developer can open or download it later. */
+  content?: string;
 };
 
 
