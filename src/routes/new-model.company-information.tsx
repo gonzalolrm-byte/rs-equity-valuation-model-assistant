@@ -25,16 +25,8 @@ import {
   SAME_AS_OUTPUT_MEASUREMENT,
   SECTORS,
   SUBSECTORS,
-  WORKING_CAPITAL_ASSETS,
-  MANUAL_WORKING_CAPITAL_BASIS,
-  WORKING_CAPITAL_BASIS_OPTIONS,
-  WORKING_CAPITAL_LIABILITIES,
 } from "@/lib/data";
-import {
-  useApp,
-  type SegmentMeasurement,
-  type WorkingCapitalDays,
-} from "@/lib/store";
+import { useApp, type SegmentMeasurement } from "@/lib/store";
 
 export const WORKFLOW_A_STEPS = [
   "Template Selection & Key Inputs",
@@ -642,37 +634,6 @@ function CompanyInformation() {
 
                       <Question
                         number={2}
-                        label="Working capital — how should days be modeled for each line item?"
-                        hint="Select the historical basis used to derive days for each working capital item, or choose Manual input to enter the number of days directly."
-                      >
-                        <div className="space-y-4">
-                          {isSotp ? (
-                            <>
-                              <LineWorkingCapitalMatrix
-                                title="Assets"
-                                items={WORKING_CAPITAL_ASSETS}
-                                lines={lines}
-                              />
-                              <LineWorkingCapitalMatrix
-                                title="Liabilities"
-                                items={WORKING_CAPITAL_LIABILITIES}
-                                lines={lines}
-                              />
-                            </>
-                          ) : (
-                            <>
-                              <WorkingCapitalGroup title="Assets" items={WORKING_CAPITAL_ASSETS} />
-                              <WorkingCapitalGroup
-                                title="Liabilities"
-                                items={WORKING_CAPITAL_LIABILITIES}
-                              />
-                            </>
-                          )}
-                        </div>
-                      </Question>
-
-                      <Question
-                        number={3}
                         label="How many comparable companies (comps) does the company have?"
                         hint={
                           isSotp
@@ -710,7 +671,7 @@ function CompanyInformation() {
                 })()}
 
                 <Question
-                  number={4}
+                  number={3}
                   label="Does IFC have common shares or preferred shares?"
                   required
                 >
@@ -736,7 +697,7 @@ function CompanyInformation() {
                   )}
                 </Question>
 
-                <Question number={5} label="Does the company have a liquidity put?" required>
+                <Question number={4} label="Does the company have a liquidity put?" required>
                   <OptionRow
                     value={a.liquidityPut}
                     onChange={(value) => setAnswer("liquidityPut", value as typeof a.liquidityPut)}
@@ -1191,65 +1152,8 @@ function SegmentMeasurements({
 }
 
 /**
- * Days basis selection for a group of working capital line items (assets or
- * liabilities). Each item can use a historical average or a manual day count.
- */
-function WorkingCapitalGroup({ title, items }: { title: string; items: string[] }) {
-  const { state, setAnswer } = useApp();
-  const a = state.answers;
-
-  const update = (item: string, partial: Partial<WorkingCapitalDays>) => {
-    const current: WorkingCapitalDays =
-      a.workingCapitalDays[item] ?? { basis: "", manualDays: "" };
-    setAnswer("workingCapitalDays", {
-      ...a.workingCapitalDays,
-      [item]: { ...current, ...partial },
-    });
-  };
-
-  return (
-    <div className="rounded-xl border border-panel-border bg-panel/60 p-4">
-      <p className="text-[15px] font-semibold text-navy">{title}</p>
-      <div className="mt-3 space-y-3">
-        {items.map((item) => {
-          const current = a.workingCapitalDays[item] ?? { basis: "", manualDays: "" };
-          return (
-            <div
-              key={item}
-              className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
-            >
-              <p className="w-full pt-2 text-[15px] font-medium text-navy sm:w-1/2 lg:w-5/12">
-                {item}
-              </p>
-              <div className="flex w-full flex-col gap-2 sm:w-1/2 lg:w-7/12">
-                <SelectField
-                  value={current.basis}
-                  onChange={(value) => update(item, { basis: value })}
-                  options={WORKING_CAPITAL_BASIS_OPTIONS}
-                  placeholder="Select basis"
-                />
-                {current.basis === MANUAL_WORKING_CAPITAL_BASIS && (
-                  <TextField
-                    value={current.manualDays}
-                    onChange={(value) =>
-                      update(item, { manualDays: value.replace(/\D/g, "") })
-                    }
-                    placeholder="Enter number of days"
-                  />
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-/**
  * Generic matrix with the selected sub-sectors as columns. Used for the
- * Sum-of-the-Parts breakdown of projection horizon, working capital days and
- * comparable companies.
+ * Sum-of-the-Parts breakdown of projection horizon and comparable companies.
  */
 function LineMatrix({
   lines,
@@ -1295,63 +1199,6 @@ function LineMatrix({
         </table>
       </div>
     </div>
-  );
-}
-
-/**
- * Working capital days matrix for Sum-of-the-Parts: line items as rows and the
- * selected sub-sectors as columns.
- */
-function LineWorkingCapitalMatrix({
-  title,
-  items,
-  lines,
-}: {
-  title: string;
-  items: string[];
-  lines: { value: string; label: string }[];
-}) {
-  const { state, setAnswer } = useApp();
-  const a = state.answers;
-
-  const update = (lineId: string, item: string, partial: Partial<WorkingCapitalDays>) => {
-    const forLine = a.workingCapitalDaysByLine[lineId] ?? {};
-    const current: WorkingCapitalDays = forLine[item] ?? { basis: "", manualDays: "" };
-    setAnswer("workingCapitalDaysByLine", {
-      ...a.workingCapitalDaysByLine,
-      [lineId]: { ...forLine, [item]: { ...current, ...partial } },
-    });
-  };
-
-  return (
-    <LineMatrix
-      title={title}
-      lines={lines}
-      rows={items.map((item) => ({ key: item, label: item }))}
-      renderCell={(lineId, item) => {
-        const current =
-          a.workingCapitalDaysByLine[lineId]?.[item] ?? { basis: "", manualDays: "" };
-        return (
-          <div className="space-y-2">
-            <SelectField
-              value={current.basis}
-              onChange={(value) => update(lineId, item, { basis: value })}
-              options={WORKING_CAPITAL_BASIS_OPTIONS}
-              placeholder="Select basis"
-            />
-            {current.basis === MANUAL_WORKING_CAPITAL_BASIS && (
-              <TextField
-                value={current.manualDays}
-                onChange={(value) =>
-                  update(lineId, item, { manualDays: value.replace(/\D/g, "") })
-                }
-                placeholder="Days"
-              />
-            )}
-          </div>
-        );
-      }}
-    />
   );
 }
 
