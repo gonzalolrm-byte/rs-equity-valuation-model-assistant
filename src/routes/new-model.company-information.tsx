@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, Lightbulb } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Info, Lightbulb, Trash2 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button, ButtonLink } from "@/components/Button";
@@ -10,7 +10,6 @@ import {
   OptionRow,
   PageHeading,
   Question,
-  SegmentedToggleRow,
   SelectField,
   TextField,
 } from "@/components/form";
@@ -979,6 +978,7 @@ function SegmentMeasurements({
   measurementKey,
   isPrimaryStream = true,
   modelBasis,
+  tableRow = false,
 }: {
   segmentId: string;
   segmentLabel: string;
@@ -989,6 +989,7 @@ function SegmentMeasurements({
   isPrimaryStream?: boolean;
   /** Modeling basis inherited from the parent sub-sector. */
   modelBasis?: "unit_economics" | "percentage";
+  tableRow?: boolean;
 }) {
   const { state, setAnswer } = useApp();
   const a = state.answers;
@@ -1047,6 +1048,59 @@ function SegmentMeasurements({
       ? recommended.output
       : current.output;
 
+
+  if (tableRow && needsAnyUnit) {
+    return (
+      <div className="grid grid-cols-[minmax(8rem,0.85fr)_minmax(11rem,1.3fr)_minmax(11rem,1.2fr)] border-t border-panel-border first:border-t-0">
+        <div className="flex items-center px-4 py-3 text-[13px] font-semibold text-navy">
+          {segmentLabel}
+        </div>
+        <div className="border-l border-panel-border px-3 py-2">
+          <SelectField
+            value={outputValue}
+            onChange={(value) =>
+              update({ output: isFirstSegment && value === OTHER_MEASUREMENT ? recommended.output : value })
+            }
+            options={[
+              ...new Set(
+                [
+                  outputValue,
+                  recommended.output,
+                  ...(isMultiStream ? recommended.outputOptions : []),
+                  ...(isFirstSegment ? [] : [OTHER_MEASUREMENT]),
+                ].filter(Boolean),
+              ),
+            ]}
+          />
+          {!isFirstSegment && current.output === OTHER_MEASUREMENT && (
+            <div className="mt-2">
+              <TextField
+                value={current.outputOther}
+                onChange={(value) => update({ outputOther: value })}
+                placeholder="Enter output / units sold measurement"
+              />
+            </div>
+          )}
+        </div>
+        <div className="border-l border-panel-border px-3 py-2">
+          <SelectField
+            value={current.capacity}
+            onChange={(value) => update({ capacity: value })}
+            options={[...new Set([current.capacity, ...recommended.capacityOptions].filter(Boolean))]}
+          />
+          {current.capacity === OTHER_MEASUREMENT && (
+            <div className="mt-2">
+              <TextField
+                value={current.capacityOther}
+                onChange={(value) => update({ capacityOther: value })}
+                placeholder="Enter capacity measurement"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-2 rounded-xl border border-panel-border bg-panel/60 p-4">
@@ -1343,7 +1397,7 @@ function SegmentMatrix({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-border bg-card p-4 shadow-card">
+      <div className="rounded-xl border border-border bg-card p-3 shadow-card sm:p-4">
         {footer && <div className="mb-4">{footer}</div>}
         <div className="space-y-3">
           {segmentOptions.map((line) => {
@@ -1360,20 +1414,18 @@ function SegmentMatrix({
               a.lineModelBasis[line.value] ??
               (lineSubsector === "Generic - Percentage Based" ? "percentage" : "unit_economics");
             return (
-              <div
-                key={line.value}
-                className="rounded-lg border border-panel-border bg-panel/40 p-3"
-              >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div key={line.value} className={[
+                "overflow-hidden rounded-lg border transition-colors",
+                lineSelected ? "border-primary/55 bg-panel/35" : "border-panel-border bg-card",
+              ].join(" ")}>
+                <div className="flex min-h-12 items-center justify-between gap-3 px-3 py-2">
                   <button
                     type="button"
                     onClick={() => toggleLine(line.value)}
                     aria-pressed={lineSelected}
                     className={[
-                      "flex items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-[15px] transition-colors sm:w-64",
-                      lineSelected
-                        ? "border-primary bg-panel text-navy"
-                        : "border-border bg-card text-navy-soft hover:border-primary/50 hover:bg-secondary/60",
+                      "flex min-w-0 flex-1 items-center gap-3 text-left text-[14px] font-bold transition-colors",
+                      lineSelected ? "text-navy" : "text-navy-soft",
                     ].join(" ")}
                   >
                     <span
@@ -1394,73 +1446,49 @@ function SegmentMatrix({
                         </svg>
                       )}
                     </span>
-                    {line.label}
+                    <span className="truncate">{line.label}</span>
                   </button>
-
-                  <div className="flex flex-wrap gap-2">
-                    <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1">
-                      {(
-                        [
-                          { value: "unit_economics", label: "Unit Economics" },
-                          { value: "percentage", label: "% Based" },
-                        ] as const
-                      ).map((option) => (
-                        <button
-                          key={option.value}
-                          type="button"
-                          disabled={!lineSelected}
-                          onClick={() =>
-                            setAnswer("lineModelBasis", {
-                              ...a.lineModelBasis,
-                              [line.value]: option.value,
-                            })
-                          }
-                          aria-pressed={lineSelected && modelBasis === option.value}
-                          className={[
-                            "rounded-md px-3 py-1.5 text-[13px] font-semibold transition-colors",
-                            lineSelected && modelBasis === option.value
-                              ? "bg-primary text-primary-foreground"
-                              : "text-navy-soft hover:bg-secondary",
-                            !lineSelected && "cursor-not-allowed opacity-50",
-                          ].join(" ")}
-                        >
-                          {option.label}
-                        </button>
-                      ))}
-                    </div>
-                    <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1">
-                      {(
-                        [
-                          { value: "single", label: "Single Revenue Stream" },
-                          { value: "multi", label: "Multi Stream" },
-                        ] as const
-                      ).map((option) => {
-                        const active = lineSelected && mode === option.value;
-                        return (
-                          <button
-                            key={option.value}
-                            type="button"
-                            disabled={!lineSelected}
-                            onClick={() => setMode(line.value, option.value)}
-                            aria-pressed={active}
-                            className={[
-                              "whitespace-nowrap rounded-md px-3 py-1.5 text-[13px] font-semibold transition-colors",
-                              active
-                                ? "bg-primary text-primary-foreground"
-                                : "text-navy-soft hover:bg-secondary",
-                              !lineSelected && "cursor-not-allowed opacity-50",
-                            ].join(" ")}
-                          >
-                            {option.label}
-                          </button>
-                        );
-                      })}
-                    </div>
+                  <div className="flex shrink-0 items-center gap-2 text-muted-foreground">
+                    {line.value !== "segment1" && lineSelected && (
+                      <button type="button" onClick={() => toggleLine(line.value)} className="flex items-center gap-1 rounded-md px-2 py-1 text-xs hover:bg-secondary hover:text-destructive" aria-label={`Remove ${line.label}`}>
+                        <Trash2 className="size-3.5" /> Remove
+                      </button>
+                    )}
+                    {lineSelected ? <ChevronUp className="size-4 text-navy-soft" /> : <ChevronDown className="size-4 text-navy-soft" />}
                   </div>
                 </div>
 
-                {lineSelected && mode === "multi" && (
-                  <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {lineSelected && <div className="space-y-2 border-t border-panel-border p-2 sm:p-3">
+                  <div className="grid gap-3 rounded-lg border border-panel-border bg-card px-3 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
+                    <div className="flex items-start gap-3">
+                      <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 font-heading text-base font-bold text-primary">A</span>
+                      <div><p className="flex items-center gap-2 text-[14px] font-bold text-navy">Revenue modeling approach <Info className="size-3.5 text-navy-soft" /></p><p className="mt-0.5 text-xs text-muted-foreground">How do you want to model revenues for this sub-sector?</p></div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1 sm:min-w-72">
+                      {([{ value: "unit_economics", label: "Unit Economics" }, { value: "percentage", label: "% Based" }] as const).map((option) => (
+                        <button key={option.value} type="button" onClick={() => setAnswer("lineModelBasis", { ...a.lineModelBasis, [line.value]: option.value })} aria-pressed={modelBasis === option.value} className={["rounded-md px-4 py-2 text-xs font-semibold transition-colors", modelBasis === option.value ? "bg-primary text-primary-foreground shadow-sm" : "text-navy hover:bg-secondary"].join(" ")}>{option.label}</button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border border-panel-border bg-card p-3">
+                    <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
+                      <div className="flex items-start gap-3">
+                        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 font-heading text-base font-bold text-primary">B</span>
+                        <div><p className="flex items-center gap-2 text-[14px] font-bold text-navy">Revenue structure <Info className="size-3.5 text-navy-soft" /></p><p className="mt-0.5 text-xs text-muted-foreground">Select the number of revenue streams to include.</p></div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1 sm:min-w-72">
+                        {([{ value: "single", label: "Single Revenue Stream" }, { value: "multi", label: "Multiple Revenue Streams" }] as const).map((option) => {
+                          const active = mode === option.value;
+                          return <button key={option.value} type="button" onClick={() => setMode(line.value, option.value)} aria-pressed={active} className={["whitespace-nowrap rounded-md px-3 py-2 text-xs font-semibold transition-colors", active ? "bg-primary text-primary-foreground shadow-sm" : "text-navy hover:bg-secondary"].join(" ")}>{option.label}</button>;
+                        })}
+                      </div>
+                    </div>
+
+                  {mode === "multi" && (
+                  <div className="mt-3 rounded-lg border border-panel-border bg-panel/25 p-3">
+                    <p className="mb-2 text-xs font-bold text-navy">Select revenue streams</p>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                     {revenueStreamOptions.map((stream, index) => {
                       const active = streams.includes(stream.value);
                       const previous = streamOrder[index - 1]!;
@@ -1508,10 +1536,11 @@ function SegmentMatrix({
                         </button>
                       );
                     })}
+                    </div>
                   </div>
                 )}
 
-                {lineSelected && mode === "single" && (
+                {mode === "single" && (
                   <SegmentMeasurements
                     segmentId={line.value}
                     segmentLabel={line.label}
@@ -1520,63 +1549,37 @@ function SegmentMatrix({
                   />
                 )}
 
-                {lineSelected &&
-                  mode === "multi" &&
-                  revenueStreamOptions
-                    .filter((stream) => streams.includes(stream.value))
-                    .map((stream, streamIndex) => (
-                      <SegmentMeasurements
-                        key={stream.value}
-                        segmentId={line.value}
-                        segmentLabel={stream.label}
-                        measurementKey={`${line.value}:${stream.value}`}
-                        isPrimaryStream={streamIndex === 0}
-                        modelBasis={modelBasis}
-                      />
-                    ))}
+                  {mode === "multi" && modelBasis === "unit_economics" && streams.length > 0 && (
+                    <div className="mt-3 overflow-x-auto rounded-lg border border-panel-border bg-card">
+                      <div className="px-3 py-3"><p className="text-xs font-bold text-navy">Configure operational units for each revenue stream</p><p className="mt-0.5 text-xs italic text-muted-foreground">Define the unit of measure for sales/output and capacity for each selected revenue stream.</p></div>
+                      <div className="min-w-[620px] border-t border-panel-border">
+                        <div className="grid grid-cols-[minmax(8rem,0.85fr)_minmax(11rem,1.3fr)_minmax(11rem,1.2fr)] bg-panel/50 text-xs font-bold text-navy">
+                          <div className="px-4 py-2.5">Revenue Stream</div>
+                          <div className="border-l border-panel-border px-3 py-2.5">Sales / Output Unit <span className="font-normal text-muted-foreground">ⓘ</span><span className="mt-0.5 block text-[10px] font-normal text-muted-foreground">Unit for Maximum Output and Units Sold</span></div>
+                          <div className="border-l border-panel-border px-3 py-2.5">Capacity Unit <span className="font-normal text-muted-foreground">ⓘ</span><span className="mt-0.5 block text-[10px] font-normal text-muted-foreground">Unit for installed capacity</span></div>
+                        </div>
+                        {revenueStreamOptions.filter((stream) => streams.includes(stream.value)).map((stream, streamIndex) => (
+                          <SegmentMeasurements key={stream.value} segmentId={line.value} segmentLabel={stream.label} measurementKey={`${line.value}:${stream.value}`} isPrimaryStream={streamIndex === 0} modelBasis={modelBasis} tableRow />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  </div>
 
-
-                {lineSelected && mode === "multi" && (
-                  <div className="mt-3 space-y-3 rounded-lg border border-panel-border bg-card p-3">
-                    <p className="text-[13px] font-medium text-navy-soft">
-                      How do you want COGS and CapEx to be segmented?
-                    </p>
-                    <SegmentedToggleRow
-                      label="COGS"
-                      value={a.cogsBasis[line.value] ?? ""}
-                      onChange={(value) =>
-                        setAnswer("cogsBasis", {
-                          ...a.cogsBasis,
-                          [line.value]: value as "business_line" | "revenue_stream",
-                        })
-                      }
-                      disabledOptions={
-                        a.selectedSegments.length > 1 ? ["revenue_stream"] : []
-                      }
-                      options={[
-                        { value: "business_line", label: "By sub-sector" },
-                        { value: "revenue_stream", label: "By revenue stream" },
-                      ]}
-                    />
-                    <SegmentedToggleRow
-                      label="CapEx"
-                      value={a.capexBasis[line.value] ?? ""}
-                      onChange={(value) =>
-                        setAnswer("capexBasis", {
-                          ...a.capexBasis,
-                          [line.value]: value as "business_line" | "revenue_stream",
-                        })
-                      }
-                      disabledOptions={
-                        a.selectedSegments.length > 1 ? ["revenue_stream"] : []
-                      }
-                      options={[
-                        { value: "business_line", label: "By sub-sector" },
-                        { value: "revenue_stream", label: "By revenue stream" },
-                      ]}
-                    />
+                {mode === "multi" && (
+                  <div className="rounded-lg border border-panel-border bg-card p-3">
+                    <div className="mb-3 flex items-start gap-3"><span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 font-heading text-base font-bold text-primary">C</span><div><p className="flex items-center gap-2 text-[14px] font-bold text-navy">COGS and CapEx modeling <Info className="size-3.5 text-navy-soft" /></p><p className="mt-0.5 text-xs text-muted-foreground">How should COGS and CapEx be segmented for this sub-sector?</p></div></div>
+                    <div className="overflow-hidden rounded-md border border-panel-border">
+                      <div className="grid grid-cols-[0.8fr_1.1fr_1.1fr] bg-panel/50 text-center text-[11px] font-bold text-navy"><div className="px-3 py-2 text-left">Item</div><div className="border-l border-panel-border px-3 py-2">Sub-sector Level<span className="block font-normal text-muted-foreground">Same approach for all revenue streams</span></div><div className="border-l border-panel-border px-3 py-2">Revenue Stream Level<span className="block font-normal text-muted-foreground">Different approach by revenue stream</span></div></div>
+                      {(["COGS", "CapEx"] as const).map((item) => {
+                        const key = item === "COGS" ? "cogsBasis" : "capexBasis";
+                        const value = a[key][line.value] ?? "business_line";
+                        return <div key={item} className="grid grid-cols-[0.8fr_1.1fr_1.1fr] border-t border-panel-border text-xs"><div className="px-3 py-2 font-bold text-navy">{item}</div>{(["business_line", "revenue_stream"] as const).map((basis) => { const disabled = basis === "revenue_stream" && a.selectedSegments.length > 1; return <button key={basis} type="button" disabled={disabled} onClick={() => setAnswer(key, { ...a[key], [line.value]: basis })} className="flex items-center justify-center border-l border-panel-border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-40" aria-label={`${item} ${basis === "business_line" ? "sub-sector level" : "revenue stream level"}`}><span className={["size-4 rounded-full border", value === basis ? "border-primary bg-primary shadow-[inset_0_0_0_3px_var(--color-card)]" : "border-input"].join(" ")} /></button>; })}</div>;
+                      })}
+                    </div>
                   </div>
                 )}
+                </div>}
               </div>
             );
           })}
