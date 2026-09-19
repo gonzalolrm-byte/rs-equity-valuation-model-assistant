@@ -1428,32 +1428,34 @@ function SegmentMatrix({
                         </button>
                       ))}
                     </div>
-                    {(
-                      [
-                        { value: "single", label: "Single Revenue Stream" },
-                        { value: "multi", label: "Multi Stream" },
-                      ] as const
-                    ).map((option) => {
-                      const active = lineSelected && mode === option.value;
-                      return (
-                        <button
-                          key={option.value}
-                          type="button"
-                          disabled={!lineSelected}
-                          onClick={() => setMode(line.value, option.value)}
-                          aria-pressed={active}
-                          className={[
-                            "rounded-lg border px-3 py-2 text-[14px] font-medium transition-colors",
-                            active
-                              ? "border-primary bg-primary/10 text-navy"
-                              : "border-border bg-card text-navy-soft hover:border-primary/50 hover:bg-secondary/60",
-                            !lineSelected && "cursor-not-allowed opacity-50 hover:border-border hover:bg-card",
-                          ].join(" ")}
-                        >
-                          {option.label}
-                        </button>
-                      );
-                    })}
+                    <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1">
+                      {(
+                        [
+                          { value: "single", label: "Single Revenue Stream" },
+                          { value: "multi", label: "Multi Stream" },
+                        ] as const
+                      ).map((option) => {
+                        const active = lineSelected && mode === option.value;
+                        return (
+                          <button
+                            key={option.value}
+                            type="button"
+                            disabled={!lineSelected}
+                            onClick={() => setMode(line.value, option.value)}
+                            aria-pressed={active}
+                            className={[
+                              "whitespace-nowrap rounded-md px-3 py-1.5 text-[13px] font-semibold transition-colors",
+                              active
+                                ? "bg-primary text-primary-foreground"
+                                : "text-navy-soft hover:bg-secondary",
+                              !lineSelected && "cursor-not-allowed opacity-50",
+                            ].join(" ")}
+                          >
+                            {option.label}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
 
