@@ -103,11 +103,12 @@ function Governance() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-extrabold">4. Governance</h1>
-      <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">
-        Define the review, approval and documentation rules that apply to models produced with
-        this application, and keep the supporting governance documents in one place.
-      </p>
+      <EditableText as="h1" className="block font-heading text-2xl font-extrabold" group="Governance">
+        4. Governance
+      </EditableText>
+      <EditableText as="p" className="mt-2 block max-w-3xl text-[15px] leading-relaxed text-muted-foreground" group="Governance">
+        Define the review, approval and documentation rules that apply to models produced with this application, and keep the supporting governance documents in one place.
+      </EditableText>
 
       <div className="mt-6 space-y-4">
         {policies.map((policy) => (

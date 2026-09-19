@@ -46,11 +46,12 @@ function Resources() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-extrabold">2. Market Data &amp; Additional Templates</h1>
-      <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">
-        Upload and manage the core files and data sources used by the application. These files are
-        accessible only to developers and are not visible to users.
-      </p>
+      <EditableText as="h1" className="block font-heading text-2xl font-extrabold" group="Market Data & Additional Templates">
+        2. Market Data & Additional Templates
+      </EditableText>
+      <EditableText as="p" className="mt-2 block max-w-3xl text-[15px] leading-relaxed text-muted-foreground" group="Market Data & Additional Templates">
+        Upload and manage the core files and data sources used by the application. These files are accessible only to developers and are not visible to users.
+      </EditableText>
 
       <div className="mt-6 space-y-4">
         {state.resources.map((resource) => (
