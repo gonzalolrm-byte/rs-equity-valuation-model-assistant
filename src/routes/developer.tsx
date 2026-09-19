@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, FileSpreadsheet, FolderOpen, KeyRound, Lock, MessageSquareCode, Pencil, Settings, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { IfcLockup } from "@/components/AppHeader";
 import { useApp, type NavigationMode } from "@/lib/store";
-import { useUiContent } from "@/lib/ui-content";
+import { EditableText, useUiContent } from "@/lib/ui-content";
 import {
   isDeveloperUnlocked,
   lockDeveloper,
@@ -151,6 +151,14 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
             </button>
             <button
               type="button"
+              onClick={ui.startEditing}
+              className="inline-flex items-center gap-2 rounded-lg border border-primary/40 px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-panel"
+            >
+              <Pencil className="size-4" />
+              Edit Developer Console
+            </button>
+            <button
+              type="button"
               onClick={onLock}
               className="inline-flex items-center gap-2 rounded-lg border border-input px-3 py-2 text-sm font-semibold text-navy transition-colors hover:bg-secondary"
             >
@@ -175,10 +183,12 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
             <span className="flex size-10 items-center justify-center rounded-full bg-card">
               <Settings className="size-5 text-primary" />
             </span>
-            <p className="mt-3 font-heading text-[15px] font-bold">Developer</p>
-            <p className="mt-1 text-[13px] leading-relaxed text-navy-soft">
+            <EditableText as="p" className="mt-3 block font-heading text-[15px] font-bold" group="Developer Console">
+              Developer
+            </EditableText>
+            <EditableText as="p" className="mt-1 block text-[13px] leading-relaxed text-navy-soft" group="Developer Console">
               Access developer tools, manage prompts and templates.
-            </p>
+            </EditableText>
           </div>
           <nav className="space-y-1.5">
             <NavItem
@@ -209,10 +219,12 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
             />
           </nav>
           <div className="rounded-xl border border-panel-border bg-card p-4">
-            <p className="font-heading text-[14px] font-bold text-navy">Navigation Mode</p>
-            <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
+            <EditableText as="p" className="block font-heading text-[14px] font-bold text-navy" group="Developer Console">
+              Navigation Mode
+            </EditableText>
+            <EditableText as="p" className="mt-1 block text-[12px] leading-relaxed text-muted-foreground" group="Developer Console">
               Controls whether required fields must be completed before moving between steps.
-            </p>
+            </EditableText>
             <div className="mt-3 space-y-2">
               <ModeOption
                 value="required"
@@ -278,12 +290,14 @@ function ModeOption({
         >
           {active && <span className="size-2 rounded-full bg-primary" />}
         </span>
-        <span>
-          <span className="block text-[13px] font-semibold text-navy">{label}</span>
-          <span className="mt-0.5 block text-[12px] leading-relaxed text-muted-foreground">
-            {description}
+          <span>
+            <EditableText className="block text-[13px] font-semibold text-navy" group="Developer Console">
+              {label}
+            </EditableText>
+            <EditableText className="mt-0.5 block text-[12px] leading-relaxed text-muted-foreground" group="Developer Console">
+              {description}
+            </EditableText>
           </span>
-        </span>
       </span>
     </button>
   );
@@ -297,7 +311,7 @@ function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label
       activeProps={{ className: "bg-panel text-navy border border-panel-border" }}
     >
       {icon}
-      {label}
+      <EditableText group="Developer Console navigation">{label}</EditableText>
     </Link>
   );
 }
