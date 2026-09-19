@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { EditableText } from "@/lib/ui-content";
 import { ArrowDown, ArrowUp, FileText, Pencil, Play, Plus, Power, Search, Trash2, UploadCloud, X } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { Button } from "@/components/Button";

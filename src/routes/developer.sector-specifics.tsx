@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { EditableText } from "@/lib/ui-content";
 import {
   Download,
   ExternalLink,

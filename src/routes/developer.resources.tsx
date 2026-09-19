@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { EditableText } from "@/lib/ui-content";
 import { FileSpreadsheet, Info, Plus, Trash2, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
 import type { ResourceKind } from "@/lib/data";
