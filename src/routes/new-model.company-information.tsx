@@ -978,6 +978,7 @@ function SegmentMeasurements({
   hideHeader = false,
   measurementKey,
   isPrimaryStream = true,
+  showModelBasis = false,
 }: {
   segmentId: string;
   segmentLabel: string;
@@ -986,6 +987,8 @@ function SegmentMeasurements({
   measurementKey?: string;
   /** Revenue Stream 1 of Sub-sector 1 keeps the locked recommended unit. */
   isPrimaryStream?: boolean;
+  /** Shows the per-stream Unit Economics / % Based selector. */
+  showModelBasis?: boolean;
 }) {
   const { state, setAnswer } = useApp();
   const a = state.answers;
@@ -1027,7 +1030,10 @@ function SegmentMeasurements({
   // The selected subsector/template determines whether the model uses unit
   // economics or a percentage-based approach. Percentage-based templates do not
   // need operational measurement units.
-  const isPercentageBased = lineSubsector === "Generic - Percentage Based";
+  const defaultModelBasis =
+    lineSubsector === "Generic - Percentage Based" ? "percentage" : "unit_economics";
+  const modelBasis = a.streamModelBasis[storageKey] ?? defaultModelBasis;
+  const isPercentageBased = modelBasis === "percentage";
   const needsOutputUnit = !isPercentageBased;
   const needsCapacityUnit = !isPercentageBased;
   const needsAnyUnit = needsOutputUnit || needsCapacityUnit;
@@ -1045,10 +1051,39 @@ function SegmentMeasurements({
   return (
     <div className="mt-2 rounded-xl border border-panel-border bg-panel/60 p-4">
       {!hideHeader && (
-        <p className="text-[15px] font-semibold text-navy">
-          {segmentLabel}
-          {needsAnyUnit ? " — measurement units" : " — segment detail"}
-        </p>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-[15px] font-semibold text-navy">{segmentLabel}</p>
+          {showModelBasis && (
+            <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1">
+              {(
+                [
+                  { value: "unit_economics", label: "Unit Economics" },
+                  { value: "percentage", label: "% Based" },
+                ] as const
+              ).map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() =>
+                    setAnswer("streamModelBasis", {
+                      ...a.streamModelBasis,
+                      [storageKey]: option.value,
+                    })
+                  }
+                  aria-pressed={modelBasis === option.value}
+                  className={[
+                    "rounded-md px-3 py-1.5 text-[13px] font-semibold transition-colors",
+                    modelBasis === option.value
+                      ? "bg-primary text-primary-foreground"
+                      : "text-navy-soft hover:bg-secondary",
+                  ].join(" ")}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       )}
       {!needsAnyUnit && (
         <p className="mt-1 text-[13px] text-muted-foreground">
@@ -1486,6 +1521,7 @@ function SegmentMatrix({
                         segmentLabel={stream.label}
                         measurementKey={`${line.value}:${stream.value}`}
                         isPrimaryStream={streamIndex === 0}
+                        showModelBasis
                       />
                     ))}
 
