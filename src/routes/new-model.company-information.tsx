@@ -1483,7 +1483,7 @@ function SegmentMatrix({
                       <SegmentMeasurements
                         key={stream.value}
                         segmentId={line.value}
-                        segmentLabel={`${line.label} — ${stream.label}`}
+                        segmentLabel={stream.label}
                         measurementKey={`${line.value}:${stream.value}`}
                         isPrimaryStream={streamIndex === 0}
                       />
