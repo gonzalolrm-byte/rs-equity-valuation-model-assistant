@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { FileSpreadsheet, Info, Plus, Trash2, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
+import { EditableText } from "@/lib/ui-content";
 
 export const Route = createFileRoute("/developer/generic-templates")({
   head: () => ({
@@ -72,11 +73,12 @@ function GenericTemplates() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-extrabold">Generic DCF Templates</h1>
-      <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">
-        Upload the generic standardized DCF templates used when a company does not match a
-        sector-specific template. These files are visible to developers only.
-      </p>
+      <EditableText as="h1" className="block font-heading text-2xl font-extrabold" group="Generic DCF Templates">
+        Generic DCF Templates
+      </EditableText>
+      <EditableText as="p" className="mt-2 block max-w-3xl text-[15px] leading-relaxed text-muted-foreground" group="Generic DCF Templates">
+        Upload the generic standardized DCF templates used when a company does not match a sector-specific template. These files are visible to developers only.
+      </EditableText>
 
       <div className="mt-6 space-y-4">
         {templates.map((template) => (

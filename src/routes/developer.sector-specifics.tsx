@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { EditableText } from "@/lib/ui-content";
 import {
   Download,
   ExternalLink,
@@ -92,12 +93,12 @@ function SectorSpecifics() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-extrabold">1. Sector Specifics</h1>
-      <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">
-        Choose which measurement units are applied by default for each sector template. The default
-        Maximum Output / Units Sold unit is pre-selected for users, and only the capacity units you
-        check here appear in their capacity dropdown.
-      </p>
+      <EditableText as="h1" className="block font-heading text-2xl font-extrabold" group="Sector Specifics">
+        1. Sector Specifics
+      </EditableText>
+      <EditableText as="p" className="mt-2 block max-w-3xl text-[15px] leading-relaxed text-muted-foreground" group="Sector Specifics">
+        Choose which measurement units are applied by default for each sector template. The default Maximum Output / Units Sold unit is pre-selected for users, and only the capacity units you check here appear in their capacity dropdown.
+      </EditableText>
 
       <div className="mt-6 max-w-md">
         <label className="block text-[13px] font-semibold text-navy" htmlFor="sector-select">

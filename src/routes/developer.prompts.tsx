@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { EditableText } from "@/lib/ui-content";
 import { ArrowDown, ArrowUp, FileText, Pencil, Play, Plus, Power, Search, Trash2, UploadCloud, X } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { Button } from "@/components/Button";
@@ -56,12 +57,12 @@ function Prompts() {
   return (
     <div>
       <div>
-        <h1 className="font-heading text-2xl font-extrabold">3. Prompts &amp; Actions</h1>
-        <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">
-          Manage the list of actions / questions and their corresponding Claude prompts, organized
-          by workflow. Each item has a unique ID (A-## for the first-time standardized model,
-          B-## for model updates), title and prompt that guides Claude's response.
-        </p>
+        <EditableText as="h1" className="block font-heading text-2xl font-extrabold" group="Prompts & Actions">
+          3. Prompts & Actions
+        </EditableText>
+        <EditableText as="p" className="mt-2 block max-w-3xl text-[15px] leading-relaxed text-muted-foreground" group="Prompts & Actions">
+          Manage the list of actions / questions and their corresponding Claude prompts, organized by workflow. Each item has a unique ID (A-## for the first-time standardized model, B-## for model updates), title and prompt that guides Claude's response.
+        </EditableText>
       </div>
 
       <div className="mt-6 inline-flex rounded-xl border border-border bg-card p-1 shadow-card">
