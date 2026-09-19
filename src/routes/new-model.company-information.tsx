@@ -978,7 +978,7 @@ function SegmentMeasurements({
   hideHeader = false,
   measurementKey,
   isPrimaryStream = true,
-  showModelBasis = false,
+  modelBasis,
 }: {
   segmentId: string;
   segmentLabel: string;
@@ -987,8 +987,8 @@ function SegmentMeasurements({
   measurementKey?: string;
   /** Revenue Stream 1 of Sub-sector 1 keeps the locked recommended unit. */
   isPrimaryStream?: boolean;
-  /** Shows the per-stream Unit Economics / % Based selector. */
-  showModelBasis?: boolean;
+  /** Modeling basis inherited from the parent sub-sector. */
+  modelBasis?: "unit_economics" | "percentage";
 }) {
   const { state, setAnswer } = useApp();
   const a = state.answers;
@@ -1030,10 +1030,10 @@ function SegmentMeasurements({
   // The selected subsector/template determines whether the model uses unit
   // economics or a percentage-based approach. Percentage-based templates do not
   // need operational measurement units.
-  const defaultModelBasis =
-    lineSubsector === "Generic - Percentage Based" ? "percentage" : "unit_economics";
-  const modelBasis = a.streamModelBasis[storageKey] ?? defaultModelBasis;
-  const isPercentageBased = modelBasis === "percentage";
+  const resolvedModelBasis =
+    modelBasis ??
+    (lineSubsector === "Generic - Percentage Based" ? "percentage" : "unit_economics");
+  const isPercentageBased = resolvedModelBasis === "percentage";
   const needsOutputUnit = !isPercentageBased;
   const needsCapacityUnit = !isPercentageBased;
   const needsAnyUnit = needsOutputUnit || needsCapacityUnit;
@@ -1051,39 +1051,7 @@ function SegmentMeasurements({
   return (
     <div className="mt-2 rounded-xl border border-panel-border bg-panel/60 p-4">
       {!hideHeader && (
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-[15px] font-semibold text-navy">{segmentLabel}</p>
-          {showModelBasis && (
-            <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1">
-              {(
-                [
-                  { value: "unit_economics", label: "Unit Economics" },
-                  { value: "percentage", label: "% Based" },
-                ] as const
-              ).map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() =>
-                    setAnswer("streamModelBasis", {
-                      ...a.streamModelBasis,
-                      [storageKey]: option.value,
-                    })
-                  }
-                  aria-pressed={modelBasis === option.value}
-                  className={[
-                    "rounded-md px-3 py-1.5 text-[13px] font-semibold transition-colors",
-                    modelBasis === option.value
-                      ? "bg-primary text-primary-foreground"
-                      : "text-navy-soft hover:bg-secondary",
-                  ].join(" ")}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        <p className="text-[15px] font-semibold text-navy">{segmentLabel}</p>
       )}
       {!needsAnyUnit && (
         <p className="mt-1 text-[13px] text-muted-foreground">
@@ -1382,6 +1350,15 @@ function SegmentMatrix({
             const lineSelected = a.selectedSegments.includes(line.value);
             const mode = a.lineStreamMode[line.value] ?? "single";
             const streams = a.revenueStreams[line.value] ?? [];
+            const lineSubsector =
+              line.value === "segment1"
+                ? a.subsector
+                : line.value === "segment2"
+                  ? a.subsector2
+                  : a.subsector3;
+            const modelBasis =
+              a.lineModelBasis[line.value] ??
+              (lineSubsector === "Generic - Percentage Based" ? "percentage" : "unit_economics");
             return (
               <div
                 key={line.value}
@@ -1420,7 +1397,37 @@ function SegmentMatrix({
                     {line.label}
                   </button>
 
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
+                    <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1">
+                      {(
+                        [
+                          { value: "unit_economics", label: "Unit Economics" },
+                          { value: "percentage", label: "% Based" },
+                        ] as const
+                      ).map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          disabled={!lineSelected}
+                          onClick={() =>
+                            setAnswer("lineModelBasis", {
+                              ...a.lineModelBasis,
+                              [line.value]: option.value,
+                            })
+                          }
+                          aria-pressed={lineSelected && modelBasis === option.value}
+                          className={[
+                            "rounded-md px-3 py-1.5 text-[13px] font-semibold transition-colors",
+                            lineSelected && modelBasis === option.value
+                              ? "bg-primary text-primary-foreground"
+                              : "text-navy-soft hover:bg-secondary",
+                            !lineSelected && "cursor-not-allowed opacity-50",
+                          ].join(" ")}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
                     {(
                       [
                         { value: "single", label: "Single Revenue Stream" },
@@ -1507,6 +1514,7 @@ function SegmentMatrix({
                     segmentId={line.value}
                     segmentLabel={line.label}
                     hideHeader
+                    modelBasis={modelBasis}
                   />
                 )}
 
@@ -1521,7 +1529,7 @@ function SegmentMatrix({
                         segmentLabel={stream.label}
                         measurementKey={`${line.value}:${stream.value}`}
                         isPrimaryStream={streamIndex === 0}
-                        showModelBasis
+                        modelBasis={modelBasis}
                       />
                     ))}
 
