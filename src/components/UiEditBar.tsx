@@ -274,6 +274,19 @@ export function UiEditBar() {
   );
 }
 
+const WRAP_OPTIONS = [
+  { value: "", label: "Default" },
+  { value: "normal", label: "Wrap on" },
+  { value: "nowrap", label: "Wrap off" },
+] as const;
+
+const VERTICAL_ALIGNMENTS = [
+  { value: "", label: "Default" },
+  { value: "top", label: "Top" },
+  { value: "middle", label: "Middle" },
+  { value: "bottom", label: "Bottom" },
+] as const;
+
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between gap-3">
