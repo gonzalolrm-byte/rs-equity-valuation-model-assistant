@@ -224,6 +224,8 @@ export type AppState = {
    * developer prompt. Prototype: metadata only, no workbook is produced.
    */
   subsectorDefaultTemplates: Record<string, SubsectorDefaultTemplate>;
+  /** Developer defaults + locks for the user's Section A/B card, per subsector. */
+  subsectorConfigs: Record<string, SubsectorConfigDefaults>;
 
   /** Developer-added subsector templates per sector. */
   customSubsectors: Record<string, string[]>;
@@ -253,6 +255,7 @@ const INITIAL_STATE: AppState = {
   sectorSpecifics: {},
   subsectorTemplates: {},
   subsectorDefaultTemplates: {},
+  subsectorConfigs: {},
 
   customSubsectors: {},
   removedSubsectors: {},
@@ -295,6 +298,8 @@ type Ctx = {
     },
   ) => void;
   clearSubsectorDefaultTemplate: (subsector: string) => void;
+  setSubsectorConfig: (subsector: string, patch: Partial<SubsectorConfigDefaults>) => void;
+  resetSubsectorConfig: (subsector: string) => void;
 
   addCustomSubsector: (sector: string, name: string) => void;
   deleteSubsector: (sector: string, name: string) => void;
