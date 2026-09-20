@@ -1,12 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { EditableText } from "@/lib/ui-content";
 import {
+  Building2,
   Download,
   ExternalLink,
   FileSpreadsheet,
   Info,
+  Leaf,
   Lock,
+  Plane,
   Plus,
+  Refinery,
   RotateCcw,
   Trash2,
   Upload,
@@ -259,88 +263,18 @@ function SubsectorCard({
         </div>
       </div>
 
-      <div className="mt-4 grid gap-5 md:grid-cols-2">
-        <div>
-          <label
-            className="block text-[13px] font-semibold text-navy"
-            htmlFor={`output-${subsector}`}
-          >
-            Default Maximum Output / Units Sold measurement
-          </label>
-          <select
-            id={`output-${subsector}`}
-            value={current.output}
-            onChange={(event) => setOutput(event.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm text-navy focus:border-primary focus:outline-none"
-          >
-            {[...new Set([current.output, ...OUTPUT_CHOICES])].map((unit) => (
-              <option key={unit} value={unit}>
-                {unit}
-              </option>
-            ))}
-          </select>
-
-          {[0, 1].map((index) => (
-            <div key={index} className="mt-3">
-              <label
-                className="block text-[13px] font-semibold text-navy"
-                htmlFor={`output-opt-${index}-${subsector}`}
-              >
-                Maximum Output / Units Sold measurement (Option {index + 1})
-              </label>
-              <select
-                id={`output-opt-${index}-${subsector}`}
-                value={current.outputOptions[index] ?? ""}
-                onChange={(event) => setOutputOption(index, event.target.value)}
-                className="mt-1.5 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm text-navy focus:border-primary focus:outline-none"
-              >
-                <option value="">Not offered</option>
-                {[...new Set([current.outputOptions[index] ?? "", ...OUTPUT_CHOICES])]
-                  .filter((unit) => Boolean(unit) && unit !== current.output)
-                  .map((unit) => (
-                    <option key={unit} value={unit}>
-                      {unit}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          ))}
-          <p className="mt-1.5 text-[12px] text-muted-foreground">
-            Options 1 and 2 only appear in the questionnaire when the sub-sector is set to multiple
-            revenue streams.
-          </p>
-        </div>
-
-        <div>
-          <p className="text-[13px] font-semibold text-navy">
-            Capacity measurements offered ({current.capacityOptions.length})
-          </p>
-          <p className="mt-1 text-[12px] text-muted-foreground">
-            The first checked unit is used as the default capacity measurement.
-          </p>
-          <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
-            {[...new Set([...current.capacityOptions, ...CAPACITY_CHOICES])].map((unit) => {
-              const checked = current.capacityOptions.includes(unit);
-              return (
-                <label
-                  key={unit}
-                  className="flex cursor-pointer items-start gap-2 rounded-lg border border-input px-2.5 py-2 text-[12px] leading-relaxed text-navy transition-colors hover:bg-secondary"
-                >
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={() => toggleCapacity(unit)}
-                    className="mt-0.5 size-3.5 accent-[hsl(var(--primary))]"
-                  />
-                  <span>{unit}</span>
-                </label>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      <UserCardDefaults subsector={subsector} />
+      <UserCardDefaults
+        subsector={subsector}
+        output={current.output}
+        capacity={current.capacityOptions[0] ?? shipped.capacityOptions[0] ?? ""}
+        onOutputChange={setOutput}
+        onCapacityChange={(capacity) =>
+          setSubsectorMeasurements(subsector, {
+            ...current,
+            capacityOptions: [capacity, ...current.capacityOptions.filter((item) => item !== capacity)],
+          })
+        }
+      />
 
       <DefaultTemplateGenerator
         subsector={subsector}

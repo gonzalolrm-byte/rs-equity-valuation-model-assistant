@@ -179,6 +179,8 @@ export type SubsectorConfigDefaults = {
   streamModeLocked: boolean;
   streams: string[];
   streamsLocked: boolean;
+  unitEconomicsApproach: "v1" | "v2" | "v3" | "v4";
+  unitEconomicsApproachLocked: boolean;
   cogsBasis: "business_line" | "revenue_stream";
   capexBasis: "business_line" | "revenue_stream";
   cogsCapexLocked: boolean;
@@ -192,6 +194,8 @@ export const DEFAULT_SUBSECTOR_CONFIG: SubsectorConfigDefaults = {
   streamModeLocked: false,
   streams: ["stream1"],
   streamsLocked: false,
+  unitEconomicsApproach: "v1",
+  unitEconomicsApproachLocked: false,
   cogsBasis: "business_line",
   capexBasis: "business_line",
   cogsCapexLocked: false,
