@@ -127,15 +127,25 @@ export function UiLayoutEditor() {
   }, [layout, pathText, scope]);
 
   useEffect(() => {
-    apply();
-    const observer = new MutationObserver(() => apply());
-    observer.observe(document.body, { childList: true, subtree: true });
+    let applying = false;
+    const run = () => {
+      if (applying) return;
+      applying = true;
+      apply();
+      // Ignore the mutations our own DOM writes produce.
+      window.setTimeout(() => {
+        applying = false;
+      }, 0);
+    };
+    run();
+    const observer = new MutationObserver(run);
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     return () => observer.disconnect();
   }, [apply]);
 
   // Keep the selection outline aligned while the page scrolls or reflows.
   useEffect(() => {
-    if (!layoutActive) {
+    if (!pickerActive) {
       setSelectedRect(null);
       setHoverRect(null);
       return;
