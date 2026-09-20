@@ -38,6 +38,9 @@ export function UiEditBar() {
   const override: UiOverride = (selected ? ui.draft[selected] : undefined) ?? {};
   const layoutPath = layoutMode ? ui.selectedPath : null;
   const layoutOverride: UiLayoutOverride = (layoutPath ? ui.layout[layoutPath] : undefined) ?? {};
+  // Text picked directly off the page (boxes, tables, bars) rather than registered content.
+  const textPath = !layoutMode && !selected ? ui.selectedPath : null;
+  const textPathValue = textPath ? ui.pathText[textPath] : undefined;
 
   return (
     <>
