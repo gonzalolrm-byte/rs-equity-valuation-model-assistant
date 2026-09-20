@@ -981,6 +981,8 @@ function SegmentMeasurements({
   modelBasis,
   tableRow = false,
   unitsLocked = false,
+  volumeCommon = false,
+  capacityCommon = false,
 }: {
   segmentId: string;
   segmentLabel: string;
@@ -994,11 +996,18 @@ function SegmentMeasurements({
   tableRow?: boolean;
   /** Developer Console lock: units are fixed and cannot be changed by the user. */
   unitsLocked?: boolean;
+  /** Share the volume/output selection across this sub-sector's revenue streams. */
+  volumeCommon?: boolean;
+  /** Share the capacity selection across this sub-sector's revenue streams. */
+  capacityCommon?: boolean;
 }) {
   const { state, setAnswer } = useApp();
   const a = state.answers;
   const storageKey = measurementKey ?? segmentId;
   const saved = a.segmentMeasurements[storageKey];
+  const commonSaved = a.segmentMeasurements[segmentId];
+  const outputSaved = volumeCommon ? commonSaved : saved;
+  const capacitySaved = capacityCommon ? commonSaved : saved;
 
   // Each sub-sector card is linked to its own A.2 subsector template selection.
   const lineSubsector =
@@ -1018,17 +1027,21 @@ function SegmentMeasurements({
   });
 
   const current: SegmentMeasurement = {
-    capacity: saved?.capacity || recommended.capacity,
-    capacityOther: saved?.capacityOther ?? "",
-    output: saved?.output || recommended.output,
-    outputOther: saved?.outputOther ?? "",
-    capacityBasis: saved?.capacityBasis ?? "",
+    capacity: unitsLocked ? recommended.capacity : (capacitySaved?.capacity || recommended.capacity),
+    capacityOther: capacitySaved?.capacityOther ?? "",
+    output: unitsLocked ? recommended.output : (outputSaved?.output || recommended.output),
+    outputOther: outputSaved?.outputOther ?? "",
+    capacityBasis: capacitySaved?.capacityBasis ?? "",
   };
 
   const update = (partial: Partial<SegmentMeasurement>) => {
+    const outputPatch = partial.output !== undefined || partial.outputOther !== undefined;
+    const capacityPatch = partial.capacity !== undefined || partial.capacityOther !== undefined || partial.capacityBasis !== undefined;
+    const targetKey = outputPatch && volumeCommon ? segmentId : capacityPatch && capacityCommon ? segmentId : storageKey;
+    const targetCurrent = a.segmentMeasurements[targetKey] ?? current;
     setAnswer("segmentMeasurements", {
       ...a.segmentMeasurements,
-      [storageKey]: { ...current, ...partial },
+      [targetKey]: { ...targetCurrent, ...partial },
     });
   };
 
@@ -1425,6 +1438,12 @@ function SegmentMatrix({
               ...DEFAULT_SUBSECTOR_CONFIG,
               ...((state.subsectorConfigs ?? {})[lineSubsector] ?? {}),
             };
+            const approach = config.unitEconomicsApproach;
+            const volumeCommon = approach === "v1";
+            const capacityCommon = approach === "v1" || approach === "v2";
+            const approachCogs = approach === "v3" || approach === "v4" ? "revenue_stream" : "business_line";
+            const approachCapex = approach === "v4" ? "revenue_stream" : "business_line";
+            const cogsLocked = config.cogsCapexLocked || config.unitEconomicsApproachLocked;
             const mode = config.streamModeLocked
               ? config.streamMode
               : (a.lineStreamMode[line.value] ?? config.streamMode);
@@ -1582,7 +1601,7 @@ function SegmentMatrix({
                           <div className="border-l border-panel-border px-3 py-2.5"><EditableText group="Section B — Sub-sector card">Capacity Unit</EditableText> <span className="font-normal text-muted-foreground">ⓘ</span><EditableText as="span" className="mt-0.5 block text-[10px] font-normal text-muted-foreground" group="Section B — Sub-sector card">Unit for installed capacity</EditableText></div>
                         </div>
                         {revenueStreamOptions.filter((stream) => streams.includes(stream.value)).map((stream, streamIndex) => (
-                          <SegmentMeasurements key={stream.value} segmentId={line.value} segmentLabel={stream.label} measurementKey={`${line.value}:${stream.value}`} isPrimaryStream={streamIndex === 0} modelBasis={modelBasis} tableRow unitsLocked={config.unitsLocked} />
+                          <SegmentMeasurements key={stream.value} segmentId={line.value} segmentLabel={stream.label} measurementKey={`${line.value}:${stream.value}`} isPrimaryStream={streamIndex === 0} modelBasis={modelBasis} tableRow unitsLocked={config.unitsLocked} volumeCommon={volumeCommon} capacityCommon={capacityCommon} />
                         ))}
                       </div>
                     </div>
@@ -1596,11 +1615,13 @@ function SegmentMatrix({
                       <div className="grid grid-cols-[0.8fr_1.1fr_1.1fr] bg-panel/50 text-center text-[11px] font-bold text-navy"><div className="px-3 py-2 text-left"><EditableText group="Section B — Sub-sector card">Item</EditableText></div><div className="border-l border-panel-border px-3 py-2"><EditableText group="Section B — Sub-sector card">Sub-sector Level</EditableText><EditableText as="span" className="block font-normal text-muted-foreground" group="Section B — Sub-sector card">Same approach for all revenue streams</EditableText></div><div className="border-l border-panel-border px-3 py-2"><EditableText group="Section B — Sub-sector card">Revenue Stream Level</EditableText><EditableText as="span" className="block font-normal text-muted-foreground" group="Section B — Sub-sector card">Different approach by revenue stream</EditableText></div></div>
                       {(["COGS", "CapEx"] as const).map((item) => {
                         const key = item === "COGS" ? "cogsBasis" : "capexBasis";
-                        const configured = item === "COGS" ? config.cogsBasis : config.capexBasis;
-                        const value = config.cogsCapexLocked
+                        const configured = config.unitEconomicsApproachLocked
+                          ? (item === "COGS" ? approachCogs : approachCapex)
+                          : (item === "COGS" ? config.cogsBasis : config.capexBasis);
+                        const value = cogsLocked
                           ? configured
                           : (a[key][line.value] ?? configured);
-                        return <div key={item} className="grid grid-cols-[0.8fr_1.1fr_1.1fr] border-t border-panel-border text-xs"><div className="px-3 py-2 font-bold text-navy">{item}</div>{(["business_line", "revenue_stream"] as const).map((basis) => { const disabled = config.cogsCapexLocked || (basis === "revenue_stream" && a.selectedSegments.length > 1); return <button key={basis} type="button" disabled={disabled} onClick={() => setAnswer(key, { ...a[key], [line.value]: basis })} className="flex items-center justify-center border-l border-panel-border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-40" aria-label={`${item} ${basis === "business_line" ? "sub-sector level" : "revenue stream level"}`}><span className={["size-4 rounded-full border", value === basis ? "border-primary bg-primary shadow-[inset_0_0_0_3px_var(--color-card)]" : "border-input"].join(" ")} /></button>; })}</div>;
+                        return <div key={item} className="grid grid-cols-[0.8fr_1.1fr_1.1fr] border-t border-panel-border text-xs"><div className="px-3 py-2 font-bold text-navy">{item}</div>{(["business_line", "revenue_stream"] as const).map((basis) => { const disabled = cogsLocked || (basis === "revenue_stream" && a.selectedSegments.length > 1); return <button key={basis} type="button" disabled={disabled} onClick={() => setAnswer(key, { ...a[key], [line.value]: basis })} className="flex items-center justify-center border-l border-panel-border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-40" aria-label={`${item} ${basis === "business_line" ? "sub-sector level" : "revenue stream level"}`}><span className={["size-4 rounded-full border", value === basis ? "border-primary bg-primary shadow-[inset_0_0_0_3px_var(--color-card)]" : "border-input"].join(" ")} /></button>; })}</div>;
                       })}
                     </div>
                   </div>
