@@ -183,8 +183,13 @@ function SubsectorCard({
   subsector: string;
   deletable?: boolean;
 }) {
-  const { state, setSubsectorMeasurements, resetSubsectorMeasurements, deleteSubsector } =
-    useApp();
+  const {
+    state,
+    setSubsectorMeasurements,
+    resetSubsectorMeasurements,
+    resetSubsectorConfig,
+    deleteSubsector,
+  } = useApp();
   const shipped = defaultSubsectorMeasurements(subsector, sector);
   const override = state.sectorSpecifics[subsector];
   const current = {
