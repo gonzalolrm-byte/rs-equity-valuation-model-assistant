@@ -26,6 +26,7 @@ import {
   SUBSECTORS,
 } from "@/lib/data";
 import { useApp, type SegmentMeasurement } from "@/lib/store";
+import { EditableText } from "@/lib/ui-content";
 
 export const WORKFLOW_A_STEPS = [
   "Template Selection & Key Inputs",
@@ -1462,11 +1463,11 @@ function SegmentMatrix({
                   <div className="grid gap-3 rounded-lg border border-panel-border bg-card px-3 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
                     <div className="flex items-start gap-3">
                       <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 font-heading text-base font-bold text-primary">A</span>
-                      <div><p className="flex items-center gap-2 text-[14px] font-bold text-navy">Revenue modeling approach <Info className="size-3.5 text-navy-soft" /></p><p className="mt-0.5 text-xs text-muted-foreground">How do you want to model revenues for this sub-sector?</p></div>
+                      <div><p className="flex items-center gap-2 text-[14px] font-bold text-navy"><EditableText group="Section B — Sub-sector card">Revenue modeling approach</EditableText> <Info className="size-3.5 text-navy-soft" /></p><EditableText as="p" className="mt-0.5 text-xs text-muted-foreground" group="Section B — Sub-sector card">How do you want to model revenues for this sub-sector?</EditableText></div>
                     </div>
                     <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1 sm:min-w-72">
                       {([{ value: "unit_economics", label: "Unit Economics" }, { value: "percentage", label: "% Based" }] as const).map((option) => (
-                        <button key={option.value} type="button" onClick={() => setAnswer("lineModelBasis", { ...a.lineModelBasis, [line.value]: option.value })} aria-pressed={modelBasis === option.value} className={["rounded-md px-4 py-2 text-xs font-semibold transition-colors", modelBasis === option.value ? "bg-primary text-primary-foreground shadow-sm" : "text-navy hover:bg-secondary"].join(" ")}>{option.label}</button>
+                        <button key={option.value} type="button" onClick={() => setAnswer("lineModelBasis", { ...a.lineModelBasis, [line.value]: option.value })} aria-pressed={modelBasis === option.value} className={["rounded-md px-4 py-2 text-xs font-semibold transition-colors", modelBasis === option.value ? "bg-primary text-primary-foreground shadow-sm" : "text-navy hover:bg-secondary"].join(" ")}><EditableText group="Section B — Sub-sector card">{option.label}</EditableText></button>
                       ))}
                     </div>
                   </div>
@@ -1475,19 +1476,19 @@ function SegmentMatrix({
                     <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
                       <div className="flex items-start gap-3">
                         <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 font-heading text-base font-bold text-primary">B</span>
-                        <div><p className="flex items-center gap-2 text-[14px] font-bold text-navy">Revenue structure <Info className="size-3.5 text-navy-soft" /></p><p className="mt-0.5 text-xs text-muted-foreground">Select the number of revenue streams to include.</p></div>
+                        <div><p className="flex items-center gap-2 text-[14px] font-bold text-navy"><EditableText group="Section B — Sub-sector card">Revenue structure</EditableText> <Info className="size-3.5 text-navy-soft" /></p><EditableText as="p" className="mt-0.5 text-xs text-muted-foreground" group="Section B — Sub-sector card">Select the number of revenue streams to include.</EditableText></div>
                       </div>
                       <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1 sm:min-w-72">
                         {([{ value: "single", label: "Single Revenue Stream" }, { value: "multi", label: "Multiple Revenue Streams" }] as const).map((option) => {
                           const active = mode === option.value;
-                          return <button key={option.value} type="button" onClick={() => setMode(line.value, option.value)} aria-pressed={active} className={["whitespace-nowrap rounded-md px-3 py-2 text-xs font-semibold transition-colors", active ? "bg-primary text-primary-foreground shadow-sm" : "text-navy hover:bg-secondary"].join(" ")}>{option.label}</button>;
+                          return <button key={option.value} type="button" onClick={() => setMode(line.value, option.value)} aria-pressed={active} className={["whitespace-nowrap rounded-md px-3 py-2 text-xs font-semibold transition-colors", active ? "bg-primary text-primary-foreground shadow-sm" : "text-navy hover:bg-secondary"].join(" ")}><EditableText group="Section B — Sub-sector card">{option.label}</EditableText></button>;
                         })}
                       </div>
                     </div>
 
                   {mode === "multi" && (
                   <div className="mt-3 rounded-lg border border-panel-border bg-panel/25 p-3">
-                    <p className="mb-2 text-xs font-bold text-navy">Select revenue streams</p>
+                    <EditableText as="p" className="mb-2 text-xs font-bold text-navy" group="Section B — Sub-sector card">Select revenue streams</EditableText>
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                     {revenueStreamOptions.map((stream, index) => {
                       const active = streams.includes(stream.value);
@@ -1551,12 +1552,12 @@ function SegmentMatrix({
 
                   {mode === "multi" && modelBasis === "unit_economics" && streams.length > 0 && (
                     <div className="mt-3 overflow-x-auto rounded-lg border border-panel-border bg-card">
-                      <div className="px-3 py-3"><p className="text-xs font-bold text-navy">Configure operational units for each revenue stream</p><p className="mt-0.5 text-xs italic text-muted-foreground">Define the unit of measure for sales/output and capacity for each selected revenue stream.</p></div>
+                      <div className="px-3 py-3"><EditableText as="p" className="text-xs font-bold text-navy" group="Section B — Sub-sector card">Configure operational units for each revenue stream</EditableText><EditableText as="p" className="mt-0.5 text-xs italic text-muted-foreground" group="Section B — Sub-sector card">Define the unit of measure for sales/output and capacity for each selected revenue stream.</EditableText></div>
                       <div className="min-w-[620px] border-t border-panel-border">
                         <div className="grid grid-cols-[minmax(8rem,0.85fr)_minmax(11rem,1.3fr)_minmax(11rem,1.2fr)] bg-panel/50 text-xs font-bold text-navy">
-                          <div className="px-4 py-2.5">Revenue Stream</div>
-                          <div className="border-l border-panel-border px-3 py-2.5">Sales / Output Unit <span className="font-normal text-muted-foreground">ⓘ</span><span className="mt-0.5 block text-[10px] font-normal text-muted-foreground">Unit for Maximum Output and Units Sold</span></div>
-                          <div className="border-l border-panel-border px-3 py-2.5">Capacity Unit <span className="font-normal text-muted-foreground">ⓘ</span><span className="mt-0.5 block text-[10px] font-normal text-muted-foreground">Unit for installed capacity</span></div>
+                          <div className="px-4 py-2.5"><EditableText group="Section B — Sub-sector card">Revenue Stream</EditableText></div>
+                          <div className="border-l border-panel-border px-3 py-2.5"><EditableText group="Section B — Sub-sector card">Sales / Output Unit</EditableText> <span className="font-normal text-muted-foreground">ⓘ</span><EditableText as="span" className="mt-0.5 block text-[10px] font-normal text-muted-foreground" group="Section B — Sub-sector card">Unit for Maximum Output and Units Sold</EditableText></div>
+                          <div className="border-l border-panel-border px-3 py-2.5"><EditableText group="Section B — Sub-sector card">Capacity Unit</EditableText> <span className="font-normal text-muted-foreground">ⓘ</span><EditableText as="span" className="mt-0.5 block text-[10px] font-normal text-muted-foreground" group="Section B — Sub-sector card">Unit for installed capacity</EditableText></div>
                         </div>
                         {revenueStreamOptions.filter((stream) => streams.includes(stream.value)).map((stream, streamIndex) => (
                           <SegmentMeasurements key={stream.value} segmentId={line.value} segmentLabel={stream.label} measurementKey={`${line.value}:${stream.value}`} isPrimaryStream={streamIndex === 0} modelBasis={modelBasis} tableRow />
@@ -1568,9 +1569,9 @@ function SegmentMatrix({
 
                 {mode === "multi" && (
                   <div className="rounded-lg border border-panel-border bg-card p-3">
-                    <div className="mb-3 flex items-start gap-3"><span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 font-heading text-base font-bold text-primary">C</span><div><p className="flex items-center gap-2 text-[14px] font-bold text-navy">COGS and CapEx modeling <Info className="size-3.5 text-navy-soft" /></p><p className="mt-0.5 text-xs text-muted-foreground">How should COGS and CapEx be segmented for this sub-sector?</p></div></div>
+                    <div className="mb-3 flex items-start gap-3"><span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 font-heading text-base font-bold text-primary">C</span><div><p className="flex items-center gap-2 text-[14px] font-bold text-navy"><EditableText group="Section B — Sub-sector card">COGS and CapEx modeling</EditableText> <Info className="size-3.5 text-navy-soft" /></p><EditableText as="p" className="mt-0.5 text-xs text-muted-foreground" group="Section B — Sub-sector card">How should COGS and CapEx be segmented for this sub-sector?</EditableText></div></div>
                     <div className="overflow-hidden rounded-md border border-panel-border">
-                      <div className="grid grid-cols-[0.8fr_1.1fr_1.1fr] bg-panel/50 text-center text-[11px] font-bold text-navy"><div className="px-3 py-2 text-left">Item</div><div className="border-l border-panel-border px-3 py-2">Sub-sector Level<span className="block font-normal text-muted-foreground">Same approach for all revenue streams</span></div><div className="border-l border-panel-border px-3 py-2">Revenue Stream Level<span className="block font-normal text-muted-foreground">Different approach by revenue stream</span></div></div>
+                      <div className="grid grid-cols-[0.8fr_1.1fr_1.1fr] bg-panel/50 text-center text-[11px] font-bold text-navy"><div className="px-3 py-2 text-left"><EditableText group="Section B — Sub-sector card">Item</EditableText></div><div className="border-l border-panel-border px-3 py-2"><EditableText group="Section B — Sub-sector card">Sub-sector Level</EditableText><EditableText as="span" className="block font-normal text-muted-foreground" group="Section B — Sub-sector card">Same approach for all revenue streams</EditableText></div><div className="border-l border-panel-border px-3 py-2"><EditableText group="Section B — Sub-sector card">Revenue Stream Level</EditableText><EditableText as="span" className="block font-normal text-muted-foreground" group="Section B — Sub-sector card">Different approach by revenue stream</EditableText></div></div>
                       {(["COGS", "CapEx"] as const).map((item) => {
                         const key = item === "COGS" ? "cogsBasis" : "capexBasis";
                         const value = a[key][line.value] ?? "business_line";
