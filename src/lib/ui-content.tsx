@@ -299,6 +299,7 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
         setDraft(content);
         setDraftOrder(order);
         setDraftLayout(layout);
+        setDraftPathText(pathText);
         setSelectedKey(null);
         setSelectedPath(null);
         setEditing(true);
@@ -307,6 +308,7 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
         setDraft(content);
         setDraftOrder(order);
         setDraftLayout(layout);
+        setDraftPathText(pathText);
         setSelectedKey(null);
         setSelectedPath(null);
         setEditing(false);
@@ -315,6 +317,7 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
         setContent(draft);
         setOrder(draftOrder);
         setLayout(draftLayout);
+        setPathTextMap(draftPathText);
         setSelectedKey(null);
         setSelectedPath(null);
         setEditing(false);
