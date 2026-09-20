@@ -251,8 +251,11 @@ export function UiLayoutEditor() {
             className="absolute -translate-y-full rounded-t bg-primary px-1.5 py-0.5 text-[11px] font-semibold text-primary-foreground"
             style={{ left: selectedRect.left, top: selectedRect.top }}
           >
-            {Math.round(selectedRect.width)} × {Math.round(selectedRect.height)}
+            {textActive
+              ? "Editing text"
+              : `${Math.round(selectedRect.width)} × ${Math.round(selectedRect.height)}`}
           </span>
+          {layoutActive && (
           <div
             role="presentation"
             onPointerDown={(event) => startDrag(event, "x")}
