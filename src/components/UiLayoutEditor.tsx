@@ -35,7 +35,11 @@ export function scopeForPath(pathname: string) {
   return pathname.startsWith("/developer") ? "developer" : "user";
 }
 
-/** Stable-enough CSS path for an element inside the app shell. */
+/**
+ * Stable-enough path for an element inside the app shell. The editor's own
+ * toolbars and overlays are ignored when counting siblings, so a path recorded
+ * while editing still resolves once edit mode is switched off.
+ */
 export function cssPathFor(element: Element): string | null {
   const parts: string[] = [];
   let current: Element | null = element;
@@ -43,15 +47,35 @@ export function cssPathFor(element: Element): string | null {
     const parent: Element | null = current.parentElement;
     if (!parent) return null;
     const tag = current.tagName.toLowerCase();
-    const index =
-      Array.from(parent.children).filter((child) => child.tagName === current!.tagName).indexOf(
-        current,
-      ) + 1;
+    const index = siblingsOfTag(parent, current.tagName).indexOf(current) + 1;
+    if (index < 1) return null;
     parts.unshift(`${tag}:nth-of-type(${index})`);
     current = parent;
   }
   if (!parts.length) return null;
   return `body > ${parts.join(" > ")}`;
+}
+
+function siblingsOfTag(parent: Element, tagName: string) {
+  return Array.from(parent.children).filter(
+    (child) => child.tagName === tagName && !child.hasAttribute("data-ui-editor"),
+  );
+}
+
+/** Resolves a path produced by `cssPathFor`, skipping editor chrome siblings. */
+export function resolvePath(path: string): HTMLElement | null {
+  const parts = path.replace(/^body\s*>\s*/, "").split(">");
+  let current: Element | null = document.body;
+  for (const rawPart of parts) {
+    const match = rawPart.trim().match(/^([a-z0-9-]+):nth-of-type\((\d+)\)$/i);
+    if (!match || !current) return null;
+    const tag = (match[1] as string).toUpperCase();
+    const index = Number(match[2]) - 1;
+    const next: Element | undefined = siblingsOfTag(current, tag)[index];
+    if (!next) return null;
+    current = next;
+  }
+  return current instanceof HTMLElement && current !== document.body ? current : null;
 }
 
 function isEditorChrome(element: Element | null) {
