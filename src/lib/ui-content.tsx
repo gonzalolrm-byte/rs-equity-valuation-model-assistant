@@ -315,7 +315,20 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
         return { text: override.text?.trim() ? override.text : defaultText, override };
       },
     };
-  }, [content, order, draft, draftOrder, editing, selectedKey, registry, register]);
+  }, [
+    content,
+    order,
+    layout,
+    draft,
+    draftOrder,
+    draftLayout,
+    editing,
+    editMode,
+    selectedKey,
+    selectedPath,
+    registry,
+    register,
+  ]);
 
   return <UiContext.Provider value={value}>{children}</UiContext.Provider>;
 }
