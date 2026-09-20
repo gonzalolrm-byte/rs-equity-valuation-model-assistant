@@ -980,6 +980,7 @@ function SegmentMeasurements({
   isPrimaryStream = true,
   modelBasis,
   tableRow = false,
+  unitsLocked = false,
 }: {
   segmentId: string;
   segmentLabel: string;
@@ -991,6 +992,8 @@ function SegmentMeasurements({
   /** Modeling basis inherited from the parent sub-sector. */
   modelBasis?: "unit_economics" | "percentage";
   tableRow?: boolean;
+  /** Developer Console lock: units are fixed and cannot be changed by the user. */
+  unitsLocked?: boolean;
 }) {
   const { state, setAnswer } = useApp();
   const a = state.answers;
