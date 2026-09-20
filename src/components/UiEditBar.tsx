@@ -105,8 +105,97 @@ export function UiEditBar() {
         </div>
       </div>
 
+      {layoutPath && (
+        <aside
+          data-ui-editor
+          className="fixed bottom-4 right-4 z-50 max-h-[80vh] w-[340px] overflow-auto rounded-2xl border border-panel-border bg-card p-5 shadow-card"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <p className="font-heading text-[15px] font-bold text-navy">Layout &amp; size</p>
+            <button
+              type="button"
+              onClick={() => ui.selectPath(null)}
+              className="rounded-md p-1 text-muted-foreground hover:bg-secondary"
+              aria-label="Close editor"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+          <p className="mt-1 text-[12px] text-muted-foreground">
+            Drag the component&apos;s edges on the page, or enter exact values. Leave a field empty
+            to keep the original.
+          </p>
+
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            {LAYOUT_FIELDS.map((field) => (
+              <label key={field.key} className="block">
+                <span className="mb-1 block text-[12px] text-muted-foreground">{field.label}</span>
+                <input
+                  value={layoutOverride[field.key] ?? ""}
+                  placeholder={field.placeholder}
+                  onChange={(event) =>
+                    ui.setLayoutOverride(layoutPath, { [field.key]: event.target.value })
+                  }
+                  className="w-full rounded-lg border border-input bg-card px-2.5 py-1.5 text-[13px] text-navy outline-none focus:border-primary"
+                />
+              </label>
+            ))}
+          </div>
+
+          <p className="mt-4 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Tables &amp; cells
+          </p>
+          <div className="mt-2 grid grid-cols-2 gap-3">
+            <Select
+              label="Text wrapping"
+              value={layoutOverride.whiteSpace ?? ""}
+              options={WRAP_OPTIONS}
+              onChange={(value) => ui.setLayoutOverride(layoutPath, { whiteSpace: value })}
+            />
+            <Select
+              label="Horizontal align"
+              value={layoutOverride.textAlign ?? ""}
+              options={ALIGNMENTS}
+              onChange={(value) => ui.setLayoutOverride(layoutPath, { textAlign: value })}
+            />
+            <Select
+              label="Vertical align"
+              value={layoutOverride.verticalAlign ?? ""}
+              options={VERTICAL_ALIGNMENTS}
+              onChange={(value) => ui.setLayoutOverride(layoutPath, { verticalAlign: value })}
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => ui.resetLayout(layoutPath)}
+            className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-input px-3 py-1.5 text-[13px] font-semibold text-navy hover:bg-secondary"
+          >
+            <RotateCcw className="size-3.5" />
+            Reset to original size
+          </button>
+
+          <div className="mt-5 rounded-xl border border-border bg-secondary/50 p-3">
+            <p className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
+              <Lock className="size-3.5" />
+              Locked system properties
+            </p>
+            <dl className="mt-2 space-y-1 text-[12px] text-muted-foreground">
+              <Row label="Interface" value={scope === "developer" ? "Developer Console" : "User"} />
+              <Row label="Component ID" value={layoutPath.split("|")[1] ?? layoutPath} />
+              <Row label="Logic & calculations" value="Unchanged" />
+              <Row label="Field definitions" value="Unchanged" />
+              <Row label="Template generation" value="Unchanged" />
+            </dl>
+          </div>
+        </aside>
+      )}
+
       {selected && (
-        <aside className="fixed bottom-4 right-4 z-50 w-[340px] max-h-[80vh] overflow-auto rounded-2xl border border-panel-border bg-card p-5 shadow-card">
+        <aside
+          data-ui-editor
+          className="fixed bottom-4 right-4 z-50 max-h-[80vh] w-[340px] overflow-auto rounded-2xl border border-panel-border bg-card p-5 shadow-card"
+        >
           <div className="flex items-start justify-between gap-3">
             <p className="font-heading text-[15px] font-bold text-navy">Edit content</p>
             <button
