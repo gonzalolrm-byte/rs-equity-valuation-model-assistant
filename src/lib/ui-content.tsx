@@ -55,6 +55,8 @@ export type UiLayoutOverride = {
 };
 
 export type UiLayoutMap = Record<string, UiLayoutOverride>;
+/** Wording overrides for any text on the page selected directly in the browser. */
+export type UiPathTextMap = Record<string, string>;
 export type UiEditMode = "text" | "layout";
 
 export const LAYOUT_FIELDS = [
