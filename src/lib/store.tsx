@@ -167,6 +167,39 @@ export type SubsectorDefaultTemplate = {
   content?: string;
 };
 
+/**
+ * Developer defaults for the user's Section A/B sub-sector card. Each value is
+ * pre-selected for users; the matching `*Locked` flag prevents users changing it.
+ * Presentation defaults only — no question IDs, mappings or logic change.
+ */
+export type SubsectorConfigDefaults = {
+  modelBasis: "unit_economics" | "percentage";
+  modelBasisLocked: boolean;
+  streamMode: "single" | "multi";
+  streamModeLocked: boolean;
+  streams: string[];
+  streamsLocked: boolean;
+  cogsBasis: "business_line" | "revenue_stream";
+  capexBasis: "business_line" | "revenue_stream";
+  cogsCapexLocked: boolean;
+  unitsLocked: boolean;
+};
+
+export const DEFAULT_SUBSECTOR_CONFIG: SubsectorConfigDefaults = {
+  modelBasis: "unit_economics",
+  modelBasisLocked: false,
+  streamMode: "single",
+  streamModeLocked: false,
+  streams: ["stream1"],
+  streamsLocked: false,
+  cogsBasis: "business_line",
+  capexBasis: "business_line",
+  cogsCapexLocked: false,
+  unitsLocked: false,
+};
+
+
+
 
 export type AppState = {
   workflow: "" | "new" | "update";
@@ -191,6 +224,8 @@ export type AppState = {
    * developer prompt. Prototype: metadata only, no workbook is produced.
    */
   subsectorDefaultTemplates: Record<string, SubsectorDefaultTemplate>;
+  /** Developer defaults + locks for the user's Section A/B card, per subsector. */
+  subsectorConfigs: Record<string, SubsectorConfigDefaults>;
 
   /** Developer-added subsector templates per sector. */
   customSubsectors: Record<string, string[]>;
@@ -220,6 +255,7 @@ const INITIAL_STATE: AppState = {
   sectorSpecifics: {},
   subsectorTemplates: {},
   subsectorDefaultTemplates: {},
+  subsectorConfigs: {},
 
   customSubsectors: {},
   removedSubsectors: {},
@@ -262,6 +298,8 @@ type Ctx = {
     },
   ) => void;
   clearSubsectorDefaultTemplate: (subsector: string) => void;
+  setSubsectorConfig: (subsector: string, patch: Partial<SubsectorConfigDefaults>) => void;
+  resetSubsectorConfig: (subsector: string) => void;
 
   addCustomSubsector: (sector: string, name: string) => void;
   deleteSubsector: (sector: string, name: string) => void;
@@ -331,6 +369,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           resources,
           deletedRegistryPromptIds: [...deletedRegistry],
           subsectorDefaultTemplates: saved.subsectorDefaultTemplates ?? {},
+          subsectorConfigs: saved.subsectorConfigs ?? {},
 
 
           // merge answers field-by-field so saved state from an older question
@@ -604,6 +643,26 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           delete next[subsector];
           return { ...prev, subsectorDefaultTemplates: next };
         }),
+      setSubsectorConfig: (subsector, patch) =>
+        setState((prev) => ({
+          ...prev,
+          subsectorConfigs: {
+            ...(prev.subsectorConfigs ?? {}),
+            [subsector]: {
+              ...DEFAULT_SUBSECTOR_CONFIG,
+              ...((prev.subsectorConfigs ?? {})[subsector] ?? {}),
+              ...patch,
+            },
+          },
+        })),
+      resetSubsectorConfig: (subsector) =>
+        setState((prev) => {
+          const next = { ...(prev.subsectorConfigs ?? {}) };
+          delete next[subsector];
+          return { ...prev, subsectorConfigs: next };
+        }),
+
+
 
       addCustomSubsector: (sector, name) =>
         setState((prev) => {
@@ -628,11 +687,14 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           delete subsectorTemplates[name];
           const subsectorDefaultTemplates = { ...(prev.subsectorDefaultTemplates ?? {}) };
           delete subsectorDefaultTemplates[name];
+          const subsectorConfigs = { ...(prev.subsectorConfigs ?? {}) };
+          delete subsectorConfigs[name];
           return {
             ...prev,
             sectorSpecifics,
             subsectorTemplates,
             subsectorDefaultTemplates,
+            subsectorConfigs,
 
             customSubsectors: isCustom
               ? {
@@ -657,6 +719,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           sectorSpecifics: prev.sectorSpecifics,
           subsectorTemplates: prev.subsectorTemplates,
           subsectorDefaultTemplates: prev.subsectorDefaultTemplates,
+          subsectorConfigs: prev.subsectorConfigs,
 
           resources: prev.resources,
           customSubsectors: prev.customSubsectors,

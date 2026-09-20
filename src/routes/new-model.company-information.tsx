@@ -25,7 +25,7 @@ import {
   SECTORS,
   SUBSECTORS,
 } from "@/lib/data";
-import { useApp, type SegmentMeasurement } from "@/lib/store";
+import { DEFAULT_SUBSECTOR_CONFIG, useApp, type SegmentMeasurement } from "@/lib/store";
 import { EditableText } from "@/lib/ui-content";
 
 export const WORKFLOW_A_STEPS = [
@@ -980,6 +980,7 @@ function SegmentMeasurements({
   isPrimaryStream = true,
   modelBasis,
   tableRow = false,
+  unitsLocked = false,
 }: {
   segmentId: string;
   segmentLabel: string;
@@ -991,6 +992,8 @@ function SegmentMeasurements({
   /** Modeling basis inherited from the parent sub-sector. */
   modelBasis?: "unit_economics" | "percentage";
   tableRow?: boolean;
+  /** Developer Console lock: units are fixed and cannot be changed by the user. */
+  unitsLocked?: boolean;
 }) {
   const { state, setAnswer } = useApp();
   const a = state.answers;
@@ -1058,6 +1061,7 @@ function SegmentMeasurements({
         </div>
         <div className="border-l border-panel-border px-3 py-2">
           <SelectField
+            disabled={unitsLocked}
             value={outputValue}
             onChange={(value) =>
               update({ output: isFirstSegment && value === OTHER_MEASUREMENT ? recommended.output : value })
@@ -1085,6 +1089,7 @@ function SegmentMeasurements({
         </div>
         <div className="border-l border-panel-border px-3 py-2">
           <SelectField
+            disabled={unitsLocked}
             value={current.capacity}
             onChange={(value) => update({ capacity: value })}
             options={[...new Set([current.capacity, ...recommended.capacityOptions].filter(Boolean))]}
@@ -1124,6 +1129,7 @@ function SegmentMeasurements({
           {needsOutputUnit && (
             <div>
               <SelectField
+                disabled={unitsLocked}
                 label="Maximum Output / Units Sold measurement"
                 labelAction={
                   <button
@@ -1172,6 +1178,7 @@ function SegmentMeasurements({
           {needsCapacityUnit && (
             <div>
               <SelectField
+                disabled={unitsLocked}
                 label="Capacity measurement"
                 value={current.capacity}
                 onChange={(value) => update({ capacity: value })}
@@ -1340,7 +1347,7 @@ function SegmentMatrix({
     }
   };
 
-  const setMode = (lineId: string, mode: "single" | "multi") => {
+  const setMode = (lineId: string, mode: "single" | "multi", config?: { streams: string[]; cogsBasis: "business_line" | "revenue_stream"; capexBasis: "business_line" | "revenue_stream" }) => {
     setAnswer("lineStreamMode", { ...a.lineStreamMode, [lineId]: mode });
     if (mode === "single") {
       const nextStreams = { ...a.revenueStreams };
@@ -1358,14 +1365,18 @@ function SegmentMatrix({
       // Multi-Stream always starts with Revenue Stream 1; additional streams
       // must be selected sequentially (stream 2 unlocks 3, 3 unlocks Other).
       if (current.length === 0 || !current.includes("stream1")) {
-        setAnswer("revenueStreams", { ...a.revenueStreams, [lineId]: ["stream1"] });
+        const seeded = config?.streams?.length ? config.streams : ["stream1"];
+        setAnswer("revenueStreams", {
+          ...a.revenueStreams,
+          [lineId]: seeded.includes("stream1") ? seeded : ["stream1", ...seeded],
+        });
       }
       // Default COGS / CapEx segmentation to By sub-sector when entering multi-stream mode.
       if (!a.cogsBasis[lineId]) {
-        setAnswer("cogsBasis", { ...a.cogsBasis, [lineId]: "business_line" });
+        setAnswer("cogsBasis", { ...a.cogsBasis, [lineId]: config?.cogsBasis ?? "business_line" });
       }
       if (!a.capexBasis[lineId]) {
-        setAnswer("capexBasis", { ...a.capexBasis, [lineId]: "business_line" });
+        setAnswer("capexBasis", { ...a.capexBasis, [lineId]: config?.capexBasis ?? "business_line" });
       }
     }
   };
@@ -1403,17 +1414,27 @@ function SegmentMatrix({
         <div className="space-y-3">
           {segmentOptions.map((line) => {
             const lineSelected = a.selectedSegments.includes(line.value);
-            const mode = a.lineStreamMode[line.value] ?? "single";
-            const streams = a.revenueStreams[line.value] ?? [];
             const lineSubsector =
               line.value === "segment1"
                 ? a.subsector
                 : line.value === "segment2"
                   ? a.subsector2
                   : a.subsector3;
-            const modelBasis =
-              a.lineModelBasis[line.value] ??
-              (lineSubsector === "Generic - Percentage Based" ? "percentage" : "unit_economics");
+            // Developer Console defaults and locks for this sub-sector template.
+            const config = {
+              ...DEFAULT_SUBSECTOR_CONFIG,
+              ...((state.subsectorConfigs ?? {})[lineSubsector] ?? {}),
+            };
+            const mode = config.streamModeLocked
+              ? config.streamMode
+              : (a.lineStreamMode[line.value] ?? config.streamMode);
+            const streams = config.streamsLocked
+              ? config.streams
+              : (a.revenueStreams[line.value] ?? config.streams);
+            const modelBasis = config.modelBasisLocked
+              ? config.modelBasis
+              : (a.lineModelBasis[line.value] ??
+                (lineSubsector === "Generic - Percentage Based" ? "percentage" : config.modelBasis));
             return (
               <div key={line.value} className={[
                 "overflow-hidden rounded-lg border transition-colors",
@@ -1467,7 +1488,7 @@ function SegmentMatrix({
                     </div>
                     <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1 sm:min-w-72">
                       {([{ value: "unit_economics", label: "Unit Economics" }, { value: "percentage", label: "% Based" }] as const).map((option) => (
-                        <button key={option.value} type="button" onClick={() => setAnswer("lineModelBasis", { ...a.lineModelBasis, [line.value]: option.value })} aria-pressed={modelBasis === option.value} className={["rounded-md px-4 py-2 text-xs font-semibold transition-colors", modelBasis === option.value ? "bg-primary text-primary-foreground shadow-sm" : "text-navy hover:bg-secondary"].join(" ")}><EditableText group="Section B — Sub-sector card">{option.label}</EditableText></button>
+                        <button key={option.value} type="button" disabled={config.modelBasisLocked} onClick={() => setAnswer("lineModelBasis", { ...a.lineModelBasis, [line.value]: option.value })} aria-pressed={modelBasis === option.value} className={["rounded-md px-4 py-2 text-xs font-semibold transition-colors", modelBasis === option.value ? "bg-primary text-primary-foreground shadow-sm" : "text-navy hover:bg-secondary"].join(" ")}><EditableText group="Section B — Sub-sector card">{option.label}</EditableText></button>
                       ))}
                     </div>
                   </div>
@@ -1481,7 +1502,7 @@ function SegmentMatrix({
                       <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1 sm:min-w-72">
                         {([{ value: "single", label: "Single Revenue Stream" }, { value: "multi", label: "Multiple Revenue Streams" }] as const).map((option) => {
                           const active = mode === option.value;
-                          return <button key={option.value} type="button" onClick={() => setMode(line.value, option.value)} aria-pressed={active} className={["whitespace-nowrap rounded-md px-3 py-2 text-xs font-semibold transition-colors", active ? "bg-primary text-primary-foreground shadow-sm" : "text-navy hover:bg-secondary"].join(" ")}><EditableText group="Section B — Sub-sector card">{option.label}</EditableText></button>;
+                          return <button key={option.value} type="button" disabled={config.streamModeLocked} onClick={() => setMode(line.value, option.value, config)} aria-pressed={active} className={["whitespace-nowrap rounded-md px-3 py-2 text-xs font-semibold transition-colors", active ? "bg-primary text-primary-foreground shadow-sm" : "text-navy hover:bg-secondary"].join(" ")}><EditableText group="Section B — Sub-sector card">{option.label}</EditableText></button>;
                         })}
                       </div>
                     </div>
@@ -1494,7 +1515,7 @@ function SegmentMatrix({
                       const active = streams.includes(stream.value);
                       const previous = streamOrder[index - 1]!;
                       const disabled =
-                        index === 0 || !streams.includes(previous);
+                        index === 0 || !streams.includes(previous) || config.streamsLocked;
                       return (
                         <button
                           key={stream.value}
@@ -1547,6 +1568,7 @@ function SegmentMatrix({
                     segmentLabel={line.label}
                     hideHeader
                     modelBasis={modelBasis}
+                    unitsLocked={config.unitsLocked}
                   />
                 )}
 
@@ -1560,7 +1582,7 @@ function SegmentMatrix({
                           <div className="border-l border-panel-border px-3 py-2.5"><EditableText group="Section B — Sub-sector card">Capacity Unit</EditableText> <span className="font-normal text-muted-foreground">ⓘ</span><EditableText as="span" className="mt-0.5 block text-[10px] font-normal text-muted-foreground" group="Section B — Sub-sector card">Unit for installed capacity</EditableText></div>
                         </div>
                         {revenueStreamOptions.filter((stream) => streams.includes(stream.value)).map((stream, streamIndex) => (
-                          <SegmentMeasurements key={stream.value} segmentId={line.value} segmentLabel={stream.label} measurementKey={`${line.value}:${stream.value}`} isPrimaryStream={streamIndex === 0} modelBasis={modelBasis} tableRow />
+                          <SegmentMeasurements key={stream.value} segmentId={line.value} segmentLabel={stream.label} measurementKey={`${line.value}:${stream.value}`} isPrimaryStream={streamIndex === 0} modelBasis={modelBasis} tableRow unitsLocked={config.unitsLocked} />
                         ))}
                       </div>
                     </div>
@@ -1574,8 +1596,11 @@ function SegmentMatrix({
                       <div className="grid grid-cols-[0.8fr_1.1fr_1.1fr] bg-panel/50 text-center text-[11px] font-bold text-navy"><div className="px-3 py-2 text-left"><EditableText group="Section B — Sub-sector card">Item</EditableText></div><div className="border-l border-panel-border px-3 py-2"><EditableText group="Section B — Sub-sector card">Sub-sector Level</EditableText><EditableText as="span" className="block font-normal text-muted-foreground" group="Section B — Sub-sector card">Same approach for all revenue streams</EditableText></div><div className="border-l border-panel-border px-3 py-2"><EditableText group="Section B — Sub-sector card">Revenue Stream Level</EditableText><EditableText as="span" className="block font-normal text-muted-foreground" group="Section B — Sub-sector card">Different approach by revenue stream</EditableText></div></div>
                       {(["COGS", "CapEx"] as const).map((item) => {
                         const key = item === "COGS" ? "cogsBasis" : "capexBasis";
-                        const value = a[key][line.value] ?? "business_line";
-                        return <div key={item} className="grid grid-cols-[0.8fr_1.1fr_1.1fr] border-t border-panel-border text-xs"><div className="px-3 py-2 font-bold text-navy">{item}</div>{(["business_line", "revenue_stream"] as const).map((basis) => { const disabled = basis === "revenue_stream" && a.selectedSegments.length > 1; return <button key={basis} type="button" disabled={disabled} onClick={() => setAnswer(key, { ...a[key], [line.value]: basis })} className="flex items-center justify-center border-l border-panel-border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-40" aria-label={`${item} ${basis === "business_line" ? "sub-sector level" : "revenue stream level"}`}><span className={["size-4 rounded-full border", value === basis ? "border-primary bg-primary shadow-[inset_0_0_0_3px_var(--color-card)]" : "border-input"].join(" ")} /></button>; })}</div>;
+                        const configured = item === "COGS" ? config.cogsBasis : config.capexBasis;
+                        const value = config.cogsCapexLocked
+                          ? configured
+                          : (a[key][line.value] ?? configured);
+                        return <div key={item} className="grid grid-cols-[0.8fr_1.1fr_1.1fr] border-t border-panel-border text-xs"><div className="px-3 py-2 font-bold text-navy">{item}</div>{(["business_line", "revenue_stream"] as const).map((basis) => { const disabled = config.cogsCapexLocked || (basis === "revenue_stream" && a.selectedSegments.length > 1); return <button key={basis} type="button" disabled={disabled} onClick={() => setAnswer(key, { ...a[key], [line.value]: basis })} className="flex items-center justify-center border-l border-panel-border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-40" aria-label={`${item} ${basis === "business_line" ? "sub-sector level" : "revenue stream level"}`}><span className={["size-4 rounded-full border", value === basis ? "border-primary bg-primary shadow-[inset_0_0_0_3px_var(--color-card)]" : "border-input"].join(" ")} /></button>; })}</div>;
                       })}
                     </div>
                   </div>
