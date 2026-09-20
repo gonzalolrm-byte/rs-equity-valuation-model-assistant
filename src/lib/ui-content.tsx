@@ -179,10 +179,12 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
           content?: UiContentMap;
           order?: UiOrderMap;
           layout?: UiLayoutMap;
+          pathText?: UiPathTextMap;
         };
         setContent(saved.content ?? {});
         setOrder(saved.order ?? {});
         setLayout(saved.layout ?? {});
+        setPathTextMap(saved.pathText ?? {});
       }
     } catch {
       /* ignore corrupt local state */
