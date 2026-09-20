@@ -135,6 +135,7 @@ function RootComponent() {
       <UiContentProvider>
         <AppStateProvider>
           <UiEditBar />
+          <UiLayoutEditor />
           <UiEditBarSpacer />
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
