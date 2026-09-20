@@ -4,13 +4,13 @@ import {
   Building2,
   Download,
   ExternalLink,
+  Factory,
   FileSpreadsheet,
   Info,
   Leaf,
   Lock,
   Plane,
   Plus,
-  Refinery,
   RotateCcw,
   Trash2,
   Upload,
@@ -198,26 +198,6 @@ function SubsectorCard({
   const setOutput = (output: string) =>
     setSubsectorMeasurements(subsector, { ...current, output });
 
-  // Option 1 / Option 2 are extra output units, only shown to users when the
-  // sub-sector is modeled with multiple revenue streams.
-  const setOutputOption = (index: number, value: string) => {
-    const next = [current.outputOptions[0] ?? "", current.outputOptions[1] ?? ""];
-    next[index] = value;
-    setSubsectorMeasurements(subsector, {
-      ...current,
-      outputOptions: next.filter(Boolean),
-    });
-  };
-
-  const toggleCapacity = (unit: string) => {
-    const has = current.capacityOptions.includes(unit);
-    const next = has
-      ? current.capacityOptions.filter((item) => item !== unit)
-      : [...current.capacityOptions, unit];
-    if (!next.length) return; // at least one capacity unit must remain
-    setSubsectorMeasurements(subsector, { ...current, capacityOptions: next });
-  };
-
   return (
     <section className="rounded-xl border border-border bg-card p-5 shadow-card">
       <div className="flex flex-wrap items-start gap-3">
@@ -299,7 +279,54 @@ const STREAM_OPTIONS = [
  * Only pre-selects values and prevents edits; question IDs, mappings and
  * workflow logic are untouched.
  */
-function UserCardDefaults({ subsector }: { subsector: string }) {
+const UNIT_ECONOMICS_APPROACHES = [
+  {
+    value: "v1" as const,
+    title: "V1 — Common Operations",
+    description: "Common volume and capacity with multiple revenue streams.",
+    rows: ["Common", "Common", "By stream", "Sub-sector", "Sub-sector"],
+    example: "Airport",
+    icon: Plane,
+  },
+  {
+    value: "v2" as const,
+    title: "V2 — Common Capacity",
+    description: "Independent volumes with common capacity.",
+    rows: ["By stream", "Common", "By stream", "Sub-sector", "Sub-sector"],
+    example: "Refinery",
+    icon: Factory,
+  },
+  {
+    value: "v3" as const,
+    title: "V3 — Independent Operations",
+    description: "Independent volumes and capacity, with shared CapEx.",
+    rows: ["By stream", "By stream", "By stream", "By stream", "Sub-sector"],
+    example: "Agriculture",
+    icon: Leaf,
+  },
+  {
+    value: "v4" as const,
+    title: "V4 — Fully Independent",
+    description: "Independent volumes, capacity, COGS and CapEx by stream.",
+    rows: ["By stream", "By stream", "By stream", "By stream", "By stream"],
+    example: "Power / Industrial",
+    icon: Building2,
+  },
+];
+
+function UserCardDefaults({
+  subsector,
+  output,
+  capacity,
+  onOutputChange,
+  onCapacityChange,
+}: {
+  subsector: string;
+  output: string;
+  capacity: string;
+  onOutputChange: (value: string) => void;
+  onCapacityChange: (value: string) => void;
+}) {
   const { state, setSubsectorConfig, resetSubsectorConfig } = useApp();
   const saved = (state.subsectorConfigs ?? {})[subsector];
   const config: SubsectorConfigDefaults = { ...DEFAULT_SUBSECTOR_CONFIG, ...(saved ?? {}) };
@@ -325,13 +352,13 @@ function UserCardDefaults({ subsector }: { subsector: string }) {
     locked: boolean,
     onLock: (locked: boolean) => void,
   ) => (
-    <div className="grid gap-2 rounded-lg border border-panel-border bg-card px-3 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
+    <div className="grid gap-3 rounded-lg border border-panel-border bg-card px-3 py-3 lg:grid-cols-[1fr_auto] lg:items-center">
       <div>
         <p className="text-[13px] font-semibold text-navy">{label}</p>
         <p className="mt-0.5 text-[12px] text-muted-foreground">{hint}</p>
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1">
+        <div className="grid min-w-[320px] grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1">
           {options.map((option) => (
             <button
               key={option.value}
@@ -339,7 +366,7 @@ function UserCardDefaults({ subsector }: { subsector: string }) {
               onClick={() => onPick(option.value)}
               aria-pressed={value === option.value}
               className={[
-                "whitespace-nowrap rounded-md px-3 py-1.5 text-[12px] font-semibold transition-colors",
+                "whitespace-nowrap rounded-md px-3 py-2 text-[12px] font-semibold transition-colors",
                 value === option.value
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-navy hover:bg-secondary",
@@ -414,7 +441,7 @@ function UserCardDefaults({ subsector }: { subsector: string }) {
         )}
 
         {config.streamMode === "multi" && (
-          <div className="rounded-lg border border-panel-border bg-panel/25 px-3 py-3">
+          <div className="rounded-lg border border-panel-border bg-card px-3 py-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-[13px] font-semibold text-navy">Pre-selected revenue streams</p>
               <label className="flex cursor-pointer items-center gap-1.5 text-[12px] font-semibold text-navy">
@@ -456,46 +483,100 @@ function UserCardDefaults({ subsector }: { subsector: string }) {
           </div>
         )}
 
-        {config.streamMode === "multi" &&
-          pillRow(
-            "C. COGS segmentation",
-            "Default COGS approach for this sub-sector.",
-            [
-              { value: "business_line", label: "Sub-sector Level" },
-              { value: "revenue_stream", label: "Revenue Stream Level" },
-            ],
-            config.cogsBasis,
-            (value) => set({ cogsBasis: value as SubsectorConfigDefaults["cogsBasis"] }),
-            config.cogsCapexLocked,
-            (cogsCapexLocked) => set({ cogsCapexLocked }),
-          )}
+        {config.streamMode === "multi" && config.modelBasis === "unit_economics" && (
+          <div className="rounded-lg border border-primary/45 bg-panel/45 p-3">
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div>
+                <p className="text-[13px] font-bold text-navy">
+                  C. Unit Economics approach
+                  <span className="ml-1 font-medium text-primary">(shown because Multiple Revenue Streams is selected)</span>
+                </p>
+                <p className="mt-0.5 text-[12px] text-muted-foreground">
+                  Select the standard Unit Economics structure for this sub-sector. This will automatically configure revenue, COGS and CapEx settings.
+                </p>
+              </div>
+              <LockToggle
+                checked={config.unitEconomicsApproachLocked}
+                onChange={(unitEconomicsApproachLocked) => set({ unitEconomicsApproachLocked })}
+              />
+            </div>
+            <div className="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-4">
+              {UNIT_ECONOMICS_APPROACHES.map((approach) => {
+                const selected = config.unitEconomicsApproach === approach.value;
+                const Icon = approach.icon;
+                return (
+                  <button
+                    key={approach.value}
+                    type="button"
+                    onClick={() => {
+                      const cogsBasis = approach.value === "v3" || approach.value === "v4" ? "revenue_stream" : "business_line";
+                      const capexBasis = approach.value === "v4" ? "revenue_stream" : "business_line";
+                      set({ unitEconomicsApproach: approach.value, cogsBasis, capexBasis });
+                    }}
+                    aria-pressed={selected}
+                    className={[
+                      "flex min-h-[220px] flex-col rounded-lg border bg-card p-3 text-left transition-colors",
+                      selected ? "border-primary shadow-card" : "border-panel-border hover:border-primary/50",
+                    ].join(" ")}
+                  >
+                    <span className="flex items-start gap-2">
+                      <span className={[
+                        "mt-0.5 size-4 shrink-0 rounded-full border",
+                        selected ? "border-primary bg-primary shadow-[inset_0_0_0_3px_var(--color-card)]" : "border-input",
+                      ].join(" ")} />
+                      <span>
+                        <span className="block text-[12px] font-bold text-navy">{approach.title}</span>
+                        <span className="mt-1 block text-[11px] leading-snug text-muted-foreground">{approach.description}</span>
+                      </span>
+                    </span>
+                    <span className="mt-3 block overflow-hidden rounded border border-panel-border text-[10px]">
+                      {["Volume", "Capacity", "Revenue", "COGS", "CapEx"].map((label, index) => (
+                        <span key={label} className="grid grid-cols-2 border-b border-panel-border last:border-b-0">
+                          <span className="bg-panel/45 px-2 py-1 font-bold text-navy">{label}</span>
+                          <span className="border-l border-panel-border px-2 py-1 text-navy-soft">{approach.rows[index]}</span>
+                        </span>
+                      ))}
+                    </span>
+                    <span className="mt-auto flex items-center gap-2 pt-3 text-[11px] text-navy-soft">
+                      <Icon className="size-5 text-navy" /> Example: {approach.example}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
-        {config.streamMode === "multi" &&
-          pillRow(
-            "C. CapEx segmentation",
-            "Default CapEx approach for this sub-sector.",
-            [
-              { value: "business_line", label: "Sub-sector Level" },
-              { value: "revenue_stream", label: "Revenue Stream Level" },
-            ],
-            config.capexBasis,
-            (value) => set({ capexBasis: value as SubsectorConfigDefaults["capexBasis"] }),
-            config.cogsCapexLocked,
-            (cogsCapexLocked) => set({ cogsCapexLocked }),
-          )}
-
-        <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-panel-border bg-card px-3 py-3 text-[13px] font-semibold text-navy">
-          <input
-            type="checkbox"
-            checked={config.unitsLocked}
-            onChange={(event) => set({ unitsLocked: event.target.checked })}
-            className="size-3.5 accent-[hsl(var(--primary))]"
-          />
-          <Lock className="size-3.5 text-navy-soft" />
-          Lock the operational unit selections (Sales / Output Unit and Capacity Unit)
-        </label>
+        <div className="grid gap-3 rounded-lg border border-panel-border bg-card px-3 py-3 lg:grid-cols-[minmax(180px,1fr)_minmax(180px,1fr)_minmax(180px,1fr)_auto] lg:items-end">
+          <div>
+            <p className="text-[13px] font-bold text-navy">D. Operational units</p>
+            <p className="mt-0.5 text-[12px] text-muted-foreground">Define the units used for operational modeling.</p>
+          </div>
+          <label className="block text-[11px] font-semibold text-navy">
+            Sales / Output Unit
+            <select value={output} onChange={(event) => onOutputChange(event.target.value)} className="mt-1.5 w-full rounded-lg border border-input bg-card px-3 py-2 text-[12px] text-navy outline-none focus:border-primary">
+              {[...new Set([output, ...OUTPUT_CHOICES])].filter(Boolean).map((unit) => <option key={unit} value={unit}>{unit}</option>)}
+            </select>
+          </label>
+          <label className="block text-[11px] font-semibold text-navy">
+            Capacity Unit
+            <select value={capacity} onChange={(event) => onCapacityChange(event.target.value)} className="mt-1.5 w-full rounded-lg border border-input bg-card px-3 py-2 text-[12px] text-navy outline-none focus:border-primary">
+              {[...new Set([capacity, ...CAPACITY_CHOICES])].filter(Boolean).map((unit) => <option key={unit} value={unit}>{unit}</option>)}
+            </select>
+          </label>
+          <LockToggle checked={config.unitsLocked} onChange={(unitsLocked) => set({ unitsLocked })} />
+        </div>
       </div>
     </div>
+  );
+}
+
+function LockToggle({ checked, onChange }: { checked: boolean; onChange: (checked: boolean) => void }) {
+  return (
+    <label className="flex cursor-pointer items-center gap-1.5 whitespace-nowrap pb-2 text-[12px] font-semibold text-navy">
+      <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} className="size-3.5 accent-[hsl(var(--primary))]" />
+      <Lock className="size-3.5 text-navy-soft" /> Lock
+    </label>
   );
 }
 
