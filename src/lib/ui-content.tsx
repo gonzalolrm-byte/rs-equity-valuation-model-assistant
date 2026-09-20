@@ -208,12 +208,15 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!hydrated) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ content, order }));
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ editing, draft, draftOrder }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ content, order, layout }));
+      sessionStorage.setItem(
+        SESSION_KEY,
+        JSON.stringify({ editing, draft, draftOrder, draftLayout, editMode }),
+      );
     } catch {
       /* storage unavailable */
     }
-  }, [content, order, editing, draft, draftOrder, hydrated]);
+  }, [content, order, layout, editing, draft, draftOrder, draftLayout, editMode, hydrated]);
 
   const register = useCallback((entry: UiRegistryEntry) => {
     setRegistry((prev) =>
