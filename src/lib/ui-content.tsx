@@ -188,11 +188,15 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
           editing?: boolean;
           draft?: UiContentMap;
           draftOrder?: UiOrderMap;
+          draftLayout?: UiLayoutMap;
+          editMode?: UiEditMode;
         };
         if (session.editing) {
           setEditing(true);
           setDraft(session.draft ?? {});
           setDraftOrder(session.draftOrder ?? {});
+          setDraftLayout(session.draftLayout ?? {});
+          setEditMode(session.editMode === "layout" ? "layout" : "text");
         }
       }
     } catch {
