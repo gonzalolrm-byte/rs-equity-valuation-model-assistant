@@ -369,6 +369,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           resources,
           deletedRegistryPromptIds: [...deletedRegistry],
           subsectorDefaultTemplates: saved.subsectorDefaultTemplates ?? {},
+          subsectorConfigs: saved.subsectorConfigs ?? {},
 
 
           // merge answers field-by-field so saved state from an older question
@@ -642,6 +643,26 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           delete next[subsector];
           return { ...prev, subsectorDefaultTemplates: next };
         }),
+      setSubsectorConfig: (subsector, patch) =>
+        setState((prev) => ({
+          ...prev,
+          subsectorConfigs: {
+            ...(prev.subsectorConfigs ?? {}),
+            [subsector]: {
+              ...DEFAULT_SUBSECTOR_CONFIG,
+              ...((prev.subsectorConfigs ?? {})[subsector] ?? {}),
+              ...patch,
+            },
+          },
+        })),
+      resetSubsectorConfig: (subsector) =>
+        setState((prev) => {
+          const next = { ...(prev.subsectorConfigs ?? {}) };
+          delete next[subsector];
+          return { ...prev, subsectorConfigs: next };
+        }),
+
+
 
       addCustomSubsector: (sector, name) =>
         setState((prev) => {
