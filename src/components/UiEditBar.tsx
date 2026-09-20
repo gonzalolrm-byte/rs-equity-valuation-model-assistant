@@ -79,7 +79,7 @@ export function UiEditBar() {
             <MousePointerClick className="size-3.5" />
             {layoutMode
               ? "Click any component to resize it, or drag its edges"
-              : "Click any text on the page to edit its wording or formatting"}
+              : "Click any text — headings, boxes, tables, bars, buttons — to rewrite it"}
           </span>
           <div className="ml-auto flex items-center gap-2">
             <button
