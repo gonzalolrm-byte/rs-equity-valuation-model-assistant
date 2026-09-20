@@ -1,18 +1,18 @@
-# Match Sub-sector Defaults Panel
+# Match Latest Sub-sector Defaults Panel
 
 ## Scope
-- Rebuild each sub-sector’s defaults area to match the supplied reference: compact bordered rows for sections A–E, aligned segmented selectors, independent lock controls, and the operational-unit lock grouped beneath CapEx.
-- Add Section C for Unit Economics Structure with separate Volume input and Capacity input defaults, each supporting Common or Independent and its own lock.
-- Split the current shared COGS/CapEx lock into independent locks for sections D and E.
-- Keep the existing saved defaults, reset behavior, template generation, and template upload areas below the redesigned panel.
+- Rebuild each sub-sector’s defaults area to match the latest reference: compact A/B rows, pre-selected streams, a highlighted Unit Economics approach area, and an Operational units row.
+- Add four Unit Economics presets: Common Operations, Common Capacity, Independent Operations, and Fully Independent, with their displayed Volume, Capacity, Revenue, COGS, and CapEx structure summaries.
+- Add developer-selectable Sales / Output Unit and Capacity Unit defaults with a lock.
+- Keep reset behavior and the generated-template controls below the panel.
 
 ## User Questionnaire Behavior
-- Apply the new Volume and Capacity Common/Independent defaults and locks to the corresponding user-facing sub-sector controls.
-- Preserve existing revenue-stream, unit-selection, COGS, and CapEx logic; locked defaults remain visible but cannot be changed.
-- Maintain compatibility with defaults already saved in the browser by filling newly added settings from safe defaults.
+- Translate each Unit Economics preset into consistent volume, capacity, revenue, COGS, and CapEx defaults.
+- Locked choices remain visible but cannot be changed; unlocked choices remain defaults users may change.
+- Preserve existing question IDs, mappings, and model-generation behavior.
 
 ## Technical Details
-- Extend `SubsectorConfigDefaults` with volume/capacity structure values and separate lock flags, plus separate COGS and CapEx lock flags.
-- Update persistence merging so older saved configurations receive all new defaults.
-- Use existing semantic design tokens and controls; no backend or workflow IDs change.
-- Verify compilation, current preview logs, and the desktop layout in the live preview.
+- Extend the per-sub-sector configuration with a Unit Economics preset, its lock, operational-unit defaults, and their lock.
+- Merge new defaults into older browser-saved configurations for compatibility.
+- Use the existing semantic design tokens and controls.
+- Verify compilation, preview logs, and desktop rendering.
