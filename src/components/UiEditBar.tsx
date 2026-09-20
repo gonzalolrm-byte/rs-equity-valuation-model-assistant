@@ -333,6 +333,16 @@ export function UiEditBar() {
   );
 }
 
+/** Current on-page text for a `${scope}|${cssPath}` selection. */
+function readPageText(key: string) {
+  const path = key.slice(key.indexOf("|") + 1);
+  try {
+    return document.querySelector(path)?.textContent ?? "";
+  } catch {
+    return "";
+  }
+}
+
 const WRAP_OPTIONS = [
   { value: "", label: "Default" },
   { value: "normal", label: "Wrap on" },
