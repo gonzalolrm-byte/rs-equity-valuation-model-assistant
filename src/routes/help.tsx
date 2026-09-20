@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppHeader } from "@/components/AppHeader";
 import { ButtonLink } from "@/components/Button";
+import { EditableText } from "@/lib/ui-content";
 
 export const Route = createFileRoute("/help")({
   head: () => ({
@@ -26,8 +27,8 @@ function Help() {
     <div className="min-h-screen bg-background">
       <AppHeader />
       <main className="mx-auto max-w-3xl px-5 py-12">
-        <p className="eyebrow">Support</p>
-        <h1 className="mt-2 text-3xl font-extrabold">Help</h1>
+        <EditableText as="p" className="eyebrow" group="Help">Support</EditableText>
+        <EditableText as="h1" className="mt-2 block text-3xl font-extrabold" group="Help">Help</EditableText>
 
         <div className="mt-8 space-y-6">
           <Block title="Which option should I choose?">
@@ -70,7 +71,7 @@ function Help() {
 function Block({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="rounded-xl border border-border bg-card p-5 shadow-card">
-      <h2 className="font-heading text-[16px] font-bold">{title}</h2>
+      <EditableText as="h2" className="block font-heading text-[16px] font-bold" group="Help">{title}</EditableText>
       <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">{children}</p>
     </section>
   );
