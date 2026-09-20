@@ -544,7 +544,7 @@ function UserCardDefaults({
                       </span>
                     </span>
                     <span className="mt-3 block overflow-hidden rounded border border-panel-border text-[10px]">
-                      {["Volume", "Capacity", "Revenue", "COGS", "CapEx"].map((label, index) => (
+                      {["Units sold (or equivalent)", "Capacity", "Revenue", "COGS", "CapEx"].map((label, index) => (
                         <span key={label} className="grid grid-cols-2 border-b border-panel-border last:border-b-0">
                           <span className="bg-panel/45 px-2 py-1 font-bold text-navy">{label}</span>
                           <span className="border-l border-panel-border px-2 py-1 text-navy-soft">{approach.rows[index]}</span>
