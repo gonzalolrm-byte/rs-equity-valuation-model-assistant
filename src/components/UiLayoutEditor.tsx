@@ -256,6 +256,7 @@ export function UiLayoutEditor() {
               : `${Math.round(selectedRect.width)} × ${Math.round(selectedRect.height)}`}
           </span>
           {layoutActive && (
+          <>
           <div
             role="presentation"
             onPointerDown={(event) => startDrag(event, "x")}
