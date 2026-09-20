@@ -129,6 +129,10 @@ type Ctx = {
   registry: UiRegistryEntry[];
   /** Active layout overrides (draft while editing). */
   layout: UiLayoutMap;
+  /** Active wording overrides for freely selected page text. */
+  pathText: UiPathTextMap;
+  setPathText: (path: string, text: string) => void;
+  resetPathText: (path: string) => void;
   editMode: UiEditMode;
   setEditMode: (mode: UiEditMode) => void;
   selectedPath: string | null;
