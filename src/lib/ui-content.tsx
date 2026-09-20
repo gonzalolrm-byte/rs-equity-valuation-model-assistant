@@ -260,10 +260,20 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
       dirty:
         JSON.stringify(draft) !== JSON.stringify(content) ||
         JSON.stringify(draftOrder) !== JSON.stringify(order) ||
-        JSON.stringify(draftLayout) !== JSON.stringify(layout),
+        JSON.stringify(draftLayout) !== JSON.stringify(layout) ||
+        JSON.stringify(draftPathText) !== JSON.stringify(pathText),
       selectedKey,
       registry,
       layout: editing ? draftLayout : layout,
+      pathText: editing ? draftPathText : pathText,
+      setPathText: (path, text) =>
+        setDraftPathText((prev) => ({ ...prev, [path]: text })),
+      resetPathText: (path) =>
+        setDraftPathText((prev) => {
+          const next = { ...prev };
+          delete next[path];
+          return next;
+        }),
       editMode,
       setEditMode: (mode) => {
         setEditMode(mode);
