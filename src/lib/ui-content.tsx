@@ -55,6 +55,8 @@ export type UiLayoutOverride = {
 };
 
 export type UiLayoutMap = Record<string, UiLayoutOverride>;
+/** Wording overrides for any text on the page selected directly in the browser. */
+export type UiPathTextMap = Record<string, string>;
 export type UiEditMode = "text" | "layout";
 
 export const LAYOUT_FIELDS = [
@@ -127,6 +129,10 @@ type Ctx = {
   registry: UiRegistryEntry[];
   /** Active layout overrides (draft while editing). */
   layout: UiLayoutMap;
+  /** Active wording overrides for freely selected page text. */
+  pathText: UiPathTextMap;
+  setPathText: (path: string, text: string) => void;
+  resetPathText: (path: string) => void;
   editMode: UiEditMode;
   setEditMode: (mode: UiEditMode) => void;
   selectedPath: string | null;
@@ -162,6 +168,8 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
   const [draftLayout, setDraftLayout] = useState<UiLayoutMap>({});
   const [editMode, setEditMode] = useState<UiEditMode>("text");
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
+  const [pathText, setPathTextMap] = useState<UiPathTextMap>({});
+  const [draftPathText, setDraftPathText] = useState<UiPathTextMap>({});
 
   useEffect(() => {
     try {
@@ -171,10 +179,12 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
           content?: UiContentMap;
           order?: UiOrderMap;
           layout?: UiLayoutMap;
+          pathText?: UiPathTextMap;
         };
         setContent(saved.content ?? {});
         setOrder(saved.order ?? {});
         setLayout(saved.layout ?? {});
+        setPathTextMap(saved.pathText ?? {});
       }
     } catch {
       /* ignore corrupt local state */
@@ -189,6 +199,7 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
           draft?: UiContentMap;
           draftOrder?: UiOrderMap;
           draftLayout?: UiLayoutMap;
+          draftPathText?: UiPathTextMap;
           editMode?: UiEditMode;
         };
         if (session.editing) {
@@ -196,6 +207,7 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
           setDraft(session.draft ?? {});
           setDraftOrder(session.draftOrder ?? {});
           setDraftLayout(session.draftLayout ?? {});
+          setDraftPathText(session.draftPathText ?? {});
           setEditMode(session.editMode === "layout" ? "layout" : "text");
         }
       }
@@ -208,15 +220,27 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!hydrated) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ content, order, layout }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ content, order, layout, pathText }));
       sessionStorage.setItem(
         SESSION_KEY,
-        JSON.stringify({ editing, draft, draftOrder, draftLayout, editMode }),
+        JSON.stringify({ editing, draft, draftOrder, draftLayout, draftPathText, editMode }),
       );
     } catch {
       /* storage unavailable */
     }
-  }, [content, order, layout, editing, draft, draftOrder, draftLayout, editMode, hydrated]);
+  }, [
+    content,
+    order,
+    layout,
+    pathText,
+    editing,
+    draft,
+    draftOrder,
+    draftLayout,
+    draftPathText,
+    editMode,
+    hydrated,
+  ]);
 
   const register = useCallback((entry: UiRegistryEntry) => {
     setRegistry((prev) =>
@@ -236,10 +260,20 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
       dirty:
         JSON.stringify(draft) !== JSON.stringify(content) ||
         JSON.stringify(draftOrder) !== JSON.stringify(order) ||
-        JSON.stringify(draftLayout) !== JSON.stringify(layout),
+        JSON.stringify(draftLayout) !== JSON.stringify(layout) ||
+        JSON.stringify(draftPathText) !== JSON.stringify(pathText),
       selectedKey,
       registry,
       layout: editing ? draftLayout : layout,
+      pathText: editing ? draftPathText : pathText,
+      setPathText: (path, text) =>
+        setDraftPathText((prev) => ({ ...prev, [path]: text })),
+      resetPathText: (path) =>
+        setDraftPathText((prev) => {
+          const next = { ...prev };
+          delete next[path];
+          return next;
+        }),
       editMode,
       setEditMode: (mode) => {
         setEditMode(mode);
@@ -265,6 +299,7 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
         setDraft(content);
         setDraftOrder(order);
         setDraftLayout(layout);
+        setDraftPathText(pathText);
         setSelectedKey(null);
         setSelectedPath(null);
         setEditing(true);
@@ -273,6 +308,7 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
         setDraft(content);
         setDraftOrder(order);
         setDraftLayout(layout);
+        setDraftPathText(pathText);
         setSelectedKey(null);
         setSelectedPath(null);
         setEditing(false);
@@ -281,6 +317,7 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
         setContent(draft);
         setOrder(draftOrder);
         setLayout(draftLayout);
+        setPathTextMap(draftPathText);
         setSelectedKey(null);
         setSelectedPath(null);
         setEditing(false);
@@ -319,9 +356,11 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
     content,
     order,
     layout,
+    pathText,
     draft,
     draftOrder,
     draftLayout,
+    draftPathText,
     editing,
     editMode,
     selectedKey,

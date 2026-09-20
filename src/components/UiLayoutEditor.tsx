@@ -35,7 +35,11 @@ export function scopeForPath(pathname: string) {
   return pathname.startsWith("/developer") ? "developer" : "user";
 }
 
-/** Stable-enough CSS path for an element inside the app shell. */
+/**
+ * Stable-enough path for an element inside the app shell. The editor's own
+ * toolbars and overlays are ignored when counting siblings, so a path recorded
+ * while editing still resolves once edit mode is switched off.
+ */
 export function cssPathFor(element: Element): string | null {
   const parts: string[] = [];
   let current: Element | null = element;
@@ -43,10 +47,8 @@ export function cssPathFor(element: Element): string | null {
     const parent: Element | null = current.parentElement;
     if (!parent) return null;
     const tag = current.tagName.toLowerCase();
-    const index =
-      Array.from(parent.children).filter((child) => child.tagName === current!.tagName).indexOf(
-        current,
-      ) + 1;
+    const index = siblingsOfTag(parent, current.tagName).indexOf(current) + 1;
+    if (index < 1) return null;
     parts.unshift(`${tag}:nth-of-type(${index})`);
     current = parent;
   }
@@ -54,8 +56,38 @@ export function cssPathFor(element: Element): string | null {
   return `body > ${parts.join(" > ")}`;
 }
 
+function siblingsOfTag(parent: Element, tagName: string) {
+  return Array.from(parent.children).filter(
+    (child) => child.tagName === tagName && !child.hasAttribute("data-ui-editor"),
+  );
+}
+
+/** Resolves a path produced by `cssPathFor`, skipping editor chrome siblings. */
+export function resolvePath(path: string): HTMLElement | null {
+  const parts = path.replace(/^body\s*>\s*/, "").split(">");
+  let current: Element | null = document.body;
+  for (const rawPart of parts) {
+    const match = rawPart.trim().match(/^([a-z0-9-]+):nth-of-type\((\d+)\)$/i);
+    if (!match || !current) return null;
+    const tag = (match[1] as string).toUpperCase();
+    const index = Number(match[2]) - 1;
+    const next: Element | undefined = siblingsOfTag(current, tag)[index];
+    if (!next) return null;
+    current = next;
+  }
+  return current instanceof HTMLElement && current !== document.body ? current : null;
+}
+
 function isEditorChrome(element: Element | null) {
   return !!element?.closest("[data-ui-editor]");
+}
+
+/** True for elements whose whole content is a single run of text. */
+export function isTextLeaf(element: Element) {
+  if (!(element instanceof HTMLElement)) return false;
+  if (element.querySelector("*")) return false;
+  if (["INPUT", "TEXTAREA", "SELECT", "IMG", "SVG", "PATH"].includes(element.tagName)) return false;
+  return !!element.textContent?.trim();
 }
 
 export function UiLayoutEditor() {
@@ -63,11 +95,15 @@ export function UiLayoutEditor() {
   const location = useLocation();
   const scope = scopeForPath(location.pathname);
   const appliedRef = useRef<Set<HTMLElement>>(new Set());
+  const textAppliedRef = useRef<Map<HTMLElement, string>>(new Map());
   const [hoverRect, setHoverRect] = useState<DOMRect | null>(null);
   const [selectedRect, setSelectedRect] = useState<DOMRect | null>(null);
 
   const layout = ui?.layout ?? {};
+  const pathText = ui?.pathText ?? {};
   const layoutActive = !!ui?.editing && ui.editMode === "layout";
+  const textActive = !!ui?.editing && ui.editMode === "text";
+  const pickerActive = layoutActive || textActive;
   const selectedPath = ui?.selectedPath ?? null;
 
   /** Applies every saved override for the current scope to the live DOM. */
@@ -79,12 +115,7 @@ export function UiLayoutEditor() {
     for (const [key, override] of Object.entries(layout)) {
       const [entryScope, path] = splitKey(key);
       if (entryScope !== scope || !path) continue;
-      let element: HTMLElement | null = null;
-      try {
-        element = document.querySelector<HTMLElement>(path);
-      } catch {
-        element = null;
-      }
+      const element = resolvePath(path);
       if (!element || isEditorChrome(element)) continue;
       for (const prop of MANAGED_PROPS) {
         const value = override[prop];
@@ -92,18 +123,43 @@ export function UiLayoutEditor() {
       }
       appliedRef.current.add(element);
     }
-  }, [layout, scope]);
+    // Wording overrides for text picked straight off the page.
+    for (const [element, original] of textAppliedRef.current) {
+      if (element.isConnected && element.textContent !== original) element.textContent = original;
+    }
+    textAppliedRef.current = new Map();
+    for (const [key, text] of Object.entries(pathText)) {
+      const [entryScope, path] = splitKey(key);
+      if (entryScope !== scope || !path) continue;
+      const element = resolvePath(path);
+      if (!element || isEditorChrome(element) || !isTextLeaf(element)) continue;
+      const original = element.textContent ?? "";
+      if (original === text) continue;
+      textAppliedRef.current.set(element, original);
+      element.textContent = text;
+    }
+  }, [layout, pathText, scope]);
 
   useEffect(() => {
-    apply();
-    const observer = new MutationObserver(() => apply());
-    observer.observe(document.body, { childList: true, subtree: true });
+    let applying = false;
+    const run = () => {
+      if (applying) return;
+      applying = true;
+      apply();
+      // Ignore the mutations our own DOM writes produce.
+      window.setTimeout(() => {
+        applying = false;
+      }, 0);
+    };
+    run();
+    const observer = new MutationObserver(run);
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     return () => observer.disconnect();
   }, [apply]);
 
   // Keep the selection outline aligned while the page scrolls or reflows.
   useEffect(() => {
-    if (!layoutActive) {
+    if (!pickerActive) {
       setSelectedRect(null);
       setHoverRect(null);
       return;
@@ -114,12 +170,7 @@ export function UiLayoutEditor() {
         return;
       }
       const [, path] = splitKey(selectedPath);
-      let element: HTMLElement | null = null;
-      try {
-        element = path ? document.querySelector<HTMLElement>(path) : null;
-      } catch {
-        element = null;
-      }
+      const element = path ? resolvePath(path) : null;
       setSelectedRect(element ? element.getBoundingClientRect() : null);
     };
     sync();
@@ -131,13 +182,18 @@ export function UiLayoutEditor() {
       window.removeEventListener("scroll", sync, true);
       window.removeEventListener("resize", sync);
     };
-  }, [layoutActive, selectedPath, layout]);
+  }, [pickerActive, selectedPath, layout, pathText]);
 
   useEffect(() => {
-    if (!layoutActive || !ui) return;
+    if (!pickerActive || !ui) return;
     const onMove = (event: MouseEvent) => {
       const target = event.target as Element | null;
       if (!target || isEditorChrome(target)) {
+        setHoverRect(null);
+        return;
+      }
+      // In text mode only highlight elements whose text can be rewritten.
+      if (textActive && !isTextLeaf(target)) {
         setHoverRect(null);
         return;
       }
@@ -146,10 +202,15 @@ export function UiLayoutEditor() {
     const onClick = (event: MouseEvent) => {
       const target = event.target as Element | null;
       if (!target || isEditorChrome(target)) return;
+      // Registered EditableText content keeps its own editor.
+      if (textActive && target.closest("[data-ui-key]")) return;
+      if (textActive && !isTextLeaf(target)) return;
       event.preventDefault();
       event.stopPropagation();
       const path = cssPathFor(target);
-      if (path) ui.selectPath(`${scope}|${path}`);
+      if (!path) return;
+      if (textActive) ui.select(null);
+      ui.selectPath(`${scope}|${path}`);
     };
     document.addEventListener("mousemove", onMove, true);
     document.addEventListener("click", onClick, true);
@@ -157,7 +218,7 @@ export function UiLayoutEditor() {
       document.removeEventListener("mousemove", onMove, true);
       document.removeEventListener("click", onClick, true);
     };
-  }, [layoutActive, scope, ui]);
+  }, [pickerActive, textActive, scope, ui]);
 
   if (!ui) return null;
 
@@ -182,7 +243,7 @@ export function UiLayoutEditor() {
     window.addEventListener("pointerup", onUp);
   };
 
-  if (!layoutActive) return null;
+  if (!pickerActive) return null;
 
   return (
     <div data-ui-editor className="pointer-events-none fixed inset-0 z-40">
@@ -199,8 +260,12 @@ export function UiLayoutEditor() {
             className="absolute -translate-y-full rounded-t bg-primary px-1.5 py-0.5 text-[11px] font-semibold text-primary-foreground"
             style={{ left: selectedRect.left, top: selectedRect.top }}
           >
-            {Math.round(selectedRect.width)} × {Math.round(selectedRect.height)}
+            {textActive
+              ? "Editing text"
+              : `${Math.round(selectedRect.width)} × ${Math.round(selectedRect.height)}`}
           </span>
+          {layoutActive && (
+          <>
           <div
             role="presentation"
             onPointerDown={(event) => startDrag(event, "x")}
@@ -227,6 +292,8 @@ export function UiLayoutEditor() {
             className="pointer-events-auto absolute size-3 cursor-nwse-resize rounded-sm bg-primary"
             style={{ left: selectedRect.right - 6, top: selectedRect.bottom - 6 }}
           />
+          </>
+          )}
         </>
       )}
     </div>
