@@ -394,5 +394,5 @@ function Select({
 export function UiEditBarSpacer() {
   const ui = useUiContent();
   if (!ui.editing) return null;
-  return <div className="h-11" />;
+  return <div data-ui-editor className="h-11" />;
 }
