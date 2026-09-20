@@ -235,25 +235,54 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
       editing,
       dirty:
         JSON.stringify(draft) !== JSON.stringify(content) ||
-        JSON.stringify(draftOrder) !== JSON.stringify(order),
+        JSON.stringify(draftOrder) !== JSON.stringify(order) ||
+        JSON.stringify(draftLayout) !== JSON.stringify(layout),
       selectedKey,
       registry,
+      layout: editing ? draftLayout : layout,
+      editMode,
+      setEditMode: (mode) => {
+        setEditMode(mode);
+        setSelectedKey(null);
+        setSelectedPath(null);
+      },
+      selectedPath,
+      selectPath: (path) => setSelectedPath(path),
+      setLayoutOverride: (path, patch) =>
+        setDraftLayout((prev) => {
+          const next = { ...prev, [path]: { ...prev[path], ...patch } };
+          const entry = next[path] as UiLayoutOverride;
+          if (Object.values(entry).every((item) => !item)) delete next[path];
+          return next;
+        }),
+      resetLayout: (path) =>
+        setDraftLayout((prev) => {
+          const next = { ...prev };
+          delete next[path];
+          return next;
+        }),
       startEditing: () => {
         setDraft(content);
         setDraftOrder(order);
+        setDraftLayout(layout);
         setSelectedKey(null);
+        setSelectedPath(null);
         setEditing(true);
       },
       cancelEditing: () => {
         setDraft(content);
         setDraftOrder(order);
+        setDraftLayout(layout);
         setSelectedKey(null);
+        setSelectedPath(null);
         setEditing(false);
       },
       saveEditing: () => {
         setContent(draft);
         setOrder(draftOrder);
+        setLayout(draftLayout);
         setSelectedKey(null);
+        setSelectedPath(null);
         setEditing(false);
       },
       select: (key) => setSelectedKey(key),
