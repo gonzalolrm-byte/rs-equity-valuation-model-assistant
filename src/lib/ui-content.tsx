@@ -391,13 +391,14 @@ export function EditableText({
   if (!ctx) return <Tag className={className}>{children}</Tag>;
 
   const { text, override } = ctx.resolve(key, children);
-  const selected = ctx.editing && ctx.selectedKey === key;
+  const textMode = ctx.editing && ctx.editMode === "text";
+  const selected = textMode && ctx.selectedKey === key;
 
   return (
     <Tag
       className={[
         className,
-        ctx.editing
+        textMode
           ? "cursor-pointer rounded outline-dashed outline-1 outline-offset-2 outline-primary/40 hover:outline-primary"
           : "",
         selected ? "outline-2 outline-primary bg-panel/60" : "",
@@ -405,7 +406,7 @@ export function EditableText({
         .filter(Boolean)
         .join(" ")}
       style={styleFor(override)}
-      {...(ctx.editing
+      {...(textMode
         ? {
             onClick: (event: React.MouseEvent) => {
               event.preventDefault();
