@@ -339,6 +339,8 @@ function SubsectorCard({
         </div>
       </div>
 
+      <UserCardDefaults subsector={subsector} />
+
       <DefaultTemplateGenerator
         subsector={subsector}
         outputMeasurement={current.output}
