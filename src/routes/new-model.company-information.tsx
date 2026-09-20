@@ -1061,6 +1061,7 @@ function SegmentMeasurements({
         </div>
         <div className="border-l border-panel-border px-3 py-2">
           <SelectField
+            disabled={unitsLocked}
             value={outputValue}
             onChange={(value) =>
               update({ output: isFirstSegment && value === OTHER_MEASUREMENT ? recommended.output : value })
@@ -1088,6 +1089,7 @@ function SegmentMeasurements({
         </div>
         <div className="border-l border-panel-border px-3 py-2">
           <SelectField
+            disabled={unitsLocked}
             value={current.capacity}
             onChange={(value) => update({ capacity: value })}
             options={[...new Set([current.capacity, ...recommended.capacityOptions].filter(Boolean))]}
@@ -1127,6 +1129,7 @@ function SegmentMeasurements({
           {needsOutputUnit && (
             <div>
               <SelectField
+                disabled={unitsLocked}
                 label="Maximum Output / Units Sold measurement"
                 labelAction={
                   <button
@@ -1175,6 +1178,7 @@ function SegmentMeasurements({
           {needsCapacityUnit && (
             <div>
               <SelectField
+                disabled={unitsLocked}
                 label="Capacity measurement"
                 value={current.capacity}
                 onChange={(value) => update({ capacity: value })}
