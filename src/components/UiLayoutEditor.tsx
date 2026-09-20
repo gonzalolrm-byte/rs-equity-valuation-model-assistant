@@ -234,7 +234,7 @@ export function UiLayoutEditor() {
     window.addEventListener("pointerup", onUp);
   };
 
-  if (!layoutActive) return null;
+  if (!pickerActive) return null;
 
   return (
     <div data-ui-editor className="pointer-events-none fixed inset-0 z-40">
