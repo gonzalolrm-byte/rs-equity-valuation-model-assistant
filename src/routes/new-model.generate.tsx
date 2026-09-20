@@ -10,6 +10,7 @@ import { PageHeading } from "@/components/form";
 import { runActions } from "@/lib/services/claudeService";
 import { buildModel } from "@/lib/services/excelService";
 import { useApp } from "@/lib/store";
+import { EditableText } from "@/lib/ui-content";
 import { WORKFLOW_A_STEPS } from "./new-model.company-information";
 
 export const Route = createFileRoute("/new-model/generate")({
@@ -78,7 +79,7 @@ function GenerateStep() {
             />
 
             <section className="rounded-xl border border-border bg-card p-5 shadow-card">
-              <p className="text-sm font-semibold text-navy">Configuration summary</p>
+              <EditableText as="p" className="text-sm font-semibold text-navy" group="Generate Model">Configuration summary</EditableText>
               <dl className="mt-3 grid gap-x-8 gap-y-2.5 text-[13px] sm:grid-cols-2">
                 <Row label="Company" value={answers.companyName || "—"} />
                 <Row label="Sector" value={answers.sector || "—"} />
@@ -131,11 +132,11 @@ function GenerateStep() {
                   1
                 </span>
                 <div>
-                  <h3 className="font-heading text-[16px] font-bold">Save Information</h3>
-                  <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+                  <EditableText as="h3" className="font-heading text-[16px] font-bold" group="Generate Model">Save Information</EditableText>
+                  <EditableText as="p" className="mt-1.5 block text-[13px] leading-relaxed text-muted-foreground" group="Generate Model">
                     Saves your questionnaire responses, uploaded files and configuration so you can
                     return later.
-                  </p>
+                  </EditableText>
                 </div>
               </div>
               <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -157,12 +158,12 @@ function GenerateStep() {
                   2
                 </span>
                 <div>
-                  <h3 className="font-heading text-[16px] font-bold">Generate Standardized Model</h3>
-                  <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+                  <EditableText as="h3" className="font-heading text-[16px] font-bold" group="Generate Model">Generate Standardized Model</EditableText>
+                  <EditableText as="p" className="mt-1.5 block text-[13px] leading-relaxed text-muted-foreground" group="Generate Model">
                     Identifies the appropriate standardized DCF template, applies your configuration,
                     runs the predefined prompt actions over your documents, populates what is
                     available and flags whatever is missing. Nothing is estimated or invented.
-                  </p>
+                  </EditableText>
                 </div>
               </div>
               <div className="mt-4">

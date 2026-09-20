@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BookOpen, Mail, Users } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
+import { EditableText } from "@/lib/ui-content";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -26,12 +27,12 @@ function Contact() {
     <div className="min-h-screen bg-background">
       <AppHeader />
       <main className="mx-auto max-w-3xl px-5 py-12">
-        <p className="eyebrow">Get in touch</p>
-        <h1 className="mt-2 text-3xl font-extrabold">Contact</h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">
+        <EditableText as="p" className="eyebrow" group="Contact">Get in touch</EditableText>
+        <EditableText as="h1" className="mt-2 block text-3xl font-extrabold" group="Contact">Contact</EditableText>
+        <EditableText as="p" className="mt-3 block text-[15px] leading-relaxed text-muted-foreground" group="Contact">
           Contact details below are placeholders for the prototype — send me the real team names,
           mailboxes and links and I will put them in.
-        </p>
+        </EditableText>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           <Card
@@ -67,10 +68,12 @@ function Card({
   return (
     <section className="rounded-xl border border-border bg-card p-5 shadow-card">
       <span className="flex size-10 items-center justify-center rounded-full bg-panel">{icon}</span>
-      <h2 className="mt-3 font-heading text-[16px] font-bold">{title}</h2>
+      <EditableText as="h2" className="mt-3 block font-heading text-[16px] font-bold" group="Contact">{title}</EditableText>
       <ul className="mt-2 space-y-1 text-[14px] text-muted-foreground">
         {lines.map((line) => (
-          <li key={line}>{line}</li>
+          <li key={line}>
+            <EditableText group="Contact">{line}</EditableText>
+          </li>
         ))}
       </ul>
     </section>

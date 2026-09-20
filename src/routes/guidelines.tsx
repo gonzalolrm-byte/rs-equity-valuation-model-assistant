@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppHeader } from "@/components/AppHeader";
 import { COGS_CATEGORIES } from "@/lib/data";
+import { EditableText } from "@/lib/ui-content";
 
 export const Route = createFileRoute("/guidelines")({
   head: () => ({
@@ -26,12 +27,12 @@ function Guidelines() {
     <div className="min-h-screen bg-background">
       <AppHeader />
       <main className="mx-auto max-w-3xl px-5 py-12">
-        <p className="eyebrow">Reference</p>
-        <h1 className="mt-2 text-3xl font-extrabold">Valuation Guidelines</h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">
+        <EditableText as="p" className="eyebrow" group="Guidelines">Reference</EditableText>
+        <EditableText as="h1" className="mt-2 block text-3xl font-extrabold" group="Guidelines">Valuation Guidelines</EditableText>
+        <EditableText as="p" className="mt-3 block text-[15px] leading-relaxed text-muted-foreground" group="Guidelines">
           Summary guidance for completing the questionnaire. The full guidelines document will be
           linked here once the document library is connected.
-        </p>
+        </EditableText>
 
         <div className="mt-8 space-y-6">
           <Section title="Segmentation">
@@ -83,7 +84,7 @@ function Guidelines() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="rounded-xl border border-border bg-card p-5 shadow-card">
-      <h2 className="font-heading text-[16px] font-bold">{title}</h2>
+      <EditableText as="h2" className="block font-heading text-[16px] font-bold" group="Guidelines">{title}</EditableText>
       <div className="mt-2 text-[15px] leading-relaxed text-muted-foreground">{children}</div>
     </section>
   );

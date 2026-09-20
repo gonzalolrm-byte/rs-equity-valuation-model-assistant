@@ -8,6 +8,7 @@ import { RunConsole } from "@/components/RunConsole";
 import { StepProgress } from "@/components/StepProgress";
 import { PageHeading } from "@/components/form";
 import { UPDATE_ACTIONS } from "@/lib/data";
+import { EditableText } from "@/lib/ui-content";
 import { runActions } from "@/lib/services/claudeService";
 import { buildModel } from "@/lib/services/excelService";
 import { useApp } from "@/lib/store";
@@ -99,11 +100,11 @@ function ReviewAndSave() {
             </section>
 
             <section className="rounded-xl border border-border bg-card p-5 shadow-card">
-              <h3 className="font-heading text-[16px] font-bold">Save for Later</h3>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+              <EditableText as="h3" className="font-heading text-[16px] font-bold" group="Update Model — Review">Save for Later</EditableText>
+              <EditableText as="p" className="mt-1.5 block text-[13px] leading-relaxed text-muted-foreground" group="Update Model — Review">
                 Save your inputs and settings so you can return later to review or make further
                 changes.
-              </p>
+              </EditableText>
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <Button variant="secondary" onClick={saveProgress}>
                   <Save className="size-4" />
@@ -118,11 +119,11 @@ function ReviewAndSave() {
             </section>
 
             <section className="rounded-xl border border-border bg-card p-5 shadow-card">
-              <h3 className="font-heading text-[16px] font-bold">Update and Generate Model</h3>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+              <EditableText as="h3" className="font-heading text-[16px] font-bold" group="Update Model — Review">Update and Generate Model</EditableText>
+              <EditableText as="p" className="mt-1.5 block text-[13px] leading-relaxed text-muted-foreground" group="Update Model — Review">
                 Runs the predefined prompt action for each selected update, applies the results to
                 the standardized model, and flags anything that could not be found.
-              </p>
+              </EditableText>
               <div className="mt-4">
                 <Button onClick={run} disabled={running || selected.length === 0}>
                   {running ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
