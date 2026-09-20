@@ -173,13 +173,18 @@ export function UiLayoutEditor() {
       window.removeEventListener("scroll", sync, true);
       window.removeEventListener("resize", sync);
     };
-  }, [layoutActive, selectedPath, layout]);
+  }, [pickerActive, selectedPath, layout, pathText]);
 
   useEffect(() => {
-    if (!layoutActive || !ui) return;
+    if (!pickerActive || !ui) return;
     const onMove = (event: MouseEvent) => {
       const target = event.target as Element | null;
       if (!target || isEditorChrome(target)) {
+        setHoverRect(null);
+        return;
+      }
+      // In text mode only highlight elements whose text can be rewritten.
+      if (textActive && !isTextLeaf(target)) {
         setHoverRect(null);
         return;
       }
@@ -188,10 +193,15 @@ export function UiLayoutEditor() {
     const onClick = (event: MouseEvent) => {
       const target = event.target as Element | null;
       if (!target || isEditorChrome(target)) return;
+      // Registered EditableText content keeps its own editor.
+      if (textActive && target.closest("[data-ui-key]")) return;
+      if (textActive && !isTextLeaf(target)) return;
       event.preventDefault();
       event.stopPropagation();
       const path = cssPathFor(target);
-      if (path) ui.selectPath(`${scope}|${path}`);
+      if (!path) return;
+      if (textActive) ui.select(null);
+      ui.selectPath(`${scope}|${path}`);
     };
     document.addEventListener("mousemove", onMove, true);
     document.addEventListener("click", onClick, true);
@@ -199,7 +209,7 @@ export function UiLayoutEditor() {
       document.removeEventListener("mousemove", onMove, true);
       document.removeEventListener("click", onClick, true);
     };
-  }, [layoutActive, scope, ui]);
+  }, [pickerActive, textActive, scope, ui]);
 
   if (!ui) return null;
 
