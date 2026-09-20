@@ -24,7 +24,7 @@ import {
   type UiLayoutOverride,
   type UiOverride,
 } from "@/lib/ui-content";
-import { scopeForPath } from "@/components/UiLayoutEditor";
+import { resolvePath, scopeForPath } from "@/components/UiLayoutEditor";
 
 export function UiEditBar() {
   const ui = useUiContent();
@@ -336,11 +336,7 @@ export function UiEditBar() {
 /** Current on-page text for a `${scope}|${cssPath}` selection. */
 function readPageText(key: string) {
   const path = key.slice(key.indexOf("|") + 1);
-  try {
-    return document.querySelector(path)?.textContent ?? "";
-  } catch {
-    return "";
-  }
+  return resolvePath(path)?.textContent ?? "";
 }
 
 const WRAP_OPTIONS = [

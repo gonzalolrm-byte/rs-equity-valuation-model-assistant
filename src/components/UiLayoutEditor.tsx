@@ -115,12 +115,7 @@ export function UiLayoutEditor() {
     for (const [key, override] of Object.entries(layout)) {
       const [entryScope, path] = splitKey(key);
       if (entryScope !== scope || !path) continue;
-      let element: HTMLElement | null = null;
-      try {
-        element = document.querySelector<HTMLElement>(path);
-      } catch {
-        element = null;
-      }
+      const element = resolvePath(path);
       if (!element || isEditorChrome(element)) continue;
       for (const prop of MANAGED_PROPS) {
         const value = override[prop];
@@ -136,12 +131,7 @@ export function UiLayoutEditor() {
     for (const [key, text] of Object.entries(pathText)) {
       const [entryScope, path] = splitKey(key);
       if (entryScope !== scope || !path) continue;
-      let element: HTMLElement | null = null;
-      try {
-        element = document.querySelector<HTMLElement>(path);
-      } catch {
-        element = null;
-      }
+      const element = resolvePath(path);
       if (!element || isEditorChrome(element) || !isTextLeaf(element)) continue;
       const original = element.textContent ?? "";
       if (original === text) continue;
@@ -180,12 +170,7 @@ export function UiLayoutEditor() {
         return;
       }
       const [, path] = splitKey(selectedPath);
-      let element: HTMLElement | null = null;
-      try {
-        element = path ? document.querySelector<HTMLElement>(path) : null;
-      } catch {
-        element = null;
-      }
+      const element = path ? resolvePath(path) : null;
       setSelectedRect(element ? element.getBoundingClientRect() : null);
     };
     sync();
