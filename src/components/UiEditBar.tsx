@@ -41,15 +41,42 @@ export function UiEditBar() {
 
   return (
     <>
-      <div className="fixed inset-x-0 top-0 z-50 border-b border-primary/40 bg-primary text-primary-foreground">
+      <div
+        data-ui-editor
+        className="fixed inset-x-0 top-0 z-50 border-b border-primary/40 bg-primary text-primary-foreground"
+      >
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-5 py-2.5">
           <span className="flex items-center gap-2 text-sm font-semibold">
             <Pencil className="size-4" />
-            Editing user interface
+            Editing {scope === "developer" ? "developer console" : "user interface"}
           </span>
-          <span className="hidden items-center gap-1.5 text-[13px] opacity-90 sm:flex">
+          <div className="flex items-center gap-1 rounded-lg bg-primary-foreground/15 p-0.5">
+            <button
+              type="button"
+              onClick={() => ui.setEditMode("text")}
+              className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[13px] font-semibold ${
+                layoutMode ? "opacity-80" : "bg-card text-primary"
+              }`}
+            >
+              <Type className="size-3.5" />
+              Text & format
+            </button>
+            <button
+              type="button"
+              onClick={() => ui.setEditMode("layout")}
+              className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[13px] font-semibold ${
+                layoutMode ? "bg-card text-primary" : "opacity-80"
+              }`}
+            >
+              <Move className="size-3.5" />
+              Layout & size
+            </button>
+          </div>
+          <span className="hidden items-center gap-1.5 text-[13px] opacity-90 lg:flex">
             <MousePointerClick className="size-3.5" />
-            Click any text on the page to edit its wording or formatting
+            {layoutMode
+              ? "Click any component to resize it, or drag its edges"
+              : "Click any text on the page to edit its wording or formatting"}
           </span>
           <div className="ml-auto flex items-center gap-2">
             <button
