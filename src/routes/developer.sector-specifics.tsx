@@ -245,6 +245,7 @@ function SubsectorCard({
 
       <UserCardDefaults
         subsector={subsector}
+        hasOverrides={Boolean(state.subsectorConfigs?.[subsector]) || edited}
         output={current.output}
         capacity={current.capacityOptions[0] ?? shipped.capacityOptions[0] ?? ""}
         onOutputChange={setOutput}
@@ -254,6 +255,10 @@ function SubsectorCard({
             capacityOptions: [capacity, ...current.capacityOptions.filter((item) => item !== capacity)],
           })
         }
+        onReset={() => {
+          resetSubsectorMeasurements(subsector);
+          resetSubsectorConfig(subsector);
+        }}
       />
 
       <DefaultTemplateGenerator
@@ -316,18 +321,22 @@ const UNIT_ECONOMICS_APPROACHES = [
 
 function UserCardDefaults({
   subsector,
+  hasOverrides,
   output,
   capacity,
   onOutputChange,
   onCapacityChange,
+  onReset,
 }: {
   subsector: string;
+  hasOverrides: boolean;
   output: string;
   capacity: string;
   onOutputChange: (value: string) => void;
   onCapacityChange: (value: string) => void;
+  onReset: () => void;
 }) {
-  const { state, setSubsectorConfig, resetSubsectorConfig } = useApp();
+  const { state, setSubsectorConfig } = useApp();
   const saved = (state.subsectorConfigs ?? {})[subsector];
   const config: SubsectorConfigDefaults = { ...DEFAULT_SUBSECTOR_CONFIG, ...(saved ?? {}) };
   const set = (patch: Partial<SubsectorConfigDefaults>) => setSubsectorConfig(subsector, patch);
@@ -401,10 +410,10 @@ function UserCardDefaults({
             changed by the user.
           </p>
         </div>
-        {saved && (
+        {hasOverrides && (
           <button
             type="button"
-            onClick={() => resetSubsectorConfig(subsector)}
+            onClick={onReset}
             className="inline-flex items-center gap-2 rounded-lg border border-input px-3 py-2 text-[13px] font-semibold text-navy transition-colors hover:bg-secondary"
           >
             <RotateCcw className="size-4" />

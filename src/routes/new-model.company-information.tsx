@@ -1018,9 +1018,9 @@ function SegmentMeasurements({
   });
 
   const current: SegmentMeasurement = {
-    capacity: saved?.capacity || recommended.capacity,
+    capacity: unitsLocked ? recommended.capacity : (saved?.capacity || recommended.capacity),
     capacityOther: saved?.capacityOther ?? "",
-    output: saved?.output || recommended.output,
+    output: unitsLocked ? recommended.output : (saved?.output || recommended.output),
     outputOther: saved?.outputOther ?? "",
     capacityBasis: saved?.capacityBasis ?? "",
   };
@@ -1425,6 +1425,10 @@ function SegmentMatrix({
               ...DEFAULT_SUBSECTOR_CONFIG,
               ...((state.subsectorConfigs ?? {})[lineSubsector] ?? {}),
             };
+            const approach = config.unitEconomicsApproach;
+            const approachCogs = approach === "v3" || approach === "v4" ? "revenue_stream" : "business_line";
+            const approachCapex = approach === "v4" ? "revenue_stream" : "business_line";
+            const cogsLocked = config.cogsCapexLocked || config.unitEconomicsApproachLocked;
             const mode = config.streamModeLocked
               ? config.streamMode
               : (a.lineStreamMode[line.value] ?? config.streamMode);
@@ -1596,11 +1600,13 @@ function SegmentMatrix({
                       <div className="grid grid-cols-[0.8fr_1.1fr_1.1fr] bg-panel/50 text-center text-[11px] font-bold text-navy"><div className="px-3 py-2 text-left"><EditableText group="Section B — Sub-sector card">Item</EditableText></div><div className="border-l border-panel-border px-3 py-2"><EditableText group="Section B — Sub-sector card">Sub-sector Level</EditableText><EditableText as="span" className="block font-normal text-muted-foreground" group="Section B — Sub-sector card">Same approach for all revenue streams</EditableText></div><div className="border-l border-panel-border px-3 py-2"><EditableText group="Section B — Sub-sector card">Revenue Stream Level</EditableText><EditableText as="span" className="block font-normal text-muted-foreground" group="Section B — Sub-sector card">Different approach by revenue stream</EditableText></div></div>
                       {(["COGS", "CapEx"] as const).map((item) => {
                         const key = item === "COGS" ? "cogsBasis" : "capexBasis";
-                        const configured = item === "COGS" ? config.cogsBasis : config.capexBasis;
-                        const value = config.cogsCapexLocked
+                        const configured = config.unitEconomicsApproachLocked
+                          ? (item === "COGS" ? approachCogs : approachCapex)
+                          : (item === "COGS" ? config.cogsBasis : config.capexBasis);
+                        const value = cogsLocked
                           ? configured
                           : (a[key][line.value] ?? configured);
-                        return <div key={item} className="grid grid-cols-[0.8fr_1.1fr_1.1fr] border-t border-panel-border text-xs"><div className="px-3 py-2 font-bold text-navy">{item}</div>{(["business_line", "revenue_stream"] as const).map((basis) => { const disabled = config.cogsCapexLocked || (basis === "revenue_stream" && a.selectedSegments.length > 1); return <button key={basis} type="button" disabled={disabled} onClick={() => setAnswer(key, { ...a[key], [line.value]: basis })} className="flex items-center justify-center border-l border-panel-border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-40" aria-label={`${item} ${basis === "business_line" ? "sub-sector level" : "revenue stream level"}`}><span className={["size-4 rounded-full border", value === basis ? "border-primary bg-primary shadow-[inset_0_0_0_3px_var(--color-card)]" : "border-input"].join(" ")} /></button>; })}</div>;
+                        return <div key={item} className="grid grid-cols-[0.8fr_1.1fr_1.1fr] border-t border-panel-border text-xs"><div className="px-3 py-2 font-bold text-navy">{item}</div>{(["business_line", "revenue_stream"] as const).map((basis) => { const disabled = cogsLocked || (basis === "revenue_stream" && a.selectedSegments.length > 1); return <button key={basis} type="button" disabled={disabled} onClick={() => setAnswer(key, { ...a[key], [line.value]: basis })} className="flex items-center justify-center border-l border-panel-border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-40" aria-label={`${item} ${basis === "business_line" ? "sub-sector level" : "revenue stream level"}`}><span className={["size-4 rounded-full border", value === basis ? "border-primary bg-primary shadow-[inset_0_0_0_3px_var(--color-card)]" : "border-input"].join(" ")} /></button>; })}</div>;
                       })}
                     </div>
                   </div>
