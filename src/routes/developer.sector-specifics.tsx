@@ -5,6 +5,7 @@ import {
   ExternalLink,
   FileSpreadsheet,
   Info,
+  Lock,
   Plus,
   RotateCcw,
   Trash2,
@@ -22,7 +23,7 @@ import {
   SUBSECTORS,
   defaultSubsectorMeasurements,
 } from "@/lib/data";
-import { useApp } from "@/lib/store";
+import { DEFAULT_SUBSECTOR_CONFIG, useApp, type SubsectorConfigDefaults } from "@/lib/store";
 
 export const Route = createFileRoute("/developer/sector-specifics")({
   head: () => ({
@@ -349,6 +350,218 @@ function SubsectorCard({
 
       <TemplateUpload subsector={subsector} />
     </section>
+  );
+}
+
+const STREAM_OPTIONS = [
+  { value: "stream1", label: "Revenue Stream 1" },
+  { value: "stream2", label: "Revenue Stream 2" },
+  { value: "stream3", label: "Revenue Stream 3" },
+  { value: "streamOther", label: "Other" },
+];
+
+/**
+ * Developer defaults and locks for the user-facing Section A/B sub-sector card.
+ * Only pre-selects values and prevents edits; question IDs, mappings and
+ * workflow logic are untouched.
+ */
+function UserCardDefaults({ subsector }: { subsector: string }) {
+  const { state, setSubsectorConfig, resetSubsectorConfig } = useApp();
+  const saved = (state.subsectorConfigs ?? {})[subsector];
+  const config: SubsectorConfigDefaults = { ...DEFAULT_SUBSECTOR_CONFIG, ...(saved ?? {}) };
+  const set = (patch: Partial<SubsectorConfigDefaults>) => setSubsectorConfig(subsector, patch);
+
+  const toggleStream = (value: string) => {
+    if (value === "stream1") return; // Revenue Stream 1 is always included
+    const index = STREAM_OPTIONS.findIndex((item) => item.value === value);
+    const list = config.streams.includes(value)
+      ? config.streams.filter(
+          (item) => item !== value && STREAM_OPTIONS.findIndex((o) => o.value === item) < index,
+        )
+      : [...config.streams, value];
+    set({ streams: STREAM_OPTIONS.map((o) => o.value).filter((v) => list.includes(v) || v === "stream1") });
+  };
+
+  const pillRow = (
+    label: string,
+    hint: string,
+    options: { value: string; label: string }[],
+    value: string,
+    onPick: (value: string) => void,
+    locked: boolean,
+    onLock: (locked: boolean) => void,
+  ) => (
+    <div className="grid gap-2 rounded-lg border border-panel-border bg-card px-3 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
+      <div>
+        <p className="text-[13px] font-semibold text-navy">{label}</p>
+        <p className="mt-0.5 text-[12px] text-muted-foreground">{hint}</p>
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="grid grid-cols-2 gap-1 rounded-lg border border-border bg-card p-1">
+          {options.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => onPick(option.value)}
+              aria-pressed={value === option.value}
+              className={[
+                "whitespace-nowrap rounded-md px-3 py-1.5 text-[12px] font-semibold transition-colors",
+                value === option.value
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-navy hover:bg-secondary",
+              ].join(" ")}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+        <label className="flex cursor-pointer items-center gap-1.5 text-[12px] font-semibold text-navy">
+          <input
+            type="checkbox"
+            checked={locked}
+            onChange={(event) => onLock(event.target.checked)}
+            className="size-3.5 accent-[hsl(var(--primary))]"
+          />
+          <Lock className="size-3.5 text-navy-soft" /> Lock
+        </label>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="mt-5 border-t border-border pt-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="text-[13px] font-semibold text-navy">
+            User card defaults — Sections A and B
+          </p>
+          <p className="mt-1 text-[12px] text-muted-foreground">
+            Pre-select what users see for this sub-sector. Locked settings are shown but cannot be
+            changed by the user.
+          </p>
+        </div>
+        {saved && (
+          <button
+            type="button"
+            onClick={() => resetSubsectorConfig(subsector)}
+            className="inline-flex items-center gap-2 rounded-lg border border-input px-3 py-2 text-[13px] font-semibold text-navy transition-colors hover:bg-secondary"
+          >
+            <RotateCcw className="size-4" />
+            Reset defaults
+          </button>
+        )}
+      </div>
+
+      <div className="mt-3 space-y-2">
+        {pillRow(
+          "A. Revenue modeling approach",
+          "How revenues are modeled for this sub-sector.",
+          [
+            { value: "unit_economics", label: "Unit Economics" },
+            { value: "percentage", label: "% Based" },
+          ],
+          config.modelBasis,
+          (value) => set({ modelBasis: value as SubsectorConfigDefaults["modelBasis"] }),
+          config.modelBasisLocked,
+          (modelBasisLocked) => set({ modelBasisLocked }),
+        )}
+
+        {pillRow(
+          "B. Revenue structure",
+          "Number of revenue streams offered by default.",
+          [
+            { value: "single", label: "Single Revenue Stream" },
+            { value: "multi", label: "Multiple Revenue Streams" },
+          ],
+          config.streamMode,
+          (value) => set({ streamMode: value as SubsectorConfigDefaults["streamMode"] }),
+          config.streamModeLocked,
+          (streamModeLocked) => set({ streamModeLocked }),
+        )}
+
+        {config.streamMode === "multi" && (
+          <div className="rounded-lg border border-panel-border bg-panel/25 px-3 py-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-[13px] font-semibold text-navy">Pre-selected revenue streams</p>
+              <label className="flex cursor-pointer items-center gap-1.5 text-[12px] font-semibold text-navy">
+                <input
+                  type="checkbox"
+                  checked={config.streamsLocked}
+                  onChange={(event) => set({ streamsLocked: event.target.checked })}
+                  className="size-3.5 accent-[hsl(var(--primary))]"
+                />
+                <Lock className="size-3.5 text-navy-soft" /> Lock
+              </label>
+            </div>
+            <div className="mt-2 grid gap-2 sm:grid-cols-4">
+              {STREAM_OPTIONS.map((stream, index) => {
+                const active = config.streams.includes(stream.value);
+                const previous = STREAM_OPTIONS[index - 1]?.value;
+                const disabled = index === 0 || (previous ? !config.streams.includes(previous) : false);
+                return (
+                  <label
+                    key={stream.value}
+                    className={[
+                      "flex items-center gap-2 rounded-lg border px-3 py-2 text-[12px] transition-colors",
+                      active ? "border-primary bg-primary/10 text-navy" : "border-border bg-card text-navy-soft",
+                      disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:bg-secondary/60",
+                    ].join(" ")}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={active}
+                      disabled={disabled}
+                      onChange={() => toggleStream(stream.value)}
+                      className="size-3.5 accent-[hsl(var(--primary))]"
+                    />
+                    {stream.label}
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {config.streamMode === "multi" &&
+          pillRow(
+            "C. COGS segmentation",
+            "Default COGS approach for this sub-sector.",
+            [
+              { value: "business_line", label: "Sub-sector Level" },
+              { value: "revenue_stream", label: "Revenue Stream Level" },
+            ],
+            config.cogsBasis,
+            (value) => set({ cogsBasis: value as SubsectorConfigDefaults["cogsBasis"] }),
+            config.cogsCapexLocked,
+            (cogsCapexLocked) => set({ cogsCapexLocked }),
+          )}
+
+        {config.streamMode === "multi" &&
+          pillRow(
+            "C. CapEx segmentation",
+            "Default CapEx approach for this sub-sector.",
+            [
+              { value: "business_line", label: "Sub-sector Level" },
+              { value: "revenue_stream", label: "Revenue Stream Level" },
+            ],
+            config.capexBasis,
+            (value) => set({ capexBasis: value as SubsectorConfigDefaults["capexBasis"] }),
+            config.cogsCapexLocked,
+            (cogsCapexLocked) => set({ cogsCapexLocked }),
+          )}
+
+        <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-panel-border bg-card px-3 py-3 text-[13px] font-semibold text-navy">
+          <input
+            type="checkbox"
+            checked={config.unitsLocked}
+            onChange={(event) => set({ unitsLocked: event.target.checked })}
+            className="size-3.5 accent-[hsl(var(--primary))]"
+          />
+          <Lock className="size-3.5 text-navy-soft" />
+          Lock the operational unit selections (Sales / Output Unit and Capacity Unit)
+        </label>
+      </div>
+    </div>
   );
 }
 
