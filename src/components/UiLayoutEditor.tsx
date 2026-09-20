@@ -58,16 +58,28 @@ function isEditorChrome(element: Element | null) {
   return !!element?.closest("[data-ui-editor]");
 }
 
+/** True for elements whose whole content is a single run of text. */
+export function isTextLeaf(element: Element) {
+  if (!(element instanceof HTMLElement)) return false;
+  if (element.querySelector("*")) return false;
+  if (["INPUT", "TEXTAREA", "SELECT", "IMG", "SVG", "PATH"].includes(element.tagName)) return false;
+  return !!element.textContent?.trim();
+}
+
 export function UiLayoutEditor() {
   const ui = useUiContentSafe();
   const location = useLocation();
   const scope = scopeForPath(location.pathname);
   const appliedRef = useRef<Set<HTMLElement>>(new Set());
+  const textAppliedRef = useRef<Map<HTMLElement, string>>(new Map());
   const [hoverRect, setHoverRect] = useState<DOMRect | null>(null);
   const [selectedRect, setSelectedRect] = useState<DOMRect | null>(null);
 
   const layout = ui?.layout ?? {};
+  const pathText = ui?.pathText ?? {};
   const layoutActive = !!ui?.editing && ui.editMode === "layout";
+  const textActive = !!ui?.editing && ui.editMode === "text";
+  const pickerActive = layoutActive || textActive;
   const selectedPath = ui?.selectedPath ?? null;
 
   /** Applies every saved override for the current scope to the live DOM. */
@@ -92,7 +104,27 @@ export function UiLayoutEditor() {
       }
       appliedRef.current.add(element);
     }
-  }, [layout, scope]);
+    // Wording overrides for text picked straight off the page.
+    for (const [element, original] of textAppliedRef.current) {
+      if (element.isConnected && element.textContent !== original) element.textContent = original;
+    }
+    textAppliedRef.current = new Map();
+    for (const [key, text] of Object.entries(pathText)) {
+      const [entryScope, path] = splitKey(key);
+      if (entryScope !== scope || !path) continue;
+      let element: HTMLElement | null = null;
+      try {
+        element = document.querySelector<HTMLElement>(path);
+      } catch {
+        element = null;
+      }
+      if (!element || isEditorChrome(element) || !isTextLeaf(element)) continue;
+      const original = element.textContent ?? "";
+      if (original === text) continue;
+      textAppliedRef.current.set(element, original);
+      element.textContent = text;
+    }
+  }, [layout, pathText, scope]);
 
   useEffect(() => {
     apply();
