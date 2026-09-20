@@ -33,6 +33,43 @@ export type UiOverride = {
 export type UiContentMap = Record<string, UiOverride>;
 export type UiOrderMap = Record<string, string[]>;
 
+/**
+ * Presentation-only layout overrides for a visible component. Keys are
+ * `${scope}|${cssPath}` where scope is "user" or "developer", so layout work in
+ * one interface never touches the other.
+ */
+export type UiLayoutOverride = {
+  width?: string | undefined;
+  height?: string | undefined;
+  minWidth?: string | undefined;
+  maxWidth?: string | undefined;
+  minHeight?: string | undefined;
+  maxHeight?: string | undefined;
+  padding?: string | undefined;
+  margin?: string | undefined;
+  columnGap?: string | undefined;
+  rowGap?: string | undefined;
+  whiteSpace?: string | undefined;
+  textAlign?: string | undefined;
+  verticalAlign?: string | undefined;
+};
+
+export type UiLayoutMap = Record<string, UiLayoutOverride>;
+export type UiEditMode = "text" | "layout";
+
+export const LAYOUT_FIELDS = [
+  { key: "width", label: "Width", placeholder: "e.g. 320px or 60%" },
+  { key: "height", label: "Height", placeholder: "e.g. 240px or auto" },
+  { key: "minWidth", label: "Min width", placeholder: "e.g. 200px" },
+  { key: "maxWidth", label: "Max width", placeholder: "e.g. 800px" },
+  { key: "minHeight", label: "Min height", placeholder: "e.g. 40px" },
+  { key: "maxHeight", label: "Max height", placeholder: "e.g. 400px" },
+  { key: "padding", label: "Internal padding", placeholder: "e.g. 12px or 8px 16px" },
+  { key: "margin", label: "Margin", placeholder: "e.g. 0 0 16px" },
+  { key: "columnGap", label: "Horizontal gap", placeholder: "e.g. 12px" },
+  { key: "rowGap", label: "Vertical gap", placeholder: "e.g. 12px" },
+] as const satisfies readonly { key: keyof UiLayoutOverride; label: string; placeholder: string }[];
+
 export type UiRegistryEntry = { key: string; defaultText: string; group: string };
 
 const STORAGE_KEY = "ifc-ui-content-v1";
