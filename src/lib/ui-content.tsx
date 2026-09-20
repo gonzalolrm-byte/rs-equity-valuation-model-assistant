@@ -199,6 +199,7 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
           draft?: UiContentMap;
           draftOrder?: UiOrderMap;
           draftLayout?: UiLayoutMap;
+          draftPathText?: UiPathTextMap;
           editMode?: UiEditMode;
         };
         if (session.editing) {
@@ -206,6 +207,7 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
           setDraft(session.draft ?? {});
           setDraftOrder(session.draftOrder ?? {});
           setDraftLayout(session.draftLayout ?? {});
+          setDraftPathText(session.draftPathText ?? {});
           setEditMode(session.editMode === "layout" ? "layout" : "text");
         }
       }
