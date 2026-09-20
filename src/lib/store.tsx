@@ -167,6 +167,39 @@ export type SubsectorDefaultTemplate = {
   content?: string;
 };
 
+/**
+ * Developer defaults for the user's Section A/B sub-sector card. Each value is
+ * pre-selected for users; the matching `*Locked` flag prevents users changing it.
+ * Presentation defaults only — no question IDs, mappings or logic change.
+ */
+export type SubsectorConfigDefaults = {
+  modelBasis: "unit_economics" | "percentage";
+  modelBasisLocked: boolean;
+  streamMode: "single" | "multi";
+  streamModeLocked: boolean;
+  streams: string[];
+  streamsLocked: boolean;
+  cogsBasis: "business_line" | "revenue_stream";
+  capexBasis: "business_line" | "revenue_stream";
+  cogsCapexLocked: boolean;
+  unitsLocked: boolean;
+};
+
+export const DEFAULT_SUBSECTOR_CONFIG: SubsectorConfigDefaults = {
+  modelBasis: "unit_economics",
+  modelBasisLocked: false,
+  streamMode: "single",
+  streamModeLocked: false,
+  streams: ["stream1"],
+  streamsLocked: false,
+  cogsBasis: "business_line",
+  capexBasis: "business_line",
+  cogsCapexLocked: false,
+  unitsLocked: false,
+};
+
+
+
 
 export type AppState = {
   workflow: "" | "new" | "update";
