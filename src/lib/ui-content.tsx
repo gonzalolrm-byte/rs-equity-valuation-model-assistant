@@ -158,14 +158,23 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [registry, setRegistry] = useState<UiRegistryEntry[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const [layout, setLayout] = useState<UiLayoutMap>({});
+  const [draftLayout, setDraftLayout] = useState<UiLayoutMap>({});
+  const [editMode, setEditMode] = useState<UiEditMode>("text");
+  const [selectedPath, setSelectedPath] = useState<string | null>(null);
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const saved = JSON.parse(raw) as { content?: UiContentMap; order?: UiOrderMap };
+        const saved = JSON.parse(raw) as {
+          content?: UiContentMap;
+          order?: UiOrderMap;
+          layout?: UiLayoutMap;
+        };
         setContent(saved.content ?? {});
         setOrder(saved.order ?? {});
+        setLayout(saved.layout ?? {});
       }
     } catch {
       /* ignore corrupt local state */
