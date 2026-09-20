@@ -4,23 +4,40 @@
  * system properties (IDs, conditions, mappings, prompts, workflow logic) are
  * displayed read-only so it is clear they cannot be changed here.
  */
-import { Link } from "@tanstack/react-router";
-import { Check, Lock, MousePointerClick, Pencil, RotateCcw, X } from "lucide-react";
+import { Link, useLocation } from "@tanstack/react-router";
+import {
+  Check,
+  Lock,
+  MousePointerClick,
+  Move,
+  Pencil,
+  RotateCcw,
+  Type,
+  X,
+} from "lucide-react";
 import {
   ALIGNMENTS,
   FONT_SIZES,
   FONT_WEIGHTS,
+  LAYOUT_FIELDS,
   useUiContent,
+  type UiLayoutOverride,
   type UiOverride,
 } from "@/lib/ui-content";
+import { scopeForPath } from "@/components/UiLayoutEditor";
 
 export function UiEditBar() {
   const ui = useUiContent();
+  const location = useLocation();
   if (!ui.editing) return null;
 
-  const selected = ui.selectedKey;
+  const scope = scopeForPath(location.pathname);
+  const layoutMode = ui.editMode === "layout";
+  const selected = layoutMode ? null : ui.selectedKey;
   const entry = ui.registry.find((item) => item.key === selected);
   const override: UiOverride = (selected ? ui.draft[selected] : undefined) ?? {};
+  const layoutPath = layoutMode ? ui.selectedPath : null;
+  const layoutOverride: UiLayoutOverride = (layoutPath ? ui.layout[layoutPath] : undefined) ?? {};
 
   return (
     <>
