@@ -981,6 +981,8 @@ function SegmentMeasurements({
   modelBasis,
   tableRow = false,
   unitsLocked = false,
+  volumeCommon = false,
+  capacityCommon = false,
 }: {
   segmentId: string;
   segmentLabel: string;
@@ -994,11 +996,18 @@ function SegmentMeasurements({
   tableRow?: boolean;
   /** Developer Console lock: units are fixed and cannot be changed by the user. */
   unitsLocked?: boolean;
+  /** Share the volume/output selection across this sub-sector's revenue streams. */
+  volumeCommon?: boolean;
+  /** Share the capacity selection across this sub-sector's revenue streams. */
+  capacityCommon?: boolean;
 }) {
   const { state, setAnswer } = useApp();
   const a = state.answers;
   const storageKey = measurementKey ?? segmentId;
   const saved = a.segmentMeasurements[storageKey];
+  const commonSaved = a.segmentMeasurements[segmentId];
+  const outputSaved = volumeCommon ? commonSaved : saved;
+  const capacitySaved = capacityCommon ? commonSaved : saved;
 
   // Each sub-sector card is linked to its own A.2 subsector template selection.
   const lineSubsector =
@@ -1018,17 +1027,21 @@ function SegmentMeasurements({
   });
 
   const current: SegmentMeasurement = {
-    capacity: unitsLocked ? recommended.capacity : (saved?.capacity || recommended.capacity),
-    capacityOther: saved?.capacityOther ?? "",
-    output: unitsLocked ? recommended.output : (saved?.output || recommended.output),
-    outputOther: saved?.outputOther ?? "",
-    capacityBasis: saved?.capacityBasis ?? "",
+    capacity: unitsLocked ? recommended.capacity : (capacitySaved?.capacity || recommended.capacity),
+    capacityOther: capacitySaved?.capacityOther ?? "",
+    output: unitsLocked ? recommended.output : (outputSaved?.output || recommended.output),
+    outputOther: outputSaved?.outputOther ?? "",
+    capacityBasis: capacitySaved?.capacityBasis ?? "",
   };
 
   const update = (partial: Partial<SegmentMeasurement>) => {
+    const outputPatch = partial.output !== undefined || partial.outputOther !== undefined;
+    const capacityPatch = partial.capacity !== undefined || partial.capacityOther !== undefined || partial.capacityBasis !== undefined;
+    const targetKey = outputPatch && volumeCommon ? segmentId : capacityPatch && capacityCommon ? segmentId : storageKey;
+    const targetCurrent = a.segmentMeasurements[targetKey] ?? current;
     setAnswer("segmentMeasurements", {
       ...a.segmentMeasurements,
-      [storageKey]: { ...current, ...partial },
+      [targetKey]: { ...targetCurrent, ...partial },
     });
   };
 
@@ -1426,6 +1439,8 @@ function SegmentMatrix({
               ...((state.subsectorConfigs ?? {})[lineSubsector] ?? {}),
             };
             const approach = config.unitEconomicsApproach;
+            const volumeCommon = approach === "v1";
+            const capacityCommon = approach === "v1" || approach === "v2";
             const approachCogs = approach === "v3" || approach === "v4" ? "revenue_stream" : "business_line";
             const approachCapex = approach === "v4" ? "revenue_stream" : "business_line";
             const cogsLocked = config.cogsCapexLocked || config.unitEconomicsApproachLocked;
@@ -1586,7 +1601,7 @@ function SegmentMatrix({
                           <div className="border-l border-panel-border px-3 py-2.5"><EditableText group="Section B — Sub-sector card">Capacity Unit</EditableText> <span className="font-normal text-muted-foreground">ⓘ</span><EditableText as="span" className="mt-0.5 block text-[10px] font-normal text-muted-foreground" group="Section B — Sub-sector card">Unit for installed capacity</EditableText></div>
                         </div>
                         {revenueStreamOptions.filter((stream) => streams.includes(stream.value)).map((stream, streamIndex) => (
-                          <SegmentMeasurements key={stream.value} segmentId={line.value} segmentLabel={stream.label} measurementKey={`${line.value}:${stream.value}`} isPrimaryStream={streamIndex === 0} modelBasis={modelBasis} tableRow unitsLocked={config.unitsLocked} />
+                          <SegmentMeasurements key={stream.value} segmentId={line.value} segmentLabel={stream.label} measurementKey={`${line.value}:${stream.value}`} isPrimaryStream={streamIndex === 0} modelBasis={modelBasis} tableRow unitsLocked={config.unitsLocked} volumeCommon={volumeCommon} capacityCommon={capacityCommon} />
                         ))}
                       </div>
                     </div>
