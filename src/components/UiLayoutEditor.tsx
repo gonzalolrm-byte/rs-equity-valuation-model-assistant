@@ -283,6 +283,8 @@ export function UiLayoutEditor() {
             className="pointer-events-auto absolute size-3 cursor-nwse-resize rounded-sm bg-primary"
             style={{ left: selectedRect.right - 6, top: selectedRect.bottom - 6 }}
           />
+          </>
+          )}
         </>
       )}
     </div>
