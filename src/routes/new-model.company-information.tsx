@@ -25,7 +25,7 @@ import {
   SECTORS,
   SUBSECTORS,
 } from "@/lib/data";
-import { useApp, type SegmentMeasurement } from "@/lib/store";
+import { DEFAULT_SUBSECTOR_CONFIG, useApp, type SegmentMeasurement } from "@/lib/store";
 import { EditableText } from "@/lib/ui-content";
 
 export const WORKFLOW_A_STEPS = [
