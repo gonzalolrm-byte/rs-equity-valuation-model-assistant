@@ -125,6 +125,14 @@ type Ctx = {
   dirty: boolean;
   selectedKey: string | null;
   registry: UiRegistryEntry[];
+  /** Active layout overrides (draft while editing). */
+  layout: UiLayoutMap;
+  editMode: UiEditMode;
+  setEditMode: (mode: UiEditMode) => void;
+  selectedPath: string | null;
+  selectPath: (path: string | null) => void;
+  setLayoutOverride: (path: string, patch: UiLayoutOverride) => void;
+  resetLayout: (path: string) => void;
   startEditing: () => void;
   cancelEditing: () => void;
   saveEditing: () => void;
