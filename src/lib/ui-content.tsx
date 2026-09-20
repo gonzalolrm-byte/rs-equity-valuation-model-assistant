@@ -168,6 +168,8 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
   const [draftLayout, setDraftLayout] = useState<UiLayoutMap>({});
   const [editMode, setEditMode] = useState<UiEditMode>("text");
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
+  const [pathText, setPathTextMap] = useState<UiPathTextMap>({});
+  const [draftPathText, setDraftPathText] = useState<UiPathTextMap>({});
 
   useEffect(() => {
     try {
