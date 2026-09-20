@@ -33,6 +33,43 @@ export type UiOverride = {
 export type UiContentMap = Record<string, UiOverride>;
 export type UiOrderMap = Record<string, string[]>;
 
+/**
+ * Presentation-only layout overrides for a visible component. Keys are
+ * `${scope}|${cssPath}` where scope is "user" or "developer", so layout work in
+ * one interface never touches the other.
+ */
+export type UiLayoutOverride = {
+  width?: string | undefined;
+  height?: string | undefined;
+  minWidth?: string | undefined;
+  maxWidth?: string | undefined;
+  minHeight?: string | undefined;
+  maxHeight?: string | undefined;
+  padding?: string | undefined;
+  margin?: string | undefined;
+  columnGap?: string | undefined;
+  rowGap?: string | undefined;
+  whiteSpace?: string | undefined;
+  textAlign?: string | undefined;
+  verticalAlign?: string | undefined;
+};
+
+export type UiLayoutMap = Record<string, UiLayoutOverride>;
+export type UiEditMode = "text" | "layout";
+
+export const LAYOUT_FIELDS = [
+  { key: "width", label: "Width", placeholder: "e.g. 320px or 60%" },
+  { key: "height", label: "Height", placeholder: "e.g. 240px or auto" },
+  { key: "minWidth", label: "Min width", placeholder: "e.g. 200px" },
+  { key: "maxWidth", label: "Max width", placeholder: "e.g. 800px" },
+  { key: "minHeight", label: "Min height", placeholder: "e.g. 40px" },
+  { key: "maxHeight", label: "Max height", placeholder: "e.g. 400px" },
+  { key: "padding", label: "Internal padding", placeholder: "e.g. 12px or 8px 16px" },
+  { key: "margin", label: "Margin", placeholder: "e.g. 0 0 16px" },
+  { key: "columnGap", label: "Horizontal gap", placeholder: "e.g. 12px" },
+  { key: "rowGap", label: "Vertical gap", placeholder: "e.g. 12px" },
+] as const satisfies readonly { key: keyof UiLayoutOverride; label: string; placeholder: string }[];
+
 export type UiRegistryEntry = { key: string; defaultText: string; group: string };
 
 const STORAGE_KEY = "ifc-ui-content-v1";
@@ -88,6 +125,14 @@ type Ctx = {
   dirty: boolean;
   selectedKey: string | null;
   registry: UiRegistryEntry[];
+  /** Active layout overrides (draft while editing). */
+  layout: UiLayoutMap;
+  editMode: UiEditMode;
+  setEditMode: (mode: UiEditMode) => void;
+  selectedPath: string | null;
+  selectPath: (path: string | null) => void;
+  setLayoutOverride: (path: string, patch: UiLayoutOverride) => void;
+  resetLayout: (path: string) => void;
   startEditing: () => void;
   cancelEditing: () => void;
   saveEditing: () => void;
@@ -113,14 +158,23 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [registry, setRegistry] = useState<UiRegistryEntry[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const [layout, setLayout] = useState<UiLayoutMap>({});
+  const [draftLayout, setDraftLayout] = useState<UiLayoutMap>({});
+  const [editMode, setEditMode] = useState<UiEditMode>("text");
+  const [selectedPath, setSelectedPath] = useState<string | null>(null);
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const saved = JSON.parse(raw) as { content?: UiContentMap; order?: UiOrderMap };
+        const saved = JSON.parse(raw) as {
+          content?: UiContentMap;
+          order?: UiOrderMap;
+          layout?: UiLayoutMap;
+        };
         setContent(saved.content ?? {});
         setOrder(saved.order ?? {});
+        setLayout(saved.layout ?? {});
       }
     } catch {
       /* ignore corrupt local state */
@@ -134,11 +188,15 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
           editing?: boolean;
           draft?: UiContentMap;
           draftOrder?: UiOrderMap;
+          draftLayout?: UiLayoutMap;
+          editMode?: UiEditMode;
         };
         if (session.editing) {
           setEditing(true);
           setDraft(session.draft ?? {});
           setDraftOrder(session.draftOrder ?? {});
+          setDraftLayout(session.draftLayout ?? {});
+          setEditMode(session.editMode === "layout" ? "layout" : "text");
         }
       }
     } catch {
@@ -150,12 +208,15 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!hydrated) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ content, order }));
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ editing, draft, draftOrder }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ content, order, layout }));
+      sessionStorage.setItem(
+        SESSION_KEY,
+        JSON.stringify({ editing, draft, draftOrder, draftLayout, editMode }),
+      );
     } catch {
       /* storage unavailable */
     }
-  }, [content, order, editing, draft, draftOrder, hydrated]);
+  }, [content, order, layout, editing, draft, draftOrder, draftLayout, editMode, hydrated]);
 
   const register = useCallback((entry: UiRegistryEntry) => {
     setRegistry((prev) =>
@@ -174,25 +235,54 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
       editing,
       dirty:
         JSON.stringify(draft) !== JSON.stringify(content) ||
-        JSON.stringify(draftOrder) !== JSON.stringify(order),
+        JSON.stringify(draftOrder) !== JSON.stringify(order) ||
+        JSON.stringify(draftLayout) !== JSON.stringify(layout),
       selectedKey,
       registry,
+      layout: editing ? draftLayout : layout,
+      editMode,
+      setEditMode: (mode) => {
+        setEditMode(mode);
+        setSelectedKey(null);
+        setSelectedPath(null);
+      },
+      selectedPath,
+      selectPath: (path) => setSelectedPath(path),
+      setLayoutOverride: (path, patch) =>
+        setDraftLayout((prev) => {
+          const next = { ...prev, [path]: { ...prev[path], ...patch } };
+          const entry = next[path] as UiLayoutOverride;
+          if (Object.values(entry).every((item) => !item)) delete next[path];
+          return next;
+        }),
+      resetLayout: (path) =>
+        setDraftLayout((prev) => {
+          const next = { ...prev };
+          delete next[path];
+          return next;
+        }),
       startEditing: () => {
         setDraft(content);
         setDraftOrder(order);
+        setDraftLayout(layout);
         setSelectedKey(null);
+        setSelectedPath(null);
         setEditing(true);
       },
       cancelEditing: () => {
         setDraft(content);
         setDraftOrder(order);
+        setDraftLayout(layout);
         setSelectedKey(null);
+        setSelectedPath(null);
         setEditing(false);
       },
       saveEditing: () => {
         setContent(draft);
         setOrder(draftOrder);
+        setLayout(draftLayout);
         setSelectedKey(null);
+        setSelectedPath(null);
         setEditing(false);
       },
       select: (key) => setSelectedKey(key),
@@ -225,7 +315,20 @@ export function UiContentProvider({ children }: { children: ReactNode }) {
         return { text: override.text?.trim() ? override.text : defaultText, override };
       },
     };
-  }, [content, order, draft, draftOrder, editing, selectedKey, registry, register]);
+  }, [
+    content,
+    order,
+    layout,
+    draft,
+    draftOrder,
+    draftLayout,
+    editing,
+    editMode,
+    selectedKey,
+    selectedPath,
+    registry,
+    register,
+  ]);
 
   return <UiContext.Provider value={value}>{children}</UiContext.Provider>;
 }
@@ -288,13 +391,14 @@ export function EditableText({
   if (!ctx) return <Tag className={className}>{children}</Tag>;
 
   const { text, override } = ctx.resolve(key, children);
-  const selected = ctx.editing && ctx.selectedKey === key;
+  const textMode = ctx.editing && ctx.editMode === "text";
+  const selected = textMode && ctx.selectedKey === key;
 
   return (
     <Tag
       className={[
         className,
-        ctx.editing
+        textMode
           ? "cursor-pointer rounded outline-dashed outline-1 outline-offset-2 outline-primary/40 hover:outline-primary"
           : "",
         selected ? "outline-2 outline-primary bg-panel/60" : "",
@@ -302,7 +406,7 @@ export function EditableText({
         .filter(Boolean)
         .join(" ")}
       style={styleFor(override)}
-      {...(ctx.editing
+      {...(textMode
         ? {
             onClick: (event: React.MouseEvent) => {
               event.preventDefault();

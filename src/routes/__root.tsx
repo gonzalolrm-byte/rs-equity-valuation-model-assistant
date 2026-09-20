@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppStateProvider } from "@/lib/store";
 import { UiContentProvider } from "@/lib/ui-content";
 import { UiEditBar, UiEditBarSpacer } from "@/components/UiEditBar";
+import { UiLayoutEditor } from "@/components/UiLayoutEditor";
 
 function NotFoundComponent() {
   return (
@@ -134,6 +135,7 @@ function RootComponent() {
       <UiContentProvider>
         <AppStateProvider>
           <UiEditBar />
+          <UiLayoutEditor />
           <UiEditBarSpacer />
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
