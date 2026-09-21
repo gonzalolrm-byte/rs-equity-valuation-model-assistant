@@ -513,7 +513,7 @@ function UserCardDefaults({
                 onChange={(unitEconomicsApproachLocked) => set({ unitEconomicsApproachLocked })}
               />
             </div>
-            <div className="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {UNIT_ECONOMICS_APPROACHES.map((approach) => {
                 const selected = config.unitEconomicsApproach === approach.value;
                 return (
