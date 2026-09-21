@@ -172,8 +172,36 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
 
       <div className="mx-auto max-w-[1560px] px-2.5 py-2">
         <div className="flex min-w-0 flex-col gap-2">
-          <nav className="flex min-w-0 flex-wrap items-center gap-1 rounded-lg border border-panel-border bg-panel/45 p-1 shadow-card">
-            <div className="flex items-center gap-2 border-r border-input pr-3 pl-1">
+          <nav className="flex min-w-0 flex-col gap-1 rounded-lg border border-panel-border bg-panel/45 p-1 shadow-card">
+            <div className="flex min-w-0 flex-wrap items-center gap-1">
+              <NavItem
+                to="/developer/generic-templates"
+                icon={<FileSpreadsheet className="size-4" />}
+                label="Sub-sector Templates"
+              />
+              <NavItem
+                to="/developer/sector-specifics"
+                icon={<SlidersHorizontal className="size-4" />}
+                label="Sector Specifics"
+              />
+
+              <NavItem
+                to="/developer/resources"
+                icon={<FolderOpen className="size-4" />}
+                label="Market Data & Additional Templates"
+              />
+              <NavItem
+                to="/developer/prompts"
+                icon={<MessageSquareCode className="size-4" />}
+                label="Prompts & Actions"
+              />
+              <NavItem
+                to="/developer/governance"
+                icon={<ShieldCheck className="size-4" />}
+                label="Governance"
+              />
+            </div>
+            <div className="flex items-center gap-2 border-t border-input pt-1 pl-1">
               <EditableText as="span" className="hidden text-[11px] font-semibold text-navy lg:inline" group="Developer Console">
                 Navigation Mode:
               </EditableText>
@@ -187,32 +215,6 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
                 <option value="free">Free Navigation</option>
               </select>
             </div>
-            <NavItem
-              to="/developer/generic-templates"
-              icon={<FileSpreadsheet className="size-4" />}
-              label="Sub-sector Templates"
-            />
-            <NavItem
-              to="/developer/sector-specifics"
-              icon={<SlidersHorizontal className="size-4" />}
-              label="Sector Specifics"
-            />
-
-            <NavItem
-              to="/developer/resources"
-              icon={<FolderOpen className="size-4" />}
-              label="Market Data & Additional Templates"
-            />
-            <NavItem
-              to="/developer/prompts"
-              icon={<MessageSquareCode className="size-4" />}
-              label="Prompts & Actions"
-            />
-            <NavItem
-              to="/developer/governance"
-              icon={<ShieldCheck className="size-4" />}
-              label="Governance"
-            />
           </nav>
           <main className="min-w-0">
           <Outlet />
