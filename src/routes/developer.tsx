@@ -157,6 +157,20 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
               <Pencil className="size-4" />
               Edit Developer Console
             </button>
+            <div className="hidden items-center gap-2 lg:flex">
+              <EditableText as="span" className="text-[11px] font-semibold text-navy" group="Developer Console">
+                Navigation Mode:
+              </EditableText>
+              <select
+                value={state.navigationMode}
+                onChange={(event) => patch({ navigationMode: event.target.value as NavigationMode })}
+                className="h-8 rounded-md border border-input bg-card px-3 text-[11px] font-semibold text-navy outline-none focus:border-primary"
+                aria-label="Navigation mode"
+              >
+                <option value="required">Complete Required Data</option>
+                <option value="free">Free Navigation</option>
+              </select>
+            </div>
             <button
               type="button"
               onClick={onLock}
