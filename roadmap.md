@@ -4,3 +4,4 @@
 - [x] Add four Unit Economics approach presets and operational-unit defaults with locks.
 - [x] Apply locked/default structures in the user questionnaire without changing workflow IDs.
 - [x] Verify the live desktop preview and build status.
+- [x] Match the Sector Specifics workspace to the compact full-width reference layout.

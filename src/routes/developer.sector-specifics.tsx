@@ -8,7 +8,6 @@ import {
   FileSpreadsheet,
   Info,
   Leaf,
-  Lock,
   Plane,
   Plus,
   RotateCcw,
@@ -416,16 +415,15 @@ function UserCardDefaults({
             changed by the user.
           </p>
         </div>
-        {hasOverrides && (
-          <button
-            type="button"
-            onClick={onReset}
-            className="inline-flex items-center gap-2 rounded-md border border-input px-3 py-1.5 text-[11px] font-semibold text-navy transition-colors hover:bg-secondary"
-          >
-            <RotateCcw className="size-4" />
-            Reset defaults
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={onReset}
+          className="inline-flex items-center gap-2 rounded-md border border-input px-3 py-1.5 text-[11px] font-semibold text-navy transition-colors hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-45"
+          disabled={!hasOverrides}
+        >
+          <RotateCcw className="size-4" />
+          Reset defaults
+        </button>
       </div>
 
       <div className="mt-2 space-y-1.5">
@@ -466,7 +464,7 @@ function UserCardDefaults({
                   onChange={(event) => set({ streamsLocked: event.target.checked })}
                   className="size-3.5 accent-[hsl(var(--primary))]"
                 />
-                <Lock className="size-3.5 text-navy-soft" /> Lock
+                 Lock
               </label>
             </div>
             <div className="mt-2 grid gap-2 sm:grid-cols-4">
@@ -590,7 +588,7 @@ function LockToggle({ checked, onChange }: { checked: boolean; onChange: (checke
   return (
     <label className="flex cursor-pointer items-center gap-1.5 whitespace-nowrap pb-2 text-[12px] font-semibold text-navy">
       <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} className="size-3.5 accent-[hsl(var(--primary))]" />
-      <Lock className="size-3.5 text-navy-soft" /> Lock
+       Lock
     </label>
   );
 }
