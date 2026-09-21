@@ -1,14 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { EditableText } from "@/lib/ui-content";
 import {
-  Building2,
   Download,
   ExternalLink,
-  Factory,
+  FileText,
   FileSpreadsheet,
   Info,
-  Leaf,
-  Plane,
   Plus,
   RotateCcw,
   Trash2,
@@ -292,35 +289,38 @@ const STREAM_OPTIONS = [
 const UNIT_ECONOMICS_APPROACHES = [
   {
     value: "v1" as const,
-    title: "V1 — Common Operations",
-    description: "Common volume and capacity with multiple revenue streams.",
-    rows: ["Common", "Common", "By stream", "Sub-sector", "Sub-sector"],
-    example: "Airport",
-    icon: Plane,
+    title: "Approach 1",
+    description: [
+      "Revenue is segmented by revenue stream but projected using aggregate Units Sold (or equivalent).",
+      "COGS and CapEx are not segmented and are modeled using aggregate Units Sold and Capacity, as applicable.",
+    ],
+    example: "An airport with separate passenger, retail, and parking revenue streams, all driven by aggregate passenger traffic.",
   },
   {
     value: "v2" as const,
-    title: "V2 — Common Capacity",
-    description: "Independent volumes with common capacity.",
-    rows: ["By stream", "Common", "By stream", "Sub-sector", "Sub-sector"],
-    example: "Refinery",
-    icon: Factory,
+    title: "Approach 2",
+    description: [
+      "Revenue is segmented by revenue stream and projected using individual Units Sold (or equivalent) for each stream.",
+      "COGS and CapEx follow the same aggregate-level approach as Approach 1.",
+    ],
+    example: "A manufacturer selling different products with separate sales volumes, but operating from a common production facility with shared costs and CapEx.",
   },
   {
     value: "v3" as const,
-    title: "V3 — Independent Operations",
-    description: "Independent volumes and capacity, with shared CapEx.",
-    rows: ["By stream", "By stream", "By stream", "By stream", "Sub-sector"],
-    example: "Agriculture",
-    icon: Leaf,
+    title: "Approach 3",
+    description: [
+      "Revenue and COGS are segmented by revenue stream and modeled using individual Units Sold (or equivalent).",
+      "CapEx is not segmented and is therefore modeled at the aggregate level.",
+    ],
+    example: "An agricultural company with different crops, each with its own production volumes and direct costs, but with a shared investment program (and processing facilities).",
   },
   {
     value: "v4" as const,
-    title: "V4 — Fully Independent",
-    description: "Independent volumes, capacity, COGS and CapEx by stream.",
-    rows: ["By stream", "By stream", "By stream", "By stream", "By stream"],
-    example: "Power / Industrial",
-    icon: Building2,
+    title: "Approach 4",
+    description: [
+      "Revenue, COGS, and CapEx are all segmented by revenue stream and modeled using individual Units Sold (or equivalent) and Capacity, as applicable.",
+    ],
+    example: "A power company with multiple generation assets, where each asset has its own generation, capacity, operating costs, and CapEx.",
   },
 ];
 
@@ -516,7 +516,6 @@ function UserCardDefaults({
             <div className="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-4">
               {UNIT_ECONOMICS_APPROACHES.map((approach) => {
                 const selected = config.unitEconomicsApproach === approach.value;
-                const Icon = approach.icon;
                 return (
                   <button
                     key={approach.value}
@@ -528,7 +527,7 @@ function UserCardDefaults({
                     }}
                     aria-pressed={selected}
                     className={[
-                      "flex min-h-[220px] flex-col rounded-lg border bg-card p-3 text-left transition-colors",
+                      "flex min-h-[300px] flex-col rounded-lg border bg-card p-4 text-left transition-colors",
                       selected ? "border-primary shadow-card" : "border-panel-border hover:border-primary/50",
                     ].join(" ")}
                   >
@@ -538,20 +537,19 @@ function UserCardDefaults({
                         selected ? "border-primary bg-primary shadow-[inset_0_0_0_3px_var(--color-card)]" : "border-input",
                       ].join(" ")} />
                       <span>
-                        <span className="block text-[12px] font-bold text-navy">{approach.title}</span>
-                        <span className="mt-1 block text-[11px] leading-snug text-muted-foreground">{approach.description}</span>
+                        <span className="block text-[14px] font-bold text-navy">{approach.title}</span>
+                        <span className="mt-3 block space-y-3 text-[12px] leading-relaxed text-navy-soft">
+                          {approach.description.map((paragraph) => (
+                            <span key={paragraph} className="block">{paragraph}</span>
+                          ))}
+                        </span>
                       </span>
                     </span>
-                    <span className="mt-3 block overflow-hidden rounded border border-panel-border text-[10px]">
-                      {["Units sold (or equivalent)", "Capacity", "Revenue", "COGS", "CapEx"].map((label, index) => (
-                        <span key={label} className="grid grid-cols-2 border-b border-panel-border last:border-b-0">
-                          <span className="bg-panel/45 px-2 py-1 font-bold text-navy">{label}</span>
-                          <span className="border-l border-panel-border px-2 py-1 text-navy-soft">{approach.rows[index]}</span>
-                        </span>
-                      ))}
-                    </span>
-                    <span className="mt-auto flex items-center gap-2 pt-3 text-[11px] text-navy-soft">
-                      <Icon className="size-5 text-navy" /> Example: {approach.example}
+                    <span className="mt-auto block rounded-lg bg-panel/55 p-3 text-[12px] leading-relaxed text-navy-soft">
+                      <span className="mb-2 flex items-center gap-2 border-b border-panel-border pb-2 font-bold text-primary">
+                        <FileText className="size-4 text-navy" /> Example
+                      </span>
+                      {approach.example}
                     </span>
                   </button>
                 );
