@@ -157,8 +157,8 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
               <Pencil className="size-4" />
               Edit Developer Console
             </button>
-            <div className="hidden items-center gap-2 lg:flex">
-              <EditableText as="span" className="text-[11px] font-semibold text-navy" group="Developer Console">
+            <div className="flex items-center gap-2">
+              <EditableText as="span" className="hidden text-[11px] font-semibold text-navy sm:inline" group="Developer Console">
                 Navigation Mode:
               </EditableText>
               <select
