@@ -397,7 +397,7 @@ function UserCardDefaults({
             onChange={(event) => onLock(event.target.checked)}
             className="size-3.5 accent-[hsl(var(--primary))]"
           />
-          <Lock className="size-3.5 text-navy-soft" /> Lock
+          Lock
         </label>
       </div>
     </div>
