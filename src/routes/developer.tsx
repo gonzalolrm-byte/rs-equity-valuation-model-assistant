@@ -157,6 +157,20 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
               <Pencil className="size-4" />
               Edit Developer Console
             </button>
+            <div className="hidden items-center gap-2 lg:flex">
+              <EditableText as="span" className="text-[11px] font-semibold text-navy" group="Developer Console">
+                Navigation Mode:
+              </EditableText>
+              <select
+                value={state.navigationMode}
+                onChange={(event) => patch({ navigationMode: event.target.value as NavigationMode })}
+                className="h-8 rounded-md border border-input bg-card px-3 text-[11px] font-semibold text-navy outline-none focus:border-primary"
+                aria-label="Navigation mode"
+              >
+                <option value="required">Complete Required Data</option>
+                <option value="free">Free Navigation</option>
+              </select>
+            </div>
             <button
               type="button"
               onClick={onLock}
@@ -172,49 +186,33 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
 
       <div className="mx-auto max-w-[1560px] px-2.5 py-2">
         <div className="flex min-w-0 flex-col gap-2">
-          <nav className="flex min-w-0 flex-col gap-1 rounded-lg border border-panel-border bg-panel/45 p-1 shadow-card">
-            <div className="flex min-w-0 flex-wrap items-center gap-1">
-              <NavItem
-                to="/developer/generic-templates"
-                icon={<FileSpreadsheet className="size-4" />}
-                label="Sub-sector Templates"
-              />
-              <NavItem
-                to="/developer/sector-specifics"
-                icon={<SlidersHorizontal className="size-4" />}
-                label="Sector Specifics"
-              />
+          <nav className="flex min-w-0 flex-wrap items-center gap-1 rounded-lg border border-panel-border bg-panel/45 p-1 shadow-card">
+            <NavItem
+              to="/developer/generic-templates"
+              icon={<FileSpreadsheet className="size-4" />}
+              label="Sub-sector Templates"
+            />
+            <NavItem
+              to="/developer/sector-specifics"
+              icon={<SlidersHorizontal className="size-4" />}
+              label="Sector Specifics"
+            />
 
-              <NavItem
-                to="/developer/resources"
-                icon={<FolderOpen className="size-4" />}
-                label="Market Data & Additional Templates"
-              />
-              <NavItem
-                to="/developer/prompts"
-                icon={<MessageSquareCode className="size-4" />}
-                label="Prompts & Actions"
-              />
-              <NavItem
-                to="/developer/governance"
-                icon={<ShieldCheck className="size-4" />}
-                label="Governance"
-              />
-            </div>
-            <div className="flex items-center gap-2 border-t border-input pt-1 pl-1">
-              <EditableText as="span" className="hidden text-[11px] font-semibold text-navy lg:inline" group="Developer Console">
-                Navigation Mode:
-              </EditableText>
-              <select
-                value={state.navigationMode}
-                onChange={(event) => patch({ navigationMode: event.target.value as NavigationMode })}
-                className="h-8 rounded-md border border-input bg-card px-3 text-[11px] font-semibold text-navy outline-none focus:border-primary"
-                aria-label="Navigation mode"
-              >
-                <option value="required">Complete Required Data</option>
-                <option value="free">Free Navigation</option>
-              </select>
-            </div>
+            <NavItem
+              to="/developer/resources"
+              icon={<FolderOpen className="size-4" />}
+              label="Market Data & Additional Templates"
+            />
+            <NavItem
+              to="/developer/prompts"
+              icon={<MessageSquareCode className="size-4" />}
+              label="Prompts & Actions"
+            />
+            <NavItem
+              to="/developer/governance"
+              icon={<ShieldCheck className="size-4" />}
+              label="Governance"
+            />
           </nav>
           <main className="min-w-0">
           <Outlet />
