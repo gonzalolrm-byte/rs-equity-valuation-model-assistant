@@ -8,7 +8,6 @@ import {
   FileSpreadsheet,
   Info,
   Leaf,
-  Lock,
   Plane,
   Plus,
   RotateCcw,
@@ -97,35 +96,31 @@ function SectorSpecifics() {
   };
 
   return (
-    <div>
-      <EditableText as="h1" className="block font-heading text-2xl font-extrabold" group="Sector Specifics">
+    <div className="rounded-xl border border-panel-border bg-card px-4 py-3 shadow-card">
+      <EditableText as="h1" className="block font-heading text-[18px] font-extrabold" group="Sector Specifics">
         1. Sector Specifics
       </EditableText>
-      <EditableText as="p" className="mt-2 block max-w-3xl text-[15px] leading-relaxed text-muted-foreground" group="Sector Specifics">
+      <EditableText as="p" className="mt-0.5 block max-w-5xl text-[12px] leading-relaxed text-muted-foreground" group="Sector Specifics">
         Choose which measurement units are applied by default for each sector template. The default Maximum Output / Units Sold unit is pre-selected for users, and only the capacity units you check here appear in their capacity dropdown.
       </EditableText>
 
-      <div className="mt-6 max-w-md">
-        <label className="block text-[13px] font-semibold text-navy" htmlFor="sector-select">
+      <div className="mt-3 grid items-end gap-4 lg:grid-cols-[minmax(240px,420px)_minmax(340px,1fr)]">
+        <label className="block text-[12px] font-semibold text-navy" htmlFor="sector-select">
           Primary sector
+          <select
+            id="sector-select"
+            value={sector}
+            onChange={(event) => setSector(event.target.value)}
+            className="mt-1.5 h-10 w-full rounded-lg border border-input bg-card px-3 text-[12px] font-normal text-navy focus:border-primary focus:outline-none"
+          >
+            {SECTORS.map((item) => (
+              <option key={item} value={item}>{item}</option>
+            ))}
+          </select>
         </label>
-        <select
-          id="sector-select"
-          value={sector}
-          onChange={(event) => setSector(event.target.value)}
-          className="mt-1.5 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm text-navy focus:border-primary focus:outline-none"
-        >
-          {SECTORS.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
-
-        <label className="mt-4 block text-[13px] font-semibold text-navy" htmlFor="new-subsector">
+        <label className="block text-[12px] font-semibold text-navy" htmlFor="new-subsector">
           Add sub-sector template
-        </label>
-        <div className="mt-1.5 flex gap-2">
+          <span className="mt-1.5 flex gap-2">
           <input
             id="new-subsector"
             value={newSubsector}
@@ -137,21 +132,22 @@ function SectorSpecifics() {
               }
             }}
             placeholder="e.g. Specialty Chemicals"
-            className="w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm text-navy focus:border-primary focus:outline-none"
+            className="h-10 w-full rounded-lg border border-input bg-card px-3 text-[12px] font-normal text-navy focus:border-primary focus:outline-none"
           />
           <button
             type="button"
             onClick={addSubsector}
             disabled={!newSubsector.trim()}
-            className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary px-3.5 py-2.5 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-secondary disabled:text-muted-foreground"
+            className="inline-flex h-10 shrink-0 items-center gap-2 rounded-lg bg-panel px-4 text-[12px] font-semibold text-primary transition-colors hover:bg-secondary disabled:cursor-not-allowed disabled:text-muted-foreground"
           >
             <Plus className="size-4" />
             Add
           </button>
-        </div>
+          </span>
+        </label>
       </div>
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-3 space-y-3">
         {subsectors.map((subsector) => (
           <SubsectorCard
             key={subsector}
@@ -162,7 +158,7 @@ function SectorSpecifics() {
         ))}
       </div>
 
-      <div className="mt-6 flex gap-3 rounded-xl border border-panel-border bg-panel p-5">
+      <div className="mt-3 flex gap-3 rounded-lg border border-panel-border bg-panel p-3">
         <Info className="mt-0.5 size-4 shrink-0 text-primary" />
         <p className="text-[13px] leading-relaxed text-navy-soft">
           Changes apply immediately to new models. Users can still pick a different unit or enter a
@@ -204,18 +200,19 @@ function SubsectorCard({
     setSubsectorMeasurements(subsector, { ...current, output });
 
   return (
-    <section className="rounded-xl border border-border bg-card p-5 shadow-card">
+    <section className="overflow-hidden rounded-lg border border-panel-border bg-card shadow-card">
+      <div className="border-b border-panel-border bg-panel/30 px-4 py-3">
       <div className="flex flex-wrap items-start gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="font-heading text-[16px] font-bold">{subsector}</h2>
+            <h2 className="font-heading text-[15px] font-bold">{subsector}</h2>
             {edited && (
               <span className="rounded-full bg-panel px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-primary">
                 Edited
               </span>
             )}
           </div>
-          <p className="mt-1 text-[12px] text-muted-foreground">
+          <p className="mt-0.5 text-[11px] text-muted-foreground">
             Shipped default: {shipped.output}
           </p>
         </div>
@@ -238,7 +235,7 @@ function SubsectorCard({
                   deleteSubsector(sector, subsector);
                 }
               }}
-              className="inline-flex items-center gap-2 rounded-lg border border-destructive/30 px-3 py-2 text-[13px] font-semibold text-destructive transition-colors hover:bg-destructive/10"
+              className="inline-flex items-center gap-2 rounded-md border border-destructive/35 bg-card px-3 py-1.5 text-[11px] font-semibold text-destructive transition-colors hover:bg-destructive/10"
               aria-label={`Delete ${subsector}`}
             >
               <Trash2 className="size-4" />
@@ -247,7 +244,9 @@ function SubsectorCard({
           )}
         </div>
       </div>
+      </div>
 
+      <div className="px-3 pb-3">
       <UserCardDefaults
         subsector={subsector}
         hasOverrides={Boolean(state.subsectorConfigs?.[subsector]) || edited}
@@ -273,6 +272,7 @@ function SubsectorCard({
       />
 
       <TemplateUpload subsector={subsector} />
+      </div>
     </section>
   );
 }
@@ -397,37 +397,36 @@ function UserCardDefaults({
             onChange={(event) => onLock(event.target.checked)}
             className="size-3.5 accent-[hsl(var(--primary))]"
           />
-          <Lock className="size-3.5 text-navy-soft" /> Lock
+          Lock
         </label>
       </div>
     </div>
   );
 
   return (
-    <div className="mt-5 border-t border-border pt-4">
+    <div className="pt-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-[13px] font-semibold text-navy">
+          <p className="text-[12px] font-semibold text-navy">
             User card defaults — Sections A and B
           </p>
-          <p className="mt-1 text-[12px] text-muted-foreground">
+          <p className="mt-0.5 text-[11px] text-muted-foreground">
             Pre-select what users see for this sub-sector. Locked settings are shown but cannot be
             changed by the user.
           </p>
         </div>
-        {hasOverrides && (
-          <button
-            type="button"
-            onClick={onReset}
-            className="inline-flex items-center gap-2 rounded-lg border border-input px-3 py-2 text-[13px] font-semibold text-navy transition-colors hover:bg-secondary"
-          >
-            <RotateCcw className="size-4" />
-            Reset defaults
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={onReset}
+          className="inline-flex items-center gap-2 rounded-md border border-input px-3 py-1.5 text-[11px] font-semibold text-navy transition-colors hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-45"
+          disabled={!hasOverrides}
+        >
+          <RotateCcw className="size-4" />
+          Reset defaults
+        </button>
       </div>
 
-      <div className="mt-3 space-y-2">
+      <div className="mt-2 space-y-1.5">
         {pillRow(
           "A. Revenue modeling approach",
           "How revenues are modeled for this sub-sector.",
@@ -465,7 +464,7 @@ function UserCardDefaults({
                   onChange={(event) => set({ streamsLocked: event.target.checked })}
                   className="size-3.5 accent-[hsl(var(--primary))]"
                 />
-                <Lock className="size-3.5 text-navy-soft" /> Lock
+                 Lock
               </label>
             </div>
             <div className="mt-2 grid gap-2 sm:grid-cols-4">
@@ -589,7 +588,7 @@ function LockToggle({ checked, onChange }: { checked: boolean; onChange: (checke
   return (
     <label className="flex cursor-pointer items-center gap-1.5 whitespace-nowrap pb-2 text-[12px] font-semibold text-navy">
       <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} className="size-3.5 accent-[hsl(var(--primary))]" />
-      <Lock className="size-3.5 text-navy-soft" /> Lock
+       Lock
     </label>
   );
 }
