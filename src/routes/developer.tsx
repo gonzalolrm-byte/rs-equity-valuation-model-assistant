@@ -1,7 +1,7 @@
 import { Link, Outlet, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { ArrowLeft, FileSpreadsheet, FolderOpen, KeyRound, Lock, MessageSquareCode, Pencil, Settings, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import { FileSpreadsheet, FolderOpen, KeyRound, Lock, MessageSquareCode, Pencil, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { IfcLockup } from "@/components/AppHeader";
 import { useApp, type NavigationMode } from "@/lib/store";
 import { EditableText, useUiContent } from "@/lib/ui-content";
@@ -129,22 +129,22 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-3 px-5 py-3.5">
+        <div className="mx-auto flex max-w-[1560px] flex-wrap items-center gap-x-6 gap-y-2 px-5 py-2.5">
           <span className="flex items-center gap-4">
             <IfcLockup />
-            <span className="hidden h-10 w-px bg-border md:block" />
+            <span className="hidden h-9 w-px bg-border md:block" />
             <span className="hidden md:block">
-              <span className="block font-heading text-lg font-bold leading-tight text-navy">
+              <span className="block font-heading text-[17px] font-bold leading-tight text-navy">
                 Real Sector – Equity Valuation Model Assistant
               </span>
-              <span className="block text-sm text-muted-foreground">Developer Console</span>
+              <span className="block text-[13px] text-muted-foreground">Developer Console</span>
             </span>
           </span>
           <div className="ml-auto flex items-center gap-2">
             <button
               type="button"
               onClick={startUiEditing}
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+              className="hidden items-center gap-2 rounded-lg border border-input px-2.5 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-secondary xl:inline-flex"
             >
               <Pencil className="size-4" />
               Edit User Interface
@@ -152,7 +152,7 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
             <button
               type="button"
               onClick={ui.startEditing}
-              className="inline-flex items-center gap-2 rounded-lg border border-primary/40 px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-panel"
+              className="hidden items-center gap-2 rounded-lg border border-input px-2.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-panel xl:inline-flex"
             >
               <Pencil className="size-4" />
               Edit Developer Console
@@ -160,41 +160,23 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
             <button
               type="button"
               onClick={onLock}
-              className="inline-flex items-center gap-2 rounded-lg border border-input px-3 py-2 text-sm font-semibold text-navy transition-colors hover:bg-secondary"
+              className="inline-flex items-center gap-2 px-2 py-1.5 text-xs font-semibold text-navy-soft transition-colors hover:text-navy"
             >
               <Lock className="size-4" />
-              Lock Console
+              Protected Console
             </button>
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 rounded-lg border border-input px-3 py-2 text-sm font-semibold text-navy transition-colors hover:bg-secondary"
-            >
-              <ArrowLeft className="size-4" />
-              Back to User Interface
-            </Link>
+            <span className="flex size-8 items-center justify-center rounded-full bg-panel text-[11px] font-bold text-navy">GL</span>
           </div>
-
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 md:grid-cols-[260px_minmax(0,1fr)]">
-        <aside className="space-y-4">
-          <div className="rounded-xl border border-panel-border bg-panel p-5">
-            <span className="flex size-10 items-center justify-center rounded-full bg-card">
-              <Settings className="size-5 text-primary" />
-            </span>
-            <EditableText as="p" className="mt-3 block font-heading text-[15px] font-bold" group="Developer Console">
-              Developer
-            </EditableText>
-            <EditableText as="p" className="mt-1 block text-[13px] leading-relaxed text-navy-soft" group="Developer Console">
-              Access developer tools, manage prompts and templates.
-            </EditableText>
-          </div>
-          <nav className="space-y-1.5">
+      <div className="mx-auto max-w-[1560px] px-2.5 py-2">
+        <div className="flex min-w-0 flex-col gap-2">
+          <nav className="flex min-w-0 flex-wrap items-center gap-1 rounded-lg border border-panel-border bg-panel/45 p-1 shadow-card">
             <NavItem
               to="/developer/generic-templates"
               icon={<FileSpreadsheet className="size-4" />}
-              label="Generic DCF Templates"
+              label="Sub-sector Templates"
             />
             <NavItem
               to="/developer/sector-specifics"
@@ -217,89 +199,27 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
               icon={<ShieldCheck className="size-4" />}
               label="Governance"
             />
-          </nav>
-          <div className="rounded-xl border border-panel-border bg-card p-4">
-            <EditableText as="p" className="block font-heading text-[14px] font-bold text-navy" group="Developer Console">
-              Navigation Mode
-            </EditableText>
-            <EditableText as="p" className="mt-1 block text-[12px] leading-relaxed text-muted-foreground" group="Developer Console">
-              Controls whether required fields must be completed before moving between steps.
-            </EditableText>
-            <div className="mt-3 space-y-2">
-              <ModeOption
-                value="required"
-                current={state.navigationMode}
-                onSelect={(mode) => patch({ navigationMode: mode })}
-                label="Complete Required Data"
-                description="Follow the standard workflow and complete all required fields before proceeding."
-              />
-              <ModeOption
-                value="free"
-                current={state.navigationMode}
-                onSelect={(mode) => patch({ navigationMode: mode })}
-                label="Free Navigation"
-                description="Navigate freely across all sections without completing the required questionnaire or fields."
-              />
+            <div className="ml-auto flex items-center gap-2 border-l border-input pl-3 pr-1">
+              <EditableText as="span" className="hidden text-[11px] font-semibold text-navy lg:inline" group="Developer Console">
+                Navigation Mode:
+              </EditableText>
+              <select
+                value={state.navigationMode}
+                onChange={(event) => patch({ navigationMode: event.target.value as NavigationMode })}
+                className="h-8 rounded-md border border-input bg-card px-3 text-[11px] font-semibold text-navy outline-none focus:border-primary"
+                aria-label="Navigation mode"
+              >
+                <option value="required">Complete Required Data</option>
+                <option value="free">Free Navigation</option>
+              </select>
             </div>
-          </div>
-          <p className="rounded-xl border border-border bg-card p-4 text-[12px] leading-relaxed text-muted-foreground">
-            This console is protected by a shared passcode. Individual accounts and role-based
-            authorization are added with the backend in the next phase.
-          </p>
-
-        </aside>
-
-        <main>
+          </nav>
+          <main className="min-w-0">
           <Outlet />
-        </main>
+          </main>
+        </div>
       </div>
     </div>
-  );
-}
-
-function ModeOption({
-  value,
-  current,
-  onSelect,
-  label,
-  description,
-}: {
-  value: NavigationMode;
-  current: NavigationMode;
-  onSelect: (mode: NavigationMode) => void;
-  label: string;
-  description: string;
-}) {
-  const active = current === value;
-  return (
-    <button
-      type="button"
-      onClick={() => onSelect(value)}
-      className={`w-full rounded-lg border p-3 text-left transition-colors ${
-        active
-          ? "border-primary bg-panel"
-          : "border-input hover:bg-secondary"
-      }`}
-      aria-pressed={active}
-    >
-      <span className="flex items-start gap-2">
-        <span
-          className={`mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border ${
-            active ? "border-primary" : "border-input"
-          }`}
-        >
-          {active && <span className="size-2 rounded-full bg-primary" />}
-        </span>
-          <span>
-            <EditableText className="block text-[13px] font-semibold text-navy" group="Developer Console">
-              {label}
-            </EditableText>
-            <EditableText className="mt-0.5 block text-[12px] leading-relaxed text-muted-foreground" group="Developer Console">
-              {description}
-            </EditableText>
-          </span>
-      </span>
-    </button>
   );
 }
 
@@ -307,8 +227,8 @@ function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label
   return (
     <Link
       to={to}
-      className="flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-sm font-semibold text-navy-soft transition-colors hover:bg-secondary hover:text-navy"
-      activeProps={{ className: "bg-panel text-navy border border-panel-border" }}
+      className="flex h-9 min-w-fit items-center gap-2 border-b-2 border-transparent px-4 text-[12px] font-semibold text-navy-soft transition-colors hover:bg-card hover:text-navy"
+      activeProps={{ className: "border-primary bg-card text-navy" }}
     >
       {icon}
       <EditableText group="Developer Console navigation">{label}</EditableText>

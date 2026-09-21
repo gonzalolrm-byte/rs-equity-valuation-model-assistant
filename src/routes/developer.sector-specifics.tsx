@@ -97,35 +97,31 @@ function SectorSpecifics() {
   };
 
   return (
-    <div>
-      <EditableText as="h1" className="block font-heading text-2xl font-extrabold" group="Sector Specifics">
+    <div className="rounded-xl border border-panel-border bg-card px-4 py-3 shadow-card">
+      <EditableText as="h1" className="block font-heading text-[18px] font-extrabold" group="Sector Specifics">
         1. Sector Specifics
       </EditableText>
-      <EditableText as="p" className="mt-2 block max-w-3xl text-[15px] leading-relaxed text-muted-foreground" group="Sector Specifics">
+      <EditableText as="p" className="mt-0.5 block max-w-5xl text-[12px] leading-relaxed text-muted-foreground" group="Sector Specifics">
         Choose which measurement units are applied by default for each sector template. The default Maximum Output / Units Sold unit is pre-selected for users, and only the capacity units you check here appear in their capacity dropdown.
       </EditableText>
 
-      <div className="mt-6 max-w-md">
-        <label className="block text-[13px] font-semibold text-navy" htmlFor="sector-select">
+      <div className="mt-3 grid items-end gap-4 lg:grid-cols-[minmax(240px,420px)_minmax(340px,1fr)]">
+        <label className="block text-[12px] font-semibold text-navy" htmlFor="sector-select">
           Primary sector
+          <select
+            id="sector-select"
+            value={sector}
+            onChange={(event) => setSector(event.target.value)}
+            className="mt-1.5 h-10 w-full rounded-lg border border-input bg-card px-3 text-[12px] font-normal text-navy focus:border-primary focus:outline-none"
+          >
+            {SECTORS.map((item) => (
+              <option key={item} value={item}>{item}</option>
+            ))}
+          </select>
         </label>
-        <select
-          id="sector-select"
-          value={sector}
-          onChange={(event) => setSector(event.target.value)}
-          className="mt-1.5 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm text-navy focus:border-primary focus:outline-none"
-        >
-          {SECTORS.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
-
-        <label className="mt-4 block text-[13px] font-semibold text-navy" htmlFor="new-subsector">
+        <label className="block text-[12px] font-semibold text-navy" htmlFor="new-subsector">
           Add sub-sector template
-        </label>
-        <div className="mt-1.5 flex gap-2">
+          <span className="mt-1.5 flex gap-2">
           <input
             id="new-subsector"
             value={newSubsector}
@@ -137,21 +133,22 @@ function SectorSpecifics() {
               }
             }}
             placeholder="e.g. Specialty Chemicals"
-            className="w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm text-navy focus:border-primary focus:outline-none"
+            className="h-10 w-full rounded-lg border border-input bg-card px-3 text-[12px] font-normal text-navy focus:border-primary focus:outline-none"
           />
           <button
             type="button"
             onClick={addSubsector}
             disabled={!newSubsector.trim()}
-            className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary px-3.5 py-2.5 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-secondary disabled:text-muted-foreground"
+            className="inline-flex h-10 shrink-0 items-center gap-2 rounded-lg bg-panel px-4 text-[12px] font-semibold text-primary transition-colors hover:bg-secondary disabled:cursor-not-allowed disabled:text-muted-foreground"
           >
             <Plus className="size-4" />
             Add
           </button>
-        </div>
+          </span>
+        </label>
       </div>
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-3 space-y-3">
         {subsectors.map((subsector) => (
           <SubsectorCard
             key={subsector}
@@ -162,7 +159,7 @@ function SectorSpecifics() {
         ))}
       </div>
 
-      <div className="mt-6 flex gap-3 rounded-xl border border-panel-border bg-panel p-5">
+      <div className="mt-3 flex gap-3 rounded-lg border border-panel-border bg-panel p-3">
         <Info className="mt-0.5 size-4 shrink-0 text-primary" />
         <p className="text-[13px] leading-relaxed text-navy-soft">
           Changes apply immediately to new models. Users can still pick a different unit or enter a
