@@ -177,7 +177,7 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 lg:grid-cols-[260px_minmax(0,1fr)]">
+      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 md:grid-cols-[260px_minmax(0,1fr)]">
         <aside className="space-y-4">
           <div className="rounded-xl border border-panel-border bg-panel p-5">
             <span className="flex size-10 items-center justify-center rounded-full bg-card">
