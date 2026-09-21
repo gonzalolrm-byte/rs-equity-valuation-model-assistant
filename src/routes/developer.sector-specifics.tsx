@@ -201,18 +201,19 @@ function SubsectorCard({
     setSubsectorMeasurements(subsector, { ...current, output });
 
   return (
-    <section className="rounded-xl border border-border bg-card p-5 shadow-card">
+    <section className="overflow-hidden rounded-lg border border-panel-border bg-card shadow-card">
+      <div className="border-b border-panel-border bg-panel/30 px-4 py-3">
       <div className="flex flex-wrap items-start gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="font-heading text-[16px] font-bold">{subsector}</h2>
+            <h2 className="font-heading text-[15px] font-bold">{subsector}</h2>
             {edited && (
               <span className="rounded-full bg-panel px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-primary">
                 Edited
               </span>
             )}
           </div>
-          <p className="mt-1 text-[12px] text-muted-foreground">
+          <p className="mt-0.5 text-[11px] text-muted-foreground">
             Shipped default: {shipped.output}
           </p>
         </div>
@@ -235,7 +236,7 @@ function SubsectorCard({
                   deleteSubsector(sector, subsector);
                 }
               }}
-              className="inline-flex items-center gap-2 rounded-lg border border-destructive/30 px-3 py-2 text-[13px] font-semibold text-destructive transition-colors hover:bg-destructive/10"
+              className="inline-flex items-center gap-2 rounded-md border border-destructive/35 bg-card px-3 py-1.5 text-[11px] font-semibold text-destructive transition-colors hover:bg-destructive/10"
               aria-label={`Delete ${subsector}`}
             >
               <Trash2 className="size-4" />
@@ -244,7 +245,9 @@ function SubsectorCard({
           )}
         </div>
       </div>
+      </div>
 
+      <div className="px-3 pb-3">
       <UserCardDefaults
         subsector={subsector}
         hasOverrides={Boolean(state.subsectorConfigs?.[subsector]) || edited}
@@ -270,6 +273,7 @@ function SubsectorCard({
       />
 
       <TemplateUpload subsector={subsector} />
+      </div>
     </section>
   );
 }
@@ -401,13 +405,13 @@ function UserCardDefaults({
   );
 
   return (
-    <div className="mt-5 border-t border-border pt-4">
+    <div className="pt-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-[13px] font-semibold text-navy">
+          <p className="text-[12px] font-semibold text-navy">
             User card defaults — Sections A and B
           </p>
-          <p className="mt-1 text-[12px] text-muted-foreground">
+          <p className="mt-0.5 text-[11px] text-muted-foreground">
             Pre-select what users see for this sub-sector. Locked settings are shown but cannot be
             changed by the user.
           </p>
@@ -416,7 +420,7 @@ function UserCardDefaults({
           <button
             type="button"
             onClick={onReset}
-            className="inline-flex items-center gap-2 rounded-lg border border-input px-3 py-2 text-[13px] font-semibold text-navy transition-colors hover:bg-secondary"
+            className="inline-flex items-center gap-2 rounded-md border border-input px-3 py-1.5 text-[11px] font-semibold text-navy transition-colors hover:bg-secondary"
           >
             <RotateCcw className="size-4" />
             Reset defaults
@@ -424,7 +428,7 @@ function UserCardDefaults({
         )}
       </div>
 
-      <div className="mt-3 space-y-2">
+      <div className="mt-2 space-y-1.5">
         {pillRow(
           "A. Revenue modeling approach",
           "How revenues are modeled for this sub-sector.",
