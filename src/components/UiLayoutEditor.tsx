@@ -12,6 +12,7 @@
  * or template generation — only CSS box properties on the selected element.
  */
 import { useLocation } from "@tanstack/react-router";
+import { Move } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useUiContentSafe, type UiLayoutOverride } from "@/lib/ui-content";
 
@@ -29,6 +30,9 @@ const MANAGED_PROPS = [
   "whiteSpace",
   "textAlign",
   "verticalAlign",
+  "position",
+  "transform",
+  "display",
 ] as const;
 
 export function scopeForPath(pathname: string) {
