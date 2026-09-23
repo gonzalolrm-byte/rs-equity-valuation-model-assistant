@@ -257,6 +257,30 @@ export function UiLayoutEditor() {
     window.addEventListener("pointerup", onUp);
   };
 
+  /** Drags the whole component to a new position (translate offset). */
+  const startMove = (event: React.PointerEvent) => {
+    if (!selectedPath) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const base = layout[selectedPath];
+    const baseX = Number.parseInt(base?.offsetX ?? "0", 10) || 0;
+    const baseY = Number.parseInt(base?.offsetY ?? "0", 10) || 0;
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const onMove = (moveEvent: PointerEvent) => {
+      ui.setLayoutOverride(selectedPath, {
+        offsetX: `${baseX + moveEvent.clientX - startX}px`,
+        offsetY: `${baseY + moveEvent.clientY - startY}px`,
+      });
+    };
+    const onUp = () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  };
+
   if (!pickerActive) return null;
 
   return (
