@@ -166,11 +166,13 @@ export function GenericTemplatesSection() {
     removeGenericTemplate,
   } = useApp();
 
+  const removed = state.removedGenericTemplates ?? [];
+  const uploaded = state.genericTemplateFiles ?? {};
   const templates = INITIAL_GENERIC_TEMPLATES.filter(
-    (template) => !state.removedGenericTemplates.includes(template.id),
+    (template) => !removed.includes(template.id),
   ).map((template) => ({
     ...template,
-    files: state.genericTemplateFiles[template.id] ?? [],
+    files: uploaded[template.id] ?? [],
   }));
 
   return (

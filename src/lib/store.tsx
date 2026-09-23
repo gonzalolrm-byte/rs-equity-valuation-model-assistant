@@ -605,9 +605,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       removeGenericTemplate: (id) =>
         setState((prev) => ({
           ...prev,
-          removedGenericTemplates: prev.removedGenericTemplates.includes(id)
-            ? prev.removedGenericTemplates
-            : [...prev.removedGenericTemplates, id],
+          removedGenericTemplates: (prev.removedGenericTemplates ?? []).includes(id)
+            ? (prev.removedGenericTemplates ?? [])
+            : [...(prev.removedGenericTemplates ?? []), id],
         })),
 
       setSubsectorMeasurements: (subsector, setting) =>
