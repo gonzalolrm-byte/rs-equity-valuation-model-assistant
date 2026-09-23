@@ -44,7 +44,7 @@ function Prompts() {
         </EditableText>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-4">
         <PromptsSection />
       </div>
     </div>
