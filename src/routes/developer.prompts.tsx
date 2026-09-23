@@ -33,8 +33,6 @@ export const Route = createFileRoute("/developer/prompts")({
 });
 
 function Prompts() {
-  const workflow = WORKFLOWS[0];
-
   return (
     <div>
       <div>
@@ -47,18 +45,14 @@ function Prompts() {
       </div>
 
       <div className="mt-8">
-        <WorkflowSection key={workflow.key} workflow={workflow} />
+        <PromptsSection />
       </div>
     </div>
   );
 }
 
 
-function WorkflowSection({
-  workflow,
-}: {
-  workflow: (typeof WORKFLOWS)[number];
-}) {
+function PromptsSection() {
   const { state, togglePromptStatus, deletePrompt, movePrompt } = useApp();
   const [editing, setEditing] = useState<PromptAction | null>(null);
 
@@ -67,11 +61,10 @@ function WorkflowSection({
   const workflowPrompts = useMemo(
     () =>
       state.prompts
-        .filter((prompt) => prompt.step.startsWith(workflow.key))
         // Keep the table in strict ID sequence (A-01, A-02, ...).
         .slice()
         .sort((a, b) => a.id.localeCompare(b.id)),
-    [state.prompts, workflow.key],
+    [state.prompts],
   );
 
   const rows = workflowPrompts;
@@ -79,32 +72,24 @@ function WorkflowSection({
 
   let digits = 2;
   const maxNumber = state.prompts.reduce((max, prompt) => {
-    const match = prompt.id.match(new RegExp(`^${workflow.prefix}-(\\d+)$`));
+    const match = prompt.id.match(new RegExp(`^${ID_PREFIX}-(\\d+)$`));
     if (!match) return max;
     const number = match[1] ?? "";
     digits = Math.max(digits, number.length);
     return Math.max(max, Number(number));
   }, 0);
-  const nextId = `${workflow.prefix}-${String(maxNumber + 1).padStart(digits, "0")}`;
-
-  const workflowSteps = PROMPT_STEPS.filter((step) => step.startsWith(workflow.key));
+  const nextId = `${ID_PREFIX}-${String(maxNumber + 1).padStart(digits, "0")}`;
 
   return (
     <section>
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h2 className="font-heading text-lg font-extrabold text-navy">
-            {workflow.key} — {workflow.title}
-          </h2>
-          <p className="mt-1 max-w-3xl text-[13px] leading-relaxed text-muted-foreground">
-            {workflow.description}
-          </p>
-        </div>
+        <div />
         <Button variant="secondary" onClick={() => setCreating(true)}>
           <Plus className="size-4" />
-          Add {workflow.key} Action
+          Add Action
         </Button>
       </div>
+
 
       <div className="mt-4 overflow-hidden rounded-xl border border-border bg-card shadow-card">
         <div className="overflow-x-auto">
