@@ -1,7 +1,7 @@
 import { Link, Outlet, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { Home, KeyRound, Lock, Pencil } from "lucide-react";
+import { FolderOpen, Home, KeyRound, Lock, MessageSquareCode, Pencil, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { IfcLockup } from "@/components/AppHeader";
 import { useApp, type NavigationMode } from "@/lib/store";
 import { EditableText, useUiContent } from "@/lib/ui-content";
@@ -198,10 +198,48 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
       </header>
 
       <div className="mx-auto max-w-[1560px] px-2.5 pt-1 pb-2">
-        <main className="min-w-0">
-          <Outlet />
-        </main>
+        <div className="flex min-w-0 flex-col gap-2">
+          <nav className="flex min-w-0 flex-wrap items-center gap-1">
+            <NavItem
+              to="/developer/sector-specifics"
+              icon={<SlidersHorizontal className="size-4" />}
+              label="Sector Specifics"
+            />
+
+            <NavItem
+              to="/developer/resources"
+              icon={<FolderOpen className="size-4" />}
+              label="Core Information"
+            />
+            <NavItem
+              to="/developer/prompts"
+              icon={<MessageSquareCode className="size-4" />}
+              label="Prompts & Actions"
+            />
+            <NavItem
+              to="/developer/governance"
+              icon={<ShieldCheck className="size-4" />}
+              label="Governance"
+            />
+          </nav>
+          <main className="min-w-0">
+            <Outlet />
+          </main>
+        </div>
       </div>
     </div>
+  );
+}
+
+function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
+  return (
+    <Link
+      to={to}
+      className="flex h-9 min-w-fit items-center gap-2 border-b-2 border-transparent px-4 text-[12px] font-semibold text-navy-soft transition-colors hover:text-navy"
+      activeProps={{ className: "border-primary text-navy" }}
+    >
+      {icon}
+      <EditableText group="Developer Console navigation">{label}</EditableText>
+    </Link>
   );
 }
