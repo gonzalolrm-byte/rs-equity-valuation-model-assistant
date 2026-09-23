@@ -15,6 +15,7 @@ import { AppStateProvider } from "@/lib/store";
 import { UiContentProvider } from "@/lib/ui-content";
 import { UiEditBar, UiEditBarSpacer } from "@/components/UiEditBar";
 import { UiLayoutEditor } from "@/components/UiLayoutEditor";
+import { JinnieChat } from "@/components/JinnieChat";
 
 function NotFoundComponent() {
   return (
@@ -139,6 +140,7 @@ function RootComponent() {
           <UiEditBarSpacer />
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
+          <JinnieChat />
         </AppStateProvider>
       </UiContentProvider>
     </QueryClientProvider>

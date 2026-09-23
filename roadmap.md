@@ -5,3 +5,4 @@
 - [x] Apply locked/default structures in the user questionnaire without changing workflow IDs.
 - [x] Verify the live desktop preview and build status.
 - [x] Match the Sector Specifics workspace to the compact full-width reference layout.
+- [x] Add Jinnie, the floating AI assistant (Lovable AI now; swap to Claude with own key later).

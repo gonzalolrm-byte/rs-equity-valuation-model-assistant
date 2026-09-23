@@ -14,6 +14,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DeveloperRouteImport } from './routes/developer'
 import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as HelpRouteImport } from './routes/help'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as DeveloperIndexRouteImport } from './routes/developer.index'
 import { Route as DeveloperGenericTemplatesRouteImport } from './routes/developer.generic-templates'
 import { Route as DeveloperGovernanceRouteImport } from './routes/developer.governance'
@@ -50,6 +51,11 @@ const GuidelinesRoute = GuidelinesRouteImport.update({
 const HelpRoute = HelpRouteImport.update({
   id: '/help',
   path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DeveloperIndexRoute = DeveloperIndexRouteImport.update({
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/developer': typeof DeveloperRouteWithChildren
   '/guidelines': typeof GuidelinesRoute
   '/help': typeof HelpRoute
+  '/api/chat': typeof ApiChatRoute
   '/developer/generic-templates': typeof DeveloperGenericTemplatesRoute
   '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/guidelines': typeof GuidelinesRoute
   '/help': typeof HelpRoute
+  '/api/chat': typeof ApiChatRoute
   '/developer/generic-templates': typeof DeveloperGenericTemplatesRoute
   '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/developer': typeof DeveloperRouteWithChildren
   '/guidelines': typeof GuidelinesRoute
   '/help': typeof HelpRoute
+  '/api/chat': typeof ApiChatRoute
   '/developer/generic-templates': typeof DeveloperGenericTemplatesRoute
   '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/developer'
     | '/guidelines'
     | '/help'
+    | '/api/chat'
     | '/developer/generic-templates'
     | '/developer/governance'
     | '/developer/prompts'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/guidelines'
     | '/help'
+    | '/api/chat'
     | '/developer/generic-templates'
     | '/developer/governance'
     | '/developer/prompts'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/developer'
     | '/guidelines'
     | '/help'
+    | '/api/chat'
     | '/developer/generic-templates'
     | '/developer/governance'
     | '/developer/prompts'
@@ -238,6 +250,7 @@ export interface RootRouteChildren {
   DeveloperRoute: typeof DeveloperRouteWithChildren
   GuidelinesRoute: typeof GuidelinesRoute
   HelpRoute: typeof HelpRoute
+  ApiChatRoute: typeof ApiChatRoute
   NewModelCompanyInformationRoute: typeof NewModelCompanyInformationRoute
   NewModelGenerateRoute: typeof NewModelGenerateRoute
   NewModelUploadRoute: typeof NewModelUploadRoute
@@ -281,6 +294,13 @@ declare module '@tanstack/react-router' {
       path: '/help'
       fullPath: '/help'
       preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/developer/': {
@@ -398,6 +418,7 @@ const rootRouteChildren: RootRouteChildren = {
   DeveloperRoute: DeveloperRouteWithChildren,
   GuidelinesRoute: GuidelinesRoute,
   HelpRoute: HelpRoute,
+  ApiChatRoute: ApiChatRoute,
   NewModelCompanyInformationRoute: NewModelCompanyInformationRoute,
   NewModelGenerateRoute: NewModelGenerateRoute,
   NewModelUploadRoute: NewModelUploadRoute,
