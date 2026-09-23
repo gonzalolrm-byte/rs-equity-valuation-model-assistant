@@ -496,18 +496,6 @@ export const INITIAL_PROMPTS: PromptAction[] = [
       "Use {{company_name}} as the company name throughout the model. Replace company-specific references or placeholders in the template with this name where applicable. Do not modify formulas or model structure solely because of the company name.",
     requiredResources: [],
   },
-  {
-    id: "B-01",
-    title: "Add one year of historicals",
-    category: "Model Updates",
-    step: "Workflow B – Step 2: Model Updates",
-    status: "Active",
-    lastUpdated: "2026-09-03",
-    promptText:
-      "Roll the standardized model forward by one year. Identify the new historical year, extract its audited financials, and return the instructions to shift the historical/projection boundary while preserving all formulas and the model structure." +
-      NO_GUESSING,
-    requiredResources: [],
-  },
 ];
 
 export const PROMPT_CATEGORIES = [

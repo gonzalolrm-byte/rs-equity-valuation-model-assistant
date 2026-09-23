@@ -40,9 +40,7 @@ export const Route = createFileRoute("/developer/prompts")({
 });
 
 function Prompts() {
-  const [activeWorkflow, setActiveWorkflow] = useState<string>(WORKFLOWS[0].key);
-
-  const workflow = WORKFLOWS.find((item) => item.key === activeWorkflow) ?? WORKFLOWS[0];
+  const workflow = WORKFLOWS[0];
 
   return (
     <div>
