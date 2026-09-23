@@ -129,7 +129,7 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto grid max-w-[1560px] grid-cols-[auto_1fr_auto] items-start gap-x-6 gap-y-1.5 px-5 py-3">
+        <div className="mx-auto grid max-w-[1560px] grid-cols-[auto_1fr_auto] items-start gap-x-6 gap-y-0 px-5 py-3">
           <div className="col-start-1 row-span-3 row-start-1 flex items-start pt-0.5">
             <IfcLockup />
           </div>
