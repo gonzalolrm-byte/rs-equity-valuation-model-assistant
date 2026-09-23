@@ -129,18 +129,15 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto grid max-w-[1560px] grid-cols-[auto_1fr_auto] items-start gap-x-6 gap-y-0 px-5 py-3">
-          <div className="col-start-1 row-span-3 row-start-1 flex items-start pt-0.5">
+        <div className="mx-auto flex max-w-[1560px] items-center justify-between px-5 py-3">
+          <div className="flex items-center gap-4">
             <IfcLockup />
-          </div>
-
-          <div className="col-start-2 row-start-1 flex items-center">
-            <span className="block font-heading text-[17px] font-bold leading-none text-navy">
+            <span className="font-heading text-[17px] font-bold leading-none text-navy">
               Real Sector – Equity Valuation Model Assistant
             </span>
           </div>
 
-          <div className="col-start-3 row-start-1 flex items-center gap-2 justify-self-end">
+          <div className="flex items-center gap-2">
             <Link
               to="/"
               className="inline-flex items-center gap-2 px-2 py-1.5 text-xs font-semibold text-navy-soft transition-colors hover:text-navy"
@@ -158,41 +155,43 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
             </button>
             <span className="flex size-8 items-center justify-center rounded-full bg-panel text-[11px] font-bold text-navy">GL</span>
           </div>
+        </div>
 
-          <div className="col-start-2 row-start-2 flex items-center">
-            <span className="block text-[13px] leading-none text-muted-foreground">Developer Console</span>
-          </div>
+        <div className="border-t border-border bg-panel/30">
+          <div className="mx-auto flex max-w-[1560px] items-center justify-between px-5 py-2.5">
+            <span className="text-[13px] font-semibold leading-none text-muted-foreground">Developer Console</span>
 
-          <div className="col-start-2 row-start-3 flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={startUiEditing}
-              className="hidden items-center gap-2 rounded-full border border-input bg-card px-3.5 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-secondary lg:inline-flex"
-            >
-              <Pencil className="size-4" />
-              Edit UI
-            </button>
-            <button
-              type="button"
-              onClick={ui.startEditing}
-              className="hidden items-center gap-2 rounded-full border border-input bg-card px-3.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-panel lg:inline-flex"
-            >
-              <Pencil className="size-4" />
-              Edit Console
-            </button>
-            <div className="flex items-center gap-2">
-              <EditableText as="span" className="hidden text-[11px] font-semibold text-navy sm:inline" group="Developer Console">
-                Navigation Mode:
-              </EditableText>
-              <select
-                value={state.navigationMode}
-                onChange={(event) => patch({ navigationMode: event.target.value as NavigationMode })}
-                className="h-8 rounded-full border border-input bg-card px-4 text-[11px] font-semibold text-navy outline-none focus:border-primary"
-                aria-label="Navigation mode"
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={startUiEditing}
+                className="hidden items-center gap-2 rounded-full border border-input bg-card px-3.5 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-secondary lg:inline-flex"
               >
-                <option value="required">Complete Required Data</option>
-                <option value="free">Free Navigation</option>
-              </select>
+                <Pencil className="size-4" />
+                Edit UI
+              </button>
+              <button
+                type="button"
+                onClick={ui.startEditing}
+                className="hidden items-center gap-2 rounded-full border border-input bg-card px-3.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-panel lg:inline-flex"
+              >
+                <Pencil className="size-4" />
+                Edit Console
+              </button>
+              <div className="flex items-center gap-2">
+                <EditableText as="span" className="hidden text-[11px] font-semibold text-navy sm:inline" group="Developer Console">
+                  Navigation Mode:
+                </EditableText>
+                <select
+                  value={state.navigationMode}
+                  onChange={(event) => patch({ navigationMode: event.target.value as NavigationMode })}
+                  className="h-8 rounded-full border border-input bg-card px-4 text-[11px] font-semibold text-navy outline-none focus:border-primary"
+                  aria-label="Navigation mode"
+                >
+                  <option value="required">Complete Required Data</option>
+                  <option value="free">Free Navigation</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
