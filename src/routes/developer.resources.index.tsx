@@ -37,14 +37,16 @@ function CoreInformationIndex() {
             to={page.to}
             className="group rounded-xl border border-border bg-card p-5 shadow-card transition-colors hover:border-primary/50"
           >
-            <span className="flex size-10 items-center justify-center rounded-full bg-panel text-primary">
-              {page.icon}
+            <span className="flex items-center gap-3">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-panel text-primary">
+                {page.icon}
+              </span>
+              <h2 className="font-heading text-[16px] font-bold text-navy">{page.label}</h2>
             </span>
-            <h2 className="mt-3 font-heading text-[16px] font-bold text-navy">{page.label}</h2>
-            <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+            <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
               {page.description}
             </p>
-            <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary">
+            <span className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary">
               Open
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </span>
