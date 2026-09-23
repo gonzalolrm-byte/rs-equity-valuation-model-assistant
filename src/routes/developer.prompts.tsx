@@ -47,9 +47,6 @@ export const Route = createFileRoute("/developer/prompts")({
 });
 
 function Prompts() {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
-  const [status, setStatus] = useState("");
   const [activeWorkflow, setActiveWorkflow] = useState<string>(WORKFLOWS[0].key);
 
   const workflow = WORKFLOWS.find((item) => item.key === activeWorkflow) ?? WORKFLOWS[0];
@@ -84,38 +81,8 @@ function Prompts() {
         ))}
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <label className="relative block">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search by ID, title or keyword…"
-            className="w-full rounded-lg border border-input bg-card py-2.5 pl-9 pr-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-ring/25"
-          />
-        </label>
-        <SelectField
-          value={category}
-          onChange={setCategory}
-          options={PROMPT_CATEGORIES}
-          placeholder="All Categories"
-        />
-        <SelectField
-          value={status}
-          onChange={setStatus}
-          options={["Active", "Inactive"]}
-          placeholder="All Statuses"
-        />
-      </div>
-
       <div className="mt-8">
-        <WorkflowSection
-          key={workflow.key}
-          workflow={workflow}
-          search={search}
-          category={category}
-          status={status}
-        />
+        <WorkflowSection key={workflow.key} workflow={workflow} />
       </div>
     </div>
   );
