@@ -586,6 +586,29 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           ...prev,
           resources: prev.resources.filter((resource) => resource.id !== id),
         })),
+      setGenericTemplateFiles: (id, files) =>
+        setState((prev) => ({
+          ...prev,
+          genericTemplateFiles: {
+            ...prev.genericTemplateFiles,
+            [id]: files.map((file) => file.name),
+          },
+        })),
+      removeGenericTemplateFile: (id, fileName) =>
+        setState((prev) => ({
+          ...prev,
+          genericTemplateFiles: {
+            ...prev.genericTemplateFiles,
+            [id]: (prev.genericTemplateFiles[id] ?? []).filter((file) => file !== fileName),
+          },
+        })),
+      removeGenericTemplate: (id) =>
+        setState((prev) => ({
+          ...prev,
+          removedGenericTemplates: prev.removedGenericTemplates.includes(id)
+            ? prev.removedGenericTemplates
+            : [...prev.removedGenericTemplates, id],
+        })),
 
       setSubsectorMeasurements: (subsector, setting) =>
         setState((prev) => ({
