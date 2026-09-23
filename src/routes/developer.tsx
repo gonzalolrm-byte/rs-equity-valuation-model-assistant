@@ -171,6 +171,13 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
                 <option value="free">Free Navigation</option>
               </select>
             </div>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 px-2 py-1.5 text-xs font-semibold text-navy-soft transition-colors hover:text-navy"
+            >
+              <Home className="size-4" />
+              Home
+            </Link>
             <button
               type="button"
               onClick={onLock}
