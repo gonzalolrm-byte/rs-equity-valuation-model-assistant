@@ -306,6 +306,15 @@ export function UiLayoutEditor() {
           <>
           <div
             role="presentation"
+            onPointerDown={startMove}
+            title="Drag to move this component"
+            className="pointer-events-auto absolute flex size-6 cursor-move items-center justify-center rounded-full bg-primary text-primary-foreground shadow"
+            style={{ left: selectedRect.left - 12, top: selectedRect.top - 12 }}
+          >
+            <Move className="size-3.5" />
+          </div>
+          <div
+            role="presentation"
             onPointerDown={(event) => startDrag(event, "x")}
             className="pointer-events-auto absolute w-2 cursor-ew-resize rounded bg-primary/70"
             style={{
