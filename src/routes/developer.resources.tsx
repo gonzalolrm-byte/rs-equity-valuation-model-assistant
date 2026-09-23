@@ -240,14 +240,7 @@ function GenericTemplatesSection() {
   };
 
   return (
-    <section className="mt-8">
-      <EditableText as="h2" className="block font-heading text-lg font-extrabold" group="Market Data & Additional Templates">
-        Generic DCF Templates
-      </EditableText>
-      <EditableText as="p" className="mt-1 block max-w-3xl text-[13px] leading-relaxed text-muted-foreground" group="Market Data & Additional Templates">
-        Upload the generic standardized DCF templates used when a company does not match a sector-specific template.
-      </EditableText>
-
+    <>
       <div className="mt-4 space-y-4">
         {templates.map((template) => (
           <GenericTemplateRow
@@ -313,7 +306,7 @@ function GenericTemplatesSection() {
           Add new generic template
         </button>
       )}
-    </section>
+    </>
   );
 }
 
