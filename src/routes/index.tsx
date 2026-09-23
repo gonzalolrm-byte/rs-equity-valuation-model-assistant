@@ -39,13 +39,6 @@ function Home() {
           <EditableText as="p" className="eyebrow" group="Page heading">
             Welcome to Real Sector – Equity Valuation Model Assistant
           </EditableText>
-          <EditableText
-            as="h1"
-            className="mt-3 text-4xl font-extrabold sm:text-5xl"
-            group="Page heading"
-          >
-            Select Your Role
-          </EditableText>
           <EditableText as="p" className="mt-3 text-lg text-muted-foreground" group="Page heading">
             Choose the option that best matches your role in the model lifecycle.
           </EditableText>
