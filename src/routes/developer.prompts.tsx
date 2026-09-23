@@ -18,13 +18,6 @@ const WORKFLOWS = [
     description:
       "AI instructions used during Workflow A. Step 1 instructions correspond directly to the questions and decisions collected in the Template Selection & Key Inputs questionnaire and are used to configure the standardized DCF model.",
   },
-  {
-    key: "Workflow B",
-    prefix: "B",
-    title: "Update Standardized Model",
-    description:
-      "Prompts executed during Workflow B: quarterly and event-driven updates to an existing standardized model.",
-  },
 ] as const;
 
 export const Route = createFileRoute("/developer/prompts")({
