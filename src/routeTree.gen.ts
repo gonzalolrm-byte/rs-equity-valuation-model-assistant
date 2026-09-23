@@ -28,6 +28,10 @@ import { Route as RoleUserRouteImport } from './routes/role/user'
 import { Route as UpdateModelReviewRouteImport } from './routes/update-model.review'
 import { Route as UpdateModelUpdatesRouteImport } from './routes/update-model.updates'
 import { Route as UpdateModelUploadRouteImport } from './routes/update-model.upload'
+import { Route as DeveloperResourcesIndexRouteImport } from './routes/developer.resources.index'
+import { Route as DeveloperResourcesGuidelinesRouteImport } from './routes/developer.resources.guidelines'
+import { Route as DeveloperResourcesMarketDataRouteImport } from './routes/developer.resources.market-data'
+import { Route as DeveloperResourcesTemplatesRouteImport } from './routes/developer.resources.templates'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -126,6 +130,29 @@ const UpdateModelUploadRoute = UpdateModelUploadRouteImport.update({
   path: '/update-model/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DeveloperResourcesIndexRoute = DeveloperResourcesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DeveloperResourcesRoute,
+} as any)
+const DeveloperResourcesGuidelinesRoute =
+  DeveloperResourcesGuidelinesRouteImport.update({
+    id: '/guidelines',
+    path: '/guidelines',
+    getParentRoute: () => DeveloperResourcesRoute,
+  } as any)
+const DeveloperResourcesMarketDataRoute =
+  DeveloperResourcesMarketDataRouteImport.update({
+    id: '/market-data',
+    path: '/market-data',
+    getParentRoute: () => DeveloperResourcesRoute,
+  } as any)
+const DeveloperResourcesTemplatesRoute =
+  DeveloperResourcesTemplatesRouteImport.update({
+    id: '/templates',
+    path: '/templates',
+    getParentRoute: () => DeveloperResourcesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -137,7 +164,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
-  '/developer/resources': typeof DeveloperResourcesRoute
+  '/developer/resources': typeof DeveloperResourcesRouteWithChildren
   '/developer/sector-specifics': typeof DeveloperSectorSpecificsRoute
   '/new-model/company-information': typeof NewModelCompanyInformationRoute
   '/new-model/generate': typeof NewModelGenerateRoute
@@ -147,6 +174,10 @@ export interface FileRoutesByFullPath {
   '/update-model/updates': typeof UpdateModelUpdatesRoute
   '/update-model/upload': typeof UpdateModelUploadRoute
   '/developer/': typeof DeveloperIndexRoute
+  '/developer/resources/guidelines': typeof DeveloperResourcesGuidelinesRoute
+  '/developer/resources/market-data': typeof DeveloperResourcesMarketDataRoute
+  '/developer/resources/templates': typeof DeveloperResourcesTemplatesRoute
+  '/developer/resources/': typeof DeveloperResourcesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -157,7 +188,6 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
-  '/developer/resources': typeof DeveloperResourcesRoute
   '/developer/sector-specifics': typeof DeveloperSectorSpecificsRoute
   '/new-model/company-information': typeof NewModelCompanyInformationRoute
   '/new-model/generate': typeof NewModelGenerateRoute
@@ -167,6 +197,10 @@ export interface FileRoutesByTo {
   '/update-model/updates': typeof UpdateModelUpdatesRoute
   '/update-model/upload': typeof UpdateModelUploadRoute
   '/developer': typeof DeveloperIndexRoute
+  '/developer/resources/guidelines': typeof DeveloperResourcesGuidelinesRoute
+  '/developer/resources/market-data': typeof DeveloperResourcesMarketDataRoute
+  '/developer/resources/templates': typeof DeveloperResourcesTemplatesRoute
+  '/developer/resources': typeof DeveloperResourcesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -179,7 +213,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
-  '/developer/resources': typeof DeveloperResourcesRoute
+  '/developer/resources': typeof DeveloperResourcesRouteWithChildren
   '/developer/sector-specifics': typeof DeveloperSectorSpecificsRoute
   '/new-model/company-information': typeof NewModelCompanyInformationRoute
   '/new-model/generate': typeof NewModelGenerateRoute
@@ -189,6 +223,10 @@ export interface FileRoutesById {
   '/update-model/updates': typeof UpdateModelUpdatesRoute
   '/update-model/upload': typeof UpdateModelUploadRoute
   '/developer/': typeof DeveloperIndexRoute
+  '/developer/resources/guidelines': typeof DeveloperResourcesGuidelinesRoute
+  '/developer/resources/market-data': typeof DeveloperResourcesMarketDataRoute
+  '/developer/resources/templates': typeof DeveloperResourcesTemplatesRoute
+  '/developer/resources/': typeof DeveloperResourcesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -212,6 +250,10 @@ export interface FileRouteTypes {
     | '/update-model/updates'
     | '/update-model/upload'
     | '/developer/'
+    | '/developer/resources/guidelines'
+    | '/developer/resources/market-data'
+    | '/developer/resources/templates'
+    | '/developer/resources/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -222,7 +264,6 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/developer/governance'
     | '/developer/prompts'
-    | '/developer/resources'
     | '/developer/sector-specifics'
     | '/new-model/company-information'
     | '/new-model/generate'
@@ -232,6 +273,10 @@ export interface FileRouteTypes {
     | '/update-model/updates'
     | '/update-model/upload'
     | '/developer'
+    | '/developer/resources/guidelines'
+    | '/developer/resources/market-data'
+    | '/developer/resources/templates'
+    | '/developer/resources'
   id:
     | '__root__'
     | '/'
@@ -253,6 +298,10 @@ export interface FileRouteTypes {
     | '/update-model/updates'
     | '/update-model/upload'
     | '/developer/'
+    | '/developer/resources/guidelines'
+    | '/developer/resources/market-data'
+    | '/developer/resources/templates'
+    | '/developer/resources/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -407,13 +456,58 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UpdateModelUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/developer/resources/': {
+      id: '/developer/resources/'
+      path: '/'
+      fullPath: '/developer/resources/'
+      preLoaderRoute: typeof DeveloperResourcesIndexRouteImport
+      parentRoute: typeof DeveloperResourcesRoute
+    }
+    '/developer/resources/guidelines': {
+      id: '/developer/resources/guidelines'
+      path: '/guidelines'
+      fullPath: '/developer/resources/guidelines'
+      preLoaderRoute: typeof DeveloperResourcesGuidelinesRouteImport
+      parentRoute: typeof DeveloperResourcesRoute
+    }
+    '/developer/resources/market-data': {
+      id: '/developer/resources/market-data'
+      path: '/market-data'
+      fullPath: '/developer/resources/market-data'
+      preLoaderRoute: typeof DeveloperResourcesMarketDataRouteImport
+      parentRoute: typeof DeveloperResourcesRoute
+    }
+    '/developer/resources/templates': {
+      id: '/developer/resources/templates'
+      path: '/templates'
+      fullPath: '/developer/resources/templates'
+      preLoaderRoute: typeof DeveloperResourcesTemplatesRouteImport
+      parentRoute: typeof DeveloperResourcesRoute
+    }
   }
 }
+
+interface DeveloperResourcesRouteChildren {
+  DeveloperResourcesGuidelinesRoute: typeof DeveloperResourcesGuidelinesRoute
+  DeveloperResourcesMarketDataRoute: typeof DeveloperResourcesMarketDataRoute
+  DeveloperResourcesTemplatesRoute: typeof DeveloperResourcesTemplatesRoute
+  DeveloperResourcesIndexRoute: typeof DeveloperResourcesIndexRoute
+}
+
+const DeveloperResourcesRouteChildren: DeveloperResourcesRouteChildren = {
+  DeveloperResourcesGuidelinesRoute: DeveloperResourcesGuidelinesRoute,
+  DeveloperResourcesMarketDataRoute: DeveloperResourcesMarketDataRoute,
+  DeveloperResourcesTemplatesRoute: DeveloperResourcesTemplatesRoute,
+  DeveloperResourcesIndexRoute: DeveloperResourcesIndexRoute,
+}
+
+const DeveloperResourcesRouteWithChildren =
+  DeveloperResourcesRoute._addFileChildren(DeveloperResourcesRouteChildren)
 
 interface DeveloperRouteChildren {
   DeveloperGovernanceRoute: typeof DeveloperGovernanceRoute
   DeveloperPromptsRoute: typeof DeveloperPromptsRoute
-  DeveloperResourcesRoute: typeof DeveloperResourcesRoute
+  DeveloperResourcesRoute: typeof DeveloperResourcesRouteWithChildren
   DeveloperSectorSpecificsRoute: typeof DeveloperSectorSpecificsRoute
   DeveloperIndexRoute: typeof DeveloperIndexRoute
 }
@@ -421,7 +515,7 @@ interface DeveloperRouteChildren {
 const DeveloperRouteChildren: DeveloperRouteChildren = {
   DeveloperGovernanceRoute: DeveloperGovernanceRoute,
   DeveloperPromptsRoute: DeveloperPromptsRoute,
-  DeveloperResourcesRoute: DeveloperResourcesRoute,
+  DeveloperResourcesRoute: DeveloperResourcesRouteWithChildren,
   DeveloperSectorSpecificsRoute: DeveloperSectorSpecificsRoute,
   DeveloperIndexRoute: DeveloperIndexRoute,
 }
