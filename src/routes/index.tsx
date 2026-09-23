@@ -34,7 +34,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-background">
       <AppHeader />
-      <main className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
+      <main className="mx-auto max-w-6xl px-5 py-8 sm:py-10">
         <div className="text-center">
           <EditableText as="p" className="text-lg text-muted-foreground" group="Page heading">
             Choose the option that best matches your role in the model lifecycle.
