@@ -206,7 +206,7 @@ export const DEFAULT_SUBSECTOR_CONFIG: SubsectorConfigDefaults = {
 
 
 export type AppState = {
-  workflow: "" | "new" | "update" | "developer";
+  workflow: "" | "new" | "update" | "developer" | "user" | "validator";
   /** Developer setting: "required" enforces field validation, "free" unlocks navigation for demos. */
   navigationMode: NavigationMode;
   answers: Answers;

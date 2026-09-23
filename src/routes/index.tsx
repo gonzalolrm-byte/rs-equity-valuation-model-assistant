@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowRight, CheckCircle2, FileText, Lock, Settings, TrendingUp } from "lucide-react";
+import { ArrowRight, CheckCircle2, Lock, SearchCheck, Settings, User } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/Button";
 import { useApp } from "@/lib/store";
@@ -13,13 +13,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Create a standardized DCF valuation model for the first time, or update an existing portfolio company model with the latest financial, operational and market information.",
+          "Select your role in the standardized valuation model lifecycle: Model Owner / Developer, Model User, or Model Validator.",
       },
       { property: "og:title", content: "Real Sector – Equity Valuation Model Assistant — Standardized DCF Models" },
       {
         property: "og:description",
         content:
-          "Create a standardized DCF valuation model, or update an existing portfolio company model with the latest data.",
+          "Select your role: develop and maintain standardized valuation models, use them for transactions, or validate them.",
       },
     ],
   }),
@@ -44,10 +44,10 @@ function Home() {
             className="mt-3 text-4xl font-extrabold sm:text-5xl"
             group="Page heading"
           >
-            What would you like to do?
+            Select Your Role
           </EditableText>
           <EditableText as="p" className="mt-3 text-lg text-muted-foreground" group="Page heading">
-            Select one option to get started.
+            Choose the option that best matches your role in the model lifecycle.
           </EditableText>
         </div>
 
@@ -63,38 +63,43 @@ function Home() {
                 <Lock className="size-4 text-navy-soft" />
               </span>
             }
-            title="Developer Console"
-            description="Manage templates, resources, prompts, and application configuration."
+            badge="Restricted Access"
+            title="Model Owner / Developer"
+            description="Create and maintain standardized valuation models, manage templates and resources, and configure application settings."
             benefits={[
               "Manage templates & resources",
               "Edit prompts & actions",
               "Configure application settings",
+              "Maintain and develop models",
             ]}
           />
           <OptionCard
-            selected={selected === "new"}
-            onSelect={() => patch({ workflow: "new" })}
+            selected={selected === "user"}
+            onSelect={() => patch({ workflow: "user" })}
             tone="primary"
-            icon={<FileText className="size-7 text-primary" />}
-            title="Use a Standardized DCF Template for the First Time"
-            description="Select this option if you want the app to identify the appropriate valuation template, adapt it based on your answers, and populate it using the information you provide."
+            icon={<User className="size-7 text-primary" />}
+            title="Model User"
+            description="Use standardized valuation models for transactions, either generate a new model or update an existing one with the latest data."
             benefits={[
-              "Find the right template",
-              "Automatically adapt and populate",
+              "Generate a standardized model",
+              "Update an existing model",
+              "Input financial, operational, and market data",
+              "Generate results and reports",
               "Highlight missing information",
             ]}
           />
           <OptionCard
-            selected={selected === "update"}
-            onSelect={() => patch({ workflow: "update" })}
+            selected={selected === "validator"}
+            onSelect={() => patch({ workflow: "validator" })}
             tone="success"
-            icon={<TrendingUp className="size-7 text-success" />}
-            title="Update an Existing Standardized Portfolio Company Model"
-            description="Select this option if you already have a standardized valuation model and want to update it with the latest financial, operational, and market information."
+            icon={<SearchCheck className="size-7 text-success" />}
+            title="Model Validator"
+            description="Review and validate standardized valuation models to ensure compliance, accuracy, and robustness."
             benefits={[
-              "Upload your existing model",
-              "Update with latest data",
-              "Highlight missing information",
+              "Assess model design and logic",
+              "Perform independent testing",
+              "Benchmark against standards",
+              "Document findings and recommendations",
             ]}
           />
         </div>
@@ -106,11 +111,11 @@ function Home() {
             onClick={() =>
               navigate({
                 to:
-                  selected === "new"
-                    ? "/new-model/company-information"
-                    : selected === "update"
-                      ? "/update-model/upload"
-                      : "/developer/resources",
+                  selected === "developer"
+                    ? "/developer/resources"
+                    : selected === "user"
+                      ? "/role/user"
+                      : "/validator",
               })
             }
           >
@@ -130,6 +135,7 @@ function OptionCard({
   selected,
   onSelect,
   icon,
+  badge,
   title,
   description,
   benefits,
@@ -138,6 +144,7 @@ function OptionCard({
   selected: boolean;
   onSelect: () => void;
   icon: React.ReactNode;
+  badge?: string;
   title: string;
   description: string;
   benefits: string[];
@@ -175,9 +182,9 @@ function OptionCard({
           {icon}
         </span>
         <span className="flex flex-col items-end gap-2">
-          {tone === "developer" && (
+          {badge && (
             <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Developer Only
+              {badge}
             </span>
           )}
           <span

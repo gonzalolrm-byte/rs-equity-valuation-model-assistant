@@ -14,6 +14,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DeveloperRouteImport } from './routes/developer'
 import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as HelpRouteImport } from './routes/help'
+import { Route as ValidatorRouteImport } from './routes/validator'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as DeveloperIndexRouteImport } from './routes/developer.index'
 import { Route as DeveloperGovernanceRouteImport } from './routes/developer.governance'
@@ -23,6 +24,7 @@ import { Route as DeveloperSectorSpecificsRouteImport } from './routes/developer
 import { Route as NewModelCompanyInformationRouteImport } from './routes/new-model.company-information'
 import { Route as NewModelGenerateRouteImport } from './routes/new-model.generate'
 import { Route as NewModelUploadRouteImport } from './routes/new-model.upload'
+import { Route as RoleUserRouteImport } from './routes/role/user'
 import { Route as UpdateModelReviewRouteImport } from './routes/update-model.review'
 import { Route as UpdateModelUpdatesRouteImport } from './routes/update-model.updates'
 import { Route as UpdateModelUploadRouteImport } from './routes/update-model.upload'
@@ -50,6 +52,11 @@ const GuidelinesRoute = GuidelinesRouteImport.update({
 const HelpRoute = HelpRouteImport.update({
   id: '/help',
   path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ValidatorRoute = ValidatorRouteImport.update({
+  id: '/validator',
+  path: '/validator',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiChatRoute = ApiChatRouteImport.update({
@@ -99,6 +106,11 @@ const NewModelUploadRoute = NewModelUploadRouteImport.update({
   path: '/new-model/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RoleUserRoute = RoleUserRouteImport.update({
+  id: '/role/user',
+  path: '/role/user',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UpdateModelReviewRoute = UpdateModelReviewRouteImport.update({
   id: '/update-model/review',
   path: '/update-model/review',
@@ -121,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/developer': typeof DeveloperRouteWithChildren
   '/guidelines': typeof GuidelinesRoute
   '/help': typeof HelpRoute
+  '/validator': typeof ValidatorRoute
   '/api/chat': typeof ApiChatRoute
   '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
@@ -129,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/new-model/company-information': typeof NewModelCompanyInformationRoute
   '/new-model/generate': typeof NewModelGenerateRoute
   '/new-model/upload': typeof NewModelUploadRoute
+  '/role/user': typeof RoleUserRoute
   '/update-model/review': typeof UpdateModelReviewRoute
   '/update-model/updates': typeof UpdateModelUpdatesRoute
   '/update-model/upload': typeof UpdateModelUploadRoute
@@ -139,6 +153,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/guidelines': typeof GuidelinesRoute
   '/help': typeof HelpRoute
+  '/validator': typeof ValidatorRoute
   '/api/chat': typeof ApiChatRoute
   '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
@@ -147,6 +162,7 @@ export interface FileRoutesByTo {
   '/new-model/company-information': typeof NewModelCompanyInformationRoute
   '/new-model/generate': typeof NewModelGenerateRoute
   '/new-model/upload': typeof NewModelUploadRoute
+  '/role/user': typeof RoleUserRoute
   '/update-model/review': typeof UpdateModelReviewRoute
   '/update-model/updates': typeof UpdateModelUpdatesRoute
   '/update-model/upload': typeof UpdateModelUploadRoute
@@ -159,6 +175,7 @@ export interface FileRoutesById {
   '/developer': typeof DeveloperRouteWithChildren
   '/guidelines': typeof GuidelinesRoute
   '/help': typeof HelpRoute
+  '/validator': typeof ValidatorRoute
   '/api/chat': typeof ApiChatRoute
   '/developer/governance': typeof DeveloperGovernanceRoute
   '/developer/prompts': typeof DeveloperPromptsRoute
@@ -167,6 +184,7 @@ export interface FileRoutesById {
   '/new-model/company-information': typeof NewModelCompanyInformationRoute
   '/new-model/generate': typeof NewModelGenerateRoute
   '/new-model/upload': typeof NewModelUploadRoute
+  '/role/user': typeof RoleUserRoute
   '/update-model/review': typeof UpdateModelReviewRoute
   '/update-model/updates': typeof UpdateModelUpdatesRoute
   '/update-model/upload': typeof UpdateModelUploadRoute
@@ -180,6 +198,7 @@ export interface FileRouteTypes {
     | '/developer'
     | '/guidelines'
     | '/help'
+    | '/validator'
     | '/api/chat'
     | '/developer/governance'
     | '/developer/prompts'
@@ -188,6 +207,7 @@ export interface FileRouteTypes {
     | '/new-model/company-information'
     | '/new-model/generate'
     | '/new-model/upload'
+    | '/role/user'
     | '/update-model/review'
     | '/update-model/updates'
     | '/update-model/upload'
@@ -198,6 +218,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/guidelines'
     | '/help'
+    | '/validator'
     | '/api/chat'
     | '/developer/governance'
     | '/developer/prompts'
@@ -206,6 +227,7 @@ export interface FileRouteTypes {
     | '/new-model/company-information'
     | '/new-model/generate'
     | '/new-model/upload'
+    | '/role/user'
     | '/update-model/review'
     | '/update-model/updates'
     | '/update-model/upload'
@@ -217,6 +239,7 @@ export interface FileRouteTypes {
     | '/developer'
     | '/guidelines'
     | '/help'
+    | '/validator'
     | '/api/chat'
     | '/developer/governance'
     | '/developer/prompts'
@@ -225,6 +248,7 @@ export interface FileRouteTypes {
     | '/new-model/company-information'
     | '/new-model/generate'
     | '/new-model/upload'
+    | '/role/user'
     | '/update-model/review'
     | '/update-model/updates'
     | '/update-model/upload'
@@ -237,10 +261,12 @@ export interface RootRouteChildren {
   DeveloperRoute: typeof DeveloperRouteWithChildren
   GuidelinesRoute: typeof GuidelinesRoute
   HelpRoute: typeof HelpRoute
+  ValidatorRoute: typeof ValidatorRoute
   ApiChatRoute: typeof ApiChatRoute
   NewModelCompanyInformationRoute: typeof NewModelCompanyInformationRoute
   NewModelGenerateRoute: typeof NewModelGenerateRoute
   NewModelUploadRoute: typeof NewModelUploadRoute
+  RoleUserRoute: typeof RoleUserRoute
   UpdateModelReviewRoute: typeof UpdateModelReviewRoute
   UpdateModelUpdatesRoute: typeof UpdateModelUpdatesRoute
   UpdateModelUploadRoute: typeof UpdateModelUploadRoute
@@ -281,6 +307,13 @@ declare module '@tanstack/react-router' {
       path: '/help'
       fullPath: '/help'
       preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/validator': {
+      id: '/validator'
+      path: '/validator'
+      fullPath: '/validator'
+      preLoaderRoute: typeof ValidatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/chat': {
@@ -346,6 +379,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewModelUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/role/user': {
+      id: '/role/user'
+      path: '/role/user'
+      fullPath: '/role/user'
+      preLoaderRoute: typeof RoleUserRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/update-model/review': {
       id: '/update-model/review'
       path: '/update-model/review'
@@ -396,10 +436,12 @@ const rootRouteChildren: RootRouteChildren = {
   DeveloperRoute: DeveloperRouteWithChildren,
   GuidelinesRoute: GuidelinesRoute,
   HelpRoute: HelpRoute,
+  ValidatorRoute: ValidatorRoute,
   ApiChatRoute: ApiChatRoute,
   NewModelCompanyInformationRoute: NewModelCompanyInformationRoute,
   NewModelGenerateRoute: NewModelGenerateRoute,
   NewModelUploadRoute: NewModelUploadRoute,
+  RoleUserRoute: RoleUserRoute,
   UpdateModelReviewRoute: UpdateModelReviewRoute,
   UpdateModelUpdatesRoute: UpdateModelUpdatesRoute,
   UpdateModelUploadRoute: UpdateModelUploadRoute,
