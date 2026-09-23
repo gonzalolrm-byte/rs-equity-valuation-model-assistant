@@ -193,14 +193,40 @@ export function UiEditBar() {
             />
           </div>
 
-          <button
-            type="button"
-            onClick={() => ui.resetLayout(layoutPath)}
-            className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-input px-3 py-1.5 text-[13px] font-semibold text-navy hover:bg-secondary"
-          >
-            <RotateCcw className="size-3.5" />
-            Reset to original size
-          </button>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => ui.resetLayout(layoutPath)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-input px-3 py-1.5 text-[13px] font-semibold text-navy hover:bg-secondary"
+            >
+              <RotateCcw className="size-3.5" />
+              Reset to original
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                ui.setLayoutOverride(layoutPath, { hidden: !layoutOverride.hidden });
+                if (!layoutOverride.hidden) ui.selectPath(null);
+              }}
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[13px] font-semibold ${
+                layoutOverride.hidden
+                  ? "border-input text-navy hover:bg-secondary"
+                  : "border-destructive/40 text-destructive hover:bg-destructive/10"
+              }`}
+            >
+              {layoutOverride.hidden ? (
+                <>
+                  <Undo2 className="size-3.5" />
+                  Restore component
+                </>
+              ) : (
+                <>
+                  <Trash2 className="size-3.5" />
+                  Delete component
+                </>
+              )}
+            </button>
+          </div>
 
           <div className="mt-5 rounded-xl border border-border bg-secondary/50 p-3">
             <p className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
