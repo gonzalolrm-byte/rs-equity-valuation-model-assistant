@@ -196,7 +196,7 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
             <NavItem
               to="/developer/resources"
               icon={<FolderOpen className="size-4" />}
-              label="Market Data & Additional Templates"
+              label="Core Information"
             />
             <NavItem
               to="/developer/prompts"
