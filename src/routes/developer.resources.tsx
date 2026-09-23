@@ -1,6 +1,5 @@
-import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
+import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { BookOpen, FileSpreadsheet, LineChart } from "lucide-react";
-import { EditableText } from "@/lib/ui-content";
 
 export const Route = createFileRoute("/developer/resources")({
   component: CoreInformationLayout,
@@ -33,22 +32,7 @@ export const CORE_INFORMATION_PAGES = [
 function CoreInformationLayout() {
   return (
     <div>
-      <nav className="flex min-w-0 flex-wrap items-center gap-1 rounded-lg border border-panel-border bg-panel/45 p-1 shadow-card">
-        {CORE_INFORMATION_PAGES.map((page) => (
-          <Link
-            key={page.to}
-            to={page.to}
-            className="flex h-9 min-w-fit items-center gap-2 rounded-md px-4 text-[12px] font-semibold text-navy-soft transition-colors hover:bg-card hover:text-navy"
-            activeProps={{ className: "bg-card text-navy shadow-card" }}
-          >
-            {page.icon}
-            <EditableText group="Core Information navigation">{page.label}</EditableText>
-          </Link>
-        ))}
-      </nav>
-      <div className="mt-4">
-        <Outlet />
-      </div>
+      <Outlet />
     </div>
   );
 }
