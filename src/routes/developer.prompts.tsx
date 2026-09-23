@@ -91,14 +91,8 @@ function Prompts() {
 
 function WorkflowSection({
   workflow,
-  search,
-  category,
-  status,
 }: {
   workflow: (typeof WORKFLOWS)[number];
-  search: string;
-  category: string;
-  status: string;
 }) {
   const { state, togglePromptStatus, deletePrompt, movePrompt } = useApp();
   const [editing, setEditing] = useState<PromptAction | null>(null);
@@ -115,21 +109,7 @@ function WorkflowSection({
     [state.prompts, workflow.key],
   );
 
-  const filtered = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    return workflowPrompts.filter((prompt) => {
-      if (category && prompt.category !== category) return false;
-      if (status && prompt.status !== status) return false;
-      if (!query) return true;
-      return (
-        prompt.id.toLowerCase().includes(query) ||
-        prompt.title.toLowerCase().includes(query) ||
-        prompt.promptText.toLowerCase().includes(query)
-      );
-    });
-  }, [workflowPrompts, search, category, status]);
-
-  const rows = filtered;
+  const rows = workflowPrompts;
 
 
   let digits = 2;
