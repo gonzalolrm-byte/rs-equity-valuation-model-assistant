@@ -156,7 +156,7 @@ function OptionCard({
       onClick={onSelect}
       aria-pressed={selected}
       className={[
-        "flex h-full flex-col rounded-2xl border bg-card p-7 text-left shadow-card transition-all",
+        "flex h-full flex-col rounded-2xl border bg-card p-5 text-left shadow-card transition-all",
         selected
           ? "border-primary ring-2 ring-ring/25"
           : "border-border hover:border-primary/50 hover:shadow-card-hover",
@@ -165,7 +165,7 @@ function OptionCard({
       <div className="flex items-start justify-between">
         <span
           className={[
-            "flex size-14 items-center justify-center rounded-full",
+            "flex size-11 items-center justify-center rounded-full",
             circleBg,
           ].join(" ")}
         >
@@ -190,14 +190,14 @@ function OptionCard({
 
       <EditableText
         as="h2"
-        className="mt-6 font-heading text-2xl font-bold leading-snug"
+        className="mt-4 font-heading text-xl font-bold leading-snug"
         group="Option title"
       >
         {title}
       </EditableText>
       <EditableText
         as="p"
-        className="mt-3 text-[15px] leading-relaxed text-muted-foreground"
+        className="mt-2 text-sm leading-relaxed text-muted-foreground"
         group="Option description"
       >
         {description}
@@ -205,13 +205,13 @@ function OptionCard({
 
       <ul
         className={[
-          "mt-6 space-y-2.5 rounded-xl p-4",
+          "mt-4 space-y-1.5 rounded-xl p-3",
           listBg,
         ].join(" ")}
       >
         {benefits.map((benefit) => (
-          <li key={benefit} className="flex items-center gap-2.5 text-sm text-navy">
-            <CheckCircle2 className={`size-4.5 shrink-0 ${check}`} />
+          <li key={benefit} className="flex items-center gap-2 text-sm text-navy">
+            <CheckCircle2 className={`size-4 shrink-0 ${check}`} />
             <EditableText group="Option benefit">{benefit}</EditableText>
           </li>
         ))}
