@@ -336,41 +336,6 @@ export const PUT_PRICE_MECHANISMS = [
   "Fair Value Determined by a Third Party",
 ] as const;
 
-/** Model update actions – each maps to a developer-controlled prompt action ID. */
-export const UPDATE_ACTIONS = [
-  {
-    actionId: "B-01",
-    label: "Add one year of historicals for roll-up purposes and update historical financials",
-    hint: "Rolls the model forward one year and refreshes the historical financial statements.",
-  },
-  {
-    actionId: "B-02",
-    label: "Update Cost of Equity parameters",
-    hint: "Uses the latest Cost of Equity report held in developer resources.",
-  },
-  {
-    actionId: "B-03",
-    label: "Update macro variables",
-    hint: "Inflation, FX and GDP assumptions from the latest macro tool.",
-  },
-  {
-    actionId: "B-04",
-    label: "Update YTD financials",
-    hint: "Adds year-to-date actuals from the uploaded documents.",
-  },
-  {
-    actionId: "B-05",
-    label:
-      "Update revenue, COGS and CapEx calibration factors so projections align with the client's latest projections / business plan",
-    hint: "Recalibrates projection drivers against the client's own financial model.",
-  },
-  {
-    actionId: "B-06",
-    label: "Update debt inputs so outputs match the company's projections",
-    hint: "Aligns debt schedules, drawdowns and amortization with company projections.",
-  },
-] as const;
-
 export type ResourceKind = "template" | "reference" | "guideline";
 
 export type DeveloperResource = {
@@ -496,18 +461,6 @@ export const INITIAL_PROMPTS: PromptAction[] = [
       "Use {{company_name}} as the company name throughout the model. Replace company-specific references or placeholders in the template with this name where applicable. Do not modify formulas or model structure solely because of the company name.",
     requiredResources: [],
   },
-  {
-    id: "B-01",
-    title: "Add one year of historicals",
-    category: "Model Updates",
-    step: "Workflow B – Step 2: Model Updates",
-    status: "Active",
-    lastUpdated: "2026-09-03",
-    promptText:
-      "Roll the standardized model forward by one year. Identify the new historical year, extract its audited financials, and return the instructions to shift the historical/projection boundary while preserving all formulas and the model structure." +
-      NO_GUESSING,
-    requiredResources: [],
-  },
 ];
 
 export const PROMPT_CATEGORIES = [
@@ -519,7 +472,6 @@ export const PROMPT_CATEGORIES = [
   "Other Modeling Key Inputs",
   "Document Upload",
   "Model Generation",
-  "Model Updates",
   "Review and Generate",
 ];
 
@@ -527,9 +479,6 @@ export const PROMPT_STEPS = [
   "Workflow A – Step 1: Template Selection & Key Inputs",
   "Workflow A – Step 2: Document Upload",
   "Workflow A – Step 3: Model Generation",
-  "Workflow B – Step 1: Document Upload",
-  "Workflow B – Step 2: Model Updates",
-  "Workflow B – Step 3: Review and Generate",
 ];
 
 /**

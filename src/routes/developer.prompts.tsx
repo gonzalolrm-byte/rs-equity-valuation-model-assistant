@@ -18,13 +18,6 @@ const WORKFLOWS = [
     description:
       "AI instructions used during Workflow A. Step 1 instructions correspond directly to the questions and decisions collected in the Template Selection & Key Inputs questionnaire and are used to configure the standardized DCF model.",
   },
-  {
-    key: "Workflow B",
-    prefix: "B",
-    title: "Update Standardized Model",
-    description:
-      "Prompts executed during Workflow B: quarterly and event-driven updates to an existing standardized model.",
-  },
 ] as const;
 
 export const Route = createFileRoute("/developer/prompts")({
@@ -47,9 +40,7 @@ export const Route = createFileRoute("/developer/prompts")({
 });
 
 function Prompts() {
-  const [activeWorkflow, setActiveWorkflow] = useState<string>(WORKFLOWS[0].key);
-
-  const workflow = WORKFLOWS.find((item) => item.key === activeWorkflow) ?? WORKFLOWS[0];
+  const workflow = WORKFLOWS[0];
 
   return (
     <div>
@@ -58,27 +49,8 @@ function Prompts() {
           3. Prompts & Actions
         </EditableText>
         <EditableText as="p" className="mt-2 block max-w-5xl text-[15px] leading-relaxed text-muted-foreground" group="Prompts & Actions">
-          Manage the list of actions / questions and their corresponding Claude prompts, organized by workflow. Each item has a unique ID (A-## for the first-time standardized model, B-## for model updates), title and prompt that guides Claude's response.
+          Manage the list of actions / questions and their corresponding Claude prompts. Each item has a unique ID (A-##), title and prompt that guides Claude's response.
         </EditableText>
-      </div>
-
-      <div className="mt-6 inline-flex rounded-xl border border-border bg-card p-1 shadow-card">
-        {WORKFLOWS.map((item) => (
-          <button
-            key={item.key}
-            type="button"
-            onClick={() => setActiveWorkflow(item.key)}
-            aria-pressed={item.key === activeWorkflow}
-            className={[
-              "rounded-lg px-4 py-2 text-sm font-semibold transition-colors",
-              item.key === activeWorkflow
-                ? "bg-primary text-primary-foreground"
-                : "text-navy-soft hover:bg-secondary",
-            ].join(" ")}
-          >
-            {item.key}
-          </button>
-        ))}
       </div>
 
       <div className="mt-8">

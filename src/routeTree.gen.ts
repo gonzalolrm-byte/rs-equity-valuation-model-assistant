@@ -25,9 +25,6 @@ import { Route as NewModelCompanyInformationRouteImport } from './routes/new-mod
 import { Route as NewModelGenerateRouteImport } from './routes/new-model.generate'
 import { Route as NewModelUploadRouteImport } from './routes/new-model.upload'
 import { Route as RoleUserRouteImport } from './routes/role/user'
-import { Route as UpdateModelReviewRouteImport } from './routes/update-model.review'
-import { Route as UpdateModelUpdatesRouteImport } from './routes/update-model.updates'
-import { Route as UpdateModelUploadRouteImport } from './routes/update-model.upload'
 import { Route as DeveloperResourcesIndexRouteImport } from './routes/developer.resources.index'
 import { Route as DeveloperResourcesGuidelinesRouteImport } from './routes/developer.resources.guidelines'
 import { Route as DeveloperResourcesMarketDataRouteImport } from './routes/developer.resources.market-data'
@@ -115,21 +112,6 @@ const RoleUserRoute = RoleUserRouteImport.update({
   path: '/role/user',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UpdateModelReviewRoute = UpdateModelReviewRouteImport.update({
-  id: '/update-model/review',
-  path: '/update-model/review',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UpdateModelUpdatesRoute = UpdateModelUpdatesRouteImport.update({
-  id: '/update-model/updates',
-  path: '/update-model/updates',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UpdateModelUploadRoute = UpdateModelUploadRouteImport.update({
-  id: '/update-model/upload',
-  path: '/update-model/upload',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DeveloperResourcesIndexRoute = DeveloperResourcesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -170,9 +152,6 @@ export interface FileRoutesByFullPath {
   '/new-model/generate': typeof NewModelGenerateRoute
   '/new-model/upload': typeof NewModelUploadRoute
   '/role/user': typeof RoleUserRoute
-  '/update-model/review': typeof UpdateModelReviewRoute
-  '/update-model/updates': typeof UpdateModelUpdatesRoute
-  '/update-model/upload': typeof UpdateModelUploadRoute
   '/developer/': typeof DeveloperIndexRoute
   '/developer/resources/guidelines': typeof DeveloperResourcesGuidelinesRoute
   '/developer/resources/market-data': typeof DeveloperResourcesMarketDataRoute
@@ -193,9 +172,6 @@ export interface FileRoutesByTo {
   '/new-model/generate': typeof NewModelGenerateRoute
   '/new-model/upload': typeof NewModelUploadRoute
   '/role/user': typeof RoleUserRoute
-  '/update-model/review': typeof UpdateModelReviewRoute
-  '/update-model/updates': typeof UpdateModelUpdatesRoute
-  '/update-model/upload': typeof UpdateModelUploadRoute
   '/developer': typeof DeveloperIndexRoute
   '/developer/resources/guidelines': typeof DeveloperResourcesGuidelinesRoute
   '/developer/resources/market-data': typeof DeveloperResourcesMarketDataRoute
@@ -219,9 +195,6 @@ export interface FileRoutesById {
   '/new-model/generate': typeof NewModelGenerateRoute
   '/new-model/upload': typeof NewModelUploadRoute
   '/role/user': typeof RoleUserRoute
-  '/update-model/review': typeof UpdateModelReviewRoute
-  '/update-model/updates': typeof UpdateModelUpdatesRoute
-  '/update-model/upload': typeof UpdateModelUploadRoute
   '/developer/': typeof DeveloperIndexRoute
   '/developer/resources/guidelines': typeof DeveloperResourcesGuidelinesRoute
   '/developer/resources/market-data': typeof DeveloperResourcesMarketDataRoute
@@ -246,9 +219,6 @@ export interface FileRouteTypes {
     | '/new-model/generate'
     | '/new-model/upload'
     | '/role/user'
-    | '/update-model/review'
-    | '/update-model/updates'
-    | '/update-model/upload'
     | '/developer/'
     | '/developer/resources/guidelines'
     | '/developer/resources/market-data'
@@ -269,9 +239,6 @@ export interface FileRouteTypes {
     | '/new-model/generate'
     | '/new-model/upload'
     | '/role/user'
-    | '/update-model/review'
-    | '/update-model/updates'
-    | '/update-model/upload'
     | '/developer'
     | '/developer/resources/guidelines'
     | '/developer/resources/market-data'
@@ -294,9 +261,6 @@ export interface FileRouteTypes {
     | '/new-model/generate'
     | '/new-model/upload'
     | '/role/user'
-    | '/update-model/review'
-    | '/update-model/updates'
-    | '/update-model/upload'
     | '/developer/'
     | '/developer/resources/guidelines'
     | '/developer/resources/market-data'
@@ -316,9 +280,6 @@ export interface RootRouteChildren {
   NewModelGenerateRoute: typeof NewModelGenerateRoute
   NewModelUploadRoute: typeof NewModelUploadRoute
   RoleUserRoute: typeof RoleUserRoute
-  UpdateModelReviewRoute: typeof UpdateModelReviewRoute
-  UpdateModelUpdatesRoute: typeof UpdateModelUpdatesRoute
-  UpdateModelUploadRoute: typeof UpdateModelUploadRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -435,27 +396,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoleUserRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/update-model/review': {
-      id: '/update-model/review'
-      path: '/update-model/review'
-      fullPath: '/update-model/review'
-      preLoaderRoute: typeof UpdateModelReviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/update-model/updates': {
-      id: '/update-model/updates'
-      path: '/update-model/updates'
-      fullPath: '/update-model/updates'
-      preLoaderRoute: typeof UpdateModelUpdatesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/update-model/upload': {
-      id: '/update-model/upload'
-      path: '/update-model/upload'
-      fullPath: '/update-model/upload'
-      preLoaderRoute: typeof UpdateModelUploadRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/developer/resources/': {
       id: '/developer/resources/'
       path: '/'
@@ -536,9 +476,6 @@ const rootRouteChildren: RootRouteChildren = {
   NewModelGenerateRoute: NewModelGenerateRoute,
   NewModelUploadRoute: NewModelUploadRoute,
   RoleUserRoute: RoleUserRoute,
-  UpdateModelReviewRoute: UpdateModelReviewRoute,
-  UpdateModelUpdatesRoute: UpdateModelUpdatesRoute,
-  UpdateModelUploadRoute: UpdateModelUploadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
