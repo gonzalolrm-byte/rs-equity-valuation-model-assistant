@@ -10,15 +10,8 @@ import { extractPromptText } from "@/lib/services/documentTextService";
 import { useApp } from "@/lib/store";
 
 
-const WORKFLOWS = [
-  {
-    key: "Workflow A",
-    prefix: "A",
-    title: "Use Standardized Model for the First Time",
-    description:
-      "AI instructions used during Workflow A. Step 1 instructions correspond directly to the questions and decisions collected in the Template Selection & Key Inputs questionnaire and are used to configure the standardized DCF model.",
-  },
-] as const;
+const ID_PREFIX = "A";
+
 
 export const Route = createFileRoute("/developer/prompts")({
   head: () => ({
