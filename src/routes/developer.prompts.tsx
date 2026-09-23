@@ -201,7 +201,7 @@ function PromptsSection() {
               id: nextId,
               title: "",
               category: PROMPT_CATEGORIES[0] ?? "Template Selection & Key Inputs",
-              step: workflowSteps[0] ?? `${workflow.key} – Step 1`,
+              step: PROMPT_STEPS[0] ?? "Step 1",
               status: "Active",
               lastUpdated: new Date().toISOString().slice(0, 10),
               promptText: "",
