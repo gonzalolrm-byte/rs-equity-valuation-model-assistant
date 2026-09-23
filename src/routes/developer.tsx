@@ -1,7 +1,7 @@
 import { Link, Outlet, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { FolderOpen, KeyRound, Lock, MessageSquareCode, Pencil, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import { FolderOpen, Home, KeyRound, Lock, MessageSquareCode, Pencil, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { IfcLockup } from "@/components/AppHeader";
 import { useApp, type NavigationMode } from "@/lib/store";
 import { EditableText, useUiContent } from "@/lib/ui-content";
@@ -171,6 +171,13 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
                 <option value="free">Free Navigation</option>
               </select>
             </div>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 px-2 py-1.5 text-xs font-semibold text-navy-soft transition-colors hover:text-navy"
+            >
+              <Home className="size-4" />
+              Home
+            </Link>
             <button
               type="button"
               onClick={onLock}
