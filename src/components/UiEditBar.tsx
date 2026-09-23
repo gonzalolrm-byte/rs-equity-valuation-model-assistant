@@ -114,6 +114,33 @@ export function UiEditBar() {
         </div>
       </div>
 
+      {layoutMode && hiddenPaths.length > 0 && (
+        <div
+          data-ui-editor
+          className="fixed left-4 top-16 z-50 w-[280px] rounded-xl border border-panel-border bg-card p-4 shadow-card"
+        >
+          <p className="text-[13px] font-bold text-navy">
+            Hidden components ({hiddenPaths.length})
+          </p>
+          <p className="mt-0.5 text-[12px] text-muted-foreground">
+            Deleted from view — restore any of them here.
+          </p>
+          <div className="mt-3 space-y-1.5">
+            {hiddenPaths.map((key) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => ui.setLayoutOverride(key, { hidden: false })}
+                className="flex w-full items-center gap-2 rounded-lg border border-input px-2.5 py-1.5 text-left text-[12px] font-medium text-navy hover:bg-secondary"
+              >
+                <Undo2 className="size-3.5 shrink-0" />
+                <span className="truncate">{shortPath(key)}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {layoutPath && (
         <aside
           data-ui-editor
