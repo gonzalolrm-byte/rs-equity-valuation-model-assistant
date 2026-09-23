@@ -198,7 +198,7 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
         </div>
       </header>
 
-      <div className="mx-auto max-w-[1560px] px-2.5 py-2">
+      <div className="mx-auto max-w-[1560px] px-2.5 pt-1 pb-2">
         <div className="flex min-w-0 flex-col gap-2">
           <nav className="flex min-w-0 flex-wrap items-center gap-1 rounded-lg border border-panel-border bg-panel/45 p-1 shadow-card">
             <NavItem
