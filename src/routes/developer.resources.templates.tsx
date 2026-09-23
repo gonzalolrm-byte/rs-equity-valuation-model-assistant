@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   AddResourceSection,
+  CoreBackButton,
   CoreInfoNote,
   CoreSectionHeader,
   GenericTemplatesSection,
@@ -29,6 +30,9 @@ export const Route = createFileRoute("/developer/resources/templates")({
 function CoreTemplates() {
   return (
     <div>
+      <div className="mb-4">
+        <CoreBackButton />
+      </div>
       <CoreSectionHeader
         title="Core Templates"
         description="Standardized DCF, waterfall, put and generic templates used to build or update valuation models."

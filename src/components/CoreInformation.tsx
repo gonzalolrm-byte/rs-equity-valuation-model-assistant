@@ -1,8 +1,21 @@
-import { FileSpreadsheet, Info, Plus, Trash2, Upload, X } from "lucide-react";
+import { ArrowLeft, FileSpreadsheet, Info, Plus, Trash2, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import type { ResourceKind } from "@/lib/data";
 import { useApp } from "@/lib/store";
 import { EditableText } from "@/lib/ui-content";
+
+export function CoreBackButton() {
+  return (
+    <Link
+      to="/developer/resources"
+      className="inline-flex items-center gap-1.5 rounded-lg border border-panel-border bg-panel px-3 py-1.5 text-[13px] font-semibold text-navy-soft transition-colors hover:bg-card hover:text-navy"
+    >
+      <ArrowLeft className="size-4" />
+      Back to overview
+    </Link>
+  );
+}
 
 export function CoreSectionHeader({
   title,

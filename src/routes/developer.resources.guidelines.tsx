@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   AddResourceSection,
+  CoreBackButton,
   CoreInfoNote,
   CoreSectionHeader,
   ResourceList,
@@ -28,6 +29,9 @@ export const Route = createFileRoute("/developer/resources/guidelines")({
 function CoreGuidelines() {
   return (
     <div>
+      <div className="mb-4">
+        <CoreBackButton />
+      </div>
       <CoreSectionHeader
         title="Core Guidelines"
         description="Guidance documents for completing the questionnaire and applying standardized modeling conventions."
