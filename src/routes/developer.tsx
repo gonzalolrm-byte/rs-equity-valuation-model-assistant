@@ -129,18 +129,41 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto flex max-w-[1560px] flex-wrap items-center gap-x-6 gap-y-2 px-5 py-2.5">
-          <span className="flex items-center gap-4">
+        <div className="mx-auto grid max-w-[1560px] grid-cols-[auto_1fr_auto] items-start gap-x-6 gap-y-1 px-5 py-2">
+          <div className="col-start-1 row-span-3 row-start-1 flex items-start pt-0.5">
             <IfcLockup />
-            <span className="hidden h-9 w-px bg-border md:block" />
-            <span className="hidden md:block">
-              <span className="block font-heading text-[17px] font-bold leading-tight text-navy">
-                Real Sector – Equity Valuation Model Assistant
-              </span>
-              <span className="block text-[13px] text-muted-foreground">Developer Console</span>
+          </div>
+
+          <div className="col-start-2 row-start-1 flex items-center">
+            <span className="block font-heading text-[17px] font-bold leading-tight text-navy">
+              Real Sector – Equity Valuation Model Assistant
             </span>
-          </span>
-          <div className="ml-auto flex items-center gap-2">
+          </div>
+
+          <div className="col-start-3 row-start-1 flex items-center gap-2 justify-self-end">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 px-2 py-1.5 text-xs font-semibold text-navy-soft transition-colors hover:text-navy"
+            >
+              <Home className="size-4" />
+              Home
+            </Link>
+            <button
+              type="button"
+              onClick={onLock}
+              className="inline-flex items-center gap-2 px-2 py-1.5 text-xs font-semibold text-navy-soft transition-colors hover:text-navy"
+            >
+              <Lock className="size-4" />
+              Protected Console
+            </button>
+            <span className="flex size-8 items-center justify-center rounded-full bg-panel text-[11px] font-bold text-navy">GL</span>
+          </div>
+
+          <div className="col-start-2 row-start-2 flex items-center">
+            <span className="block text-[13px] text-muted-foreground">Developer Console</span>
+          </div>
+
+          <div className="col-start-2 row-start-3 flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={startUiEditing}
@@ -171,22 +194,6 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
                 <option value="free">Free Navigation</option>
               </select>
             </div>
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 px-2 py-1.5 text-xs font-semibold text-navy-soft transition-colors hover:text-navy"
-            >
-              <Home className="size-4" />
-              Home
-            </Link>
-            <button
-              type="button"
-              onClick={onLock}
-              className="inline-flex items-center gap-2 px-2 py-1.5 text-xs font-semibold text-navy-soft transition-colors hover:text-navy"
-            >
-              <Lock className="size-4" />
-              Protected Console
-            </button>
-            <span className="flex size-8 items-center justify-center rounded-full bg-panel text-[11px] font-bold text-navy">GL</span>
           </div>
         </div>
       </header>
