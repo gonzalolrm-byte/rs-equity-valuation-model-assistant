@@ -240,6 +240,7 @@ function GenericTemplatesSection() {
   };
 
   return (
+    <>
       <div className="mt-4 space-y-4">
         {templates.map((template) => (
           <GenericTemplateRow
@@ -305,7 +306,7 @@ function GenericTemplatesSection() {
           Add new generic template
         </button>
       )}
-    </section>
+    </>
   );
 }
 
