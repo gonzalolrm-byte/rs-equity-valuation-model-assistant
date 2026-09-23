@@ -1,7 +1,7 @@
 import { Link, Outlet, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { FolderOpen, KeyRound, Lock, MessageSquareCode, Pencil, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import { FolderOpen, Home, KeyRound, Lock, MessageSquareCode, Pencil, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { IfcLockup } from "@/components/AppHeader";
 import { useApp, type NavigationMode } from "@/lib/store";
 import { EditableText, useUiContent } from "@/lib/ui-content";
