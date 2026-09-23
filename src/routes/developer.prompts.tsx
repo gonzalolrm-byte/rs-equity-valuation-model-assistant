@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { EditableText } from "@/lib/ui-content";
-import { ArrowDown, ArrowUp, FileText, Pencil, Play, Plus, Power, Search, Trash2, UploadCloud, X } from "lucide-react";
+import { ArrowDown, ArrowUp, FileText, Pencil, Play, Plus, Power, Trash2, UploadCloud, X } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { Button } from "@/components/Button";
 import { SelectField, TextField } from "@/components/form";
@@ -47,9 +47,6 @@ export const Route = createFileRoute("/developer/prompts")({
 });
 
 function Prompts() {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
-  const [status, setStatus] = useState("");
   const [activeWorkflow, setActiveWorkflow] = useState<string>(WORKFLOWS[0].key);
 
   const workflow = WORKFLOWS.find((item) => item.key === activeWorkflow) ?? WORKFLOWS[0];
@@ -84,38 +81,8 @@ function Prompts() {
         ))}
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <label className="relative block">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search by ID, title or keyword…"
-            className="w-full rounded-lg border border-input bg-card py-2.5 pl-9 pr-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-ring/25"
-          />
-        </label>
-        <SelectField
-          value={category}
-          onChange={setCategory}
-          options={PROMPT_CATEGORIES}
-          placeholder="All Categories"
-        />
-        <SelectField
-          value={status}
-          onChange={setStatus}
-          options={["Active", "Inactive"]}
-          placeholder="All Statuses"
-        />
-      </div>
-
       <div className="mt-8">
-        <WorkflowSection
-          key={workflow.key}
-          workflow={workflow}
-          search={search}
-          category={category}
-          status={status}
-        />
+        <WorkflowSection key={workflow.key} workflow={workflow} />
       </div>
     </div>
   );
@@ -124,14 +91,8 @@ function Prompts() {
 
 function WorkflowSection({
   workflow,
-  search,
-  category,
-  status,
 }: {
   workflow: (typeof WORKFLOWS)[number];
-  search: string;
-  category: string;
-  status: string;
 }) {
   const { state, togglePromptStatus, deletePrompt, movePrompt } = useApp();
   const [editing, setEditing] = useState<PromptAction | null>(null);
@@ -148,21 +109,7 @@ function WorkflowSection({
     [state.prompts, workflow.key],
   );
 
-  const filtered = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    return workflowPrompts.filter((prompt) => {
-      if (category && prompt.category !== category) return false;
-      if (status && prompt.status !== status) return false;
-      if (!query) return true;
-      return (
-        prompt.id.toLowerCase().includes(query) ||
-        prompt.title.toLowerCase().includes(query) ||
-        prompt.promptText.toLowerCase().includes(query)
-      );
-    });
-  }, [workflowPrompts, search, category, status]);
-
-  const rows = filtered;
+  const rows = workflowPrompts;
 
 
   let digits = 2;
@@ -284,7 +231,7 @@ function WorkflowSection({
               {rows.length === 0 && (
                 <tr className="border-t border-border">
                   <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
-                    No actions match these filters.
+                    No actions yet.
                   </td>
                 </tr>
               )}
@@ -292,7 +239,7 @@ function WorkflowSection({
           </table>
         </div>
         <div className="border-t border-border px-4 py-3 text-[13px] text-muted-foreground">
-          <span>{filtered.length} action(s)</span>
+          <span>{rows.length} action(s)</span>
         </div>
 
       </div>
