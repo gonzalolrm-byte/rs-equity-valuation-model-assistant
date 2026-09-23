@@ -42,15 +42,15 @@ function Home() {
         </div>
 
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-3">
+        <div className="mt-5 grid gap-4 lg:grid-cols-3">
           <OptionCard
             selected={selected === "developer"}
             onSelect={() => patch({ workflow: "developer" })}
             tone="developer"
             icon={
               <span className="flex items-center gap-1">
-                <Settings className="size-6 text-navy" />
-                <Lock className="size-4 text-navy-soft" />
+                <Settings className="size-5 text-navy" />
+                <Lock className="size-3.5 text-navy-soft" />
               </span>
             }
             badge="Restricted Access"
@@ -67,7 +67,7 @@ function Home() {
             selected={selected === "user"}
             onSelect={() => patch({ workflow: "user" })}
             tone="primary"
-            icon={<User className="size-7 text-primary" />}
+            icon={<User className="size-6 text-primary" />}
             title="Model User"
             description="Use standardized valuation models for transactions, either generate a new model or update an existing one with the latest data."
             benefits={[
@@ -82,7 +82,7 @@ function Home() {
             selected={selected === "validator"}
             onSelect={() => patch({ workflow: "validator" })}
             tone="success"
-            icon={<SearchCheck className="size-7 text-success" />}
+            icon={<SearchCheck className="size-6 text-success" />}
             title="Model Validator"
             description="Review and validate standardized valuation models to ensure compliance, accuracy, and robustness."
             benefits={[
