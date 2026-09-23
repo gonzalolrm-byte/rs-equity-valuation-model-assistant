@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen, CircleHelp, Lock, Mail, Settings, UserRound } from "lucide-react";
+import { BookOpen, CircleHelp, Mail, UserRound } from "lucide-react";
 
-export function AppHeader({ showDeveloper = true }: { showDeveloper?: boolean }) {
+export function AppHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-3 px-5 py-3.5">
@@ -22,24 +22,6 @@ export function AppHeader({ showDeveloper = true }: { showDeveloper?: boolean })
           <HeaderLink to="/help" icon={<CircleHelp className="size-4" />} label="Help" />
           <HeaderLink to="/guidelines" icon={<BookOpen className="size-4" />} label="Guidelines" />
           <HeaderLink to="/contact" icon={<Mail className="size-4" />} label="Contact" />
-          {showDeveloper && (
-            <>
-              <span className="mx-2 hidden h-6 w-px bg-border sm:block" />
-              <Link
-                to="/developer/resources"
-                className="flex items-center gap-2 rounded-lg border border-panel-border bg-panel px-3 py-2 text-xs font-semibold text-navy transition-colors hover:bg-accent"
-                title="Developer Console — restricted access"
-              >
-                <Settings className="size-4 text-primary" />
-                <span className="hidden leading-tight sm:block">
-                  Developer
-                  <br />
-                  Only
-                </span>
-                <Lock className="size-3.5 text-navy-soft" />
-              </Link>
-            </>
-          )}
           <span className="ml-1 flex size-9 items-center justify-center rounded-full bg-secondary text-navy-soft">
             <UserRound className="size-4" />
           </span>

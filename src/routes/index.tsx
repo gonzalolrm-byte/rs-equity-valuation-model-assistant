@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowRight, CheckCircle2, FileText, TrendingUp } from "lucide-react";
+import { ArrowRight, CheckCircle2, FileText, Lock, Settings, TrendingUp } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/Button";
 import { useApp } from "@/lib/store";
@@ -52,7 +52,25 @@ function Home() {
         </div>
 
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-2">
+        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+          <OptionCard
+            selected={selected === "developer"}
+            onSelect={() => patch({ workflow: "developer" })}
+            tone="developer"
+            icon={
+              <span className="flex items-center gap-1">
+                <Settings className="size-6 text-navy" />
+                <Lock className="size-4 text-navy-soft" />
+              </span>
+            }
+            title="Developer Console"
+            description="Manage templates, resources, prompts, and application configuration."
+            benefits={[
+              "Manage templates & resources",
+              "Edit prompts & actions",
+              "Configure application settings",
+            ]}
+          />
           <OptionCard
             selected={selected === "new"}
             onSelect={() => patch({ workflow: "new" })}
@@ -87,7 +105,12 @@ function Home() {
             className="min-w-48 py-3"
             onClick={() =>
               navigate({
-                to: selected === "new" ? "/new-model/company-information" : "/update-model/upload",
+                to:
+                  selected === "new"
+                    ? "/new-model/company-information"
+                    : selected === "update"
+                      ? "/update-model/upload"
+                      : "/developer/resources",
               })
             }
           >
@@ -118,9 +141,18 @@ function OptionCard({
   title: string;
   description: string;
   benefits: string[];
-  tone: "primary" | "success";
+  tone: "primary" | "success" | "developer";
 }) {
-  const check = tone === "primary" ? "text-primary" : "text-success";
+  const check = tone === "primary" ? "text-primary" : tone === "success" ? "text-success" : "text-navy";
+  const circleBg =
+    tone === "primary" ? "bg-panel" : tone === "success" ? "bg-success-soft" : "bg-secondary";
+  const listBg =
+    tone === "primary"
+      ? "bg-panel/70"
+      : tone === "success"
+        ? "bg-success-soft/70"
+        : "bg-secondary/70";
+
   return (
     <button
       type="button"
@@ -137,18 +169,25 @@ function OptionCard({
         <span
           className={[
             "flex size-14 items-center justify-center rounded-full",
-            tone === "primary" ? "bg-panel" : "bg-success-soft",
+            circleBg,
           ].join(" ")}
         >
           {icon}
         </span>
-        <span
-          className={[
-            "flex size-6 items-center justify-center rounded-full border-2",
-            selected ? "border-primary" : "border-input",
-          ].join(" ")}
-        >
-          {selected && <span className="size-3 rounded-full bg-primary" />}
+        <span className="flex flex-col items-end gap-2">
+          {tone === "developer" && (
+            <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Developer Only
+            </span>
+          )}
+          <span
+            className={[
+              "flex size-6 items-center justify-center rounded-full border-2",
+              selected ? "border-primary" : "border-input",
+            ].join(" ")}
+          >
+            {selected && <span className="size-3 rounded-full bg-primary" />}
+          </span>
         </span>
       </div>
 
@@ -170,7 +209,7 @@ function OptionCard({
       <ul
         className={[
           "mt-6 space-y-2.5 rounded-xl p-4",
-          tone === "primary" ? "bg-panel/70" : "bg-success-soft/70",
+          listBg,
         ].join(" ")}
       >
         {benefits.map((benefit) => (
