@@ -36,16 +36,13 @@ function Home() {
       <AppHeader />
       <main className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
         <div className="text-center">
-          <EditableText as="p" className="eyebrow" group="Page heading">
-            Welcome to Real Sector – Equity Valuation Model Assistant
-          </EditableText>
-          <EditableText as="p" className="mt-3 text-lg text-muted-foreground" group="Page heading">
+          <EditableText as="p" className="text-lg text-muted-foreground" group="Page heading">
             Choose the option that best matches your role in the model lifecycle.
           </EditableText>
         </div>
 
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+        <div className="mt-6 grid gap-6 lg:grid-cols-3">
           <OptionCard
             selected={selected === "developer"}
             onSelect={() => patch({ workflow: "developer" })}
