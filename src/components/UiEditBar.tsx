@@ -12,7 +12,9 @@ import {
   Move,
   Pencil,
   RotateCcw,
+  Trash2,
   Type,
+  Undo2,
   X,
 } from "lucide-react";
 import {
@@ -41,6 +43,10 @@ export function UiEditBar() {
   // Text picked directly off the page (boxes, tables, bars) rather than registered content.
   const textPath = !layoutMode && !selected ? ui.selectedPath : null;
   const textPathValue = textPath ? ui.pathText[textPath] : undefined;
+  // Components hidden (deleted) on this interface, so they can be restored.
+  const hiddenPaths = Object.entries(ui.layout)
+    .filter(([key, value]) => key.startsWith(`${scope}|`) && value.hidden)
+    .map(([key]) => key);
 
   return (
     <>
@@ -78,7 +84,7 @@ export function UiEditBar() {
           <span className="hidden items-center gap-1.5 text-[13px] opacity-90 lg:flex">
             <MousePointerClick className="size-3.5" />
             {layoutMode
-              ? "Click any component to resize it, or drag its edges"
+              ? "Click any component to resize, move (blue dot) or delete it"
               : "Click any text — headings, boxes, tables, bars, buttons — to rewrite it"}
           </span>
           <div className="ml-auto flex items-center gap-2">
