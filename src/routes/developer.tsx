@@ -129,7 +129,7 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto grid max-w-[1560px] grid-cols-[auto_1fr_auto] items-start gap-x-6 gap-y-1 px-5 py-2">
+        <div className="mx-auto grid max-w-[1560px] grid-cols-[auto_1fr_auto] items-start gap-x-6 gap-y-1.5 px-5 py-3">
           <div className="col-start-1 row-span-3 row-start-1 flex items-start pt-0.5">
             <IfcLockup />
           </div>
@@ -167,7 +167,7 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
             <button
               type="button"
               onClick={startUiEditing}
-              className="hidden items-center gap-2 rounded-lg border border-input px-2.5 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-secondary lg:inline-flex"
+              className="hidden items-center gap-2 rounded-full border border-input bg-card px-3.5 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-secondary lg:inline-flex"
             >
               <Pencil className="size-4" />
               Edit UI
@@ -175,7 +175,7 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
             <button
               type="button"
               onClick={ui.startEditing}
-              className="hidden items-center gap-2 rounded-lg border border-input px-2.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-panel lg:inline-flex"
+              className="hidden items-center gap-2 rounded-full border border-input bg-card px-3.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-panel lg:inline-flex"
             >
               <Pencil className="size-4" />
               Edit Console
@@ -187,7 +187,7 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
               <select
                 value={state.navigationMode}
                 onChange={(event) => patch({ navigationMode: event.target.value as NavigationMode })}
-                className="h-8 rounded-md border border-input bg-card px-3 text-[11px] font-semibold text-navy outline-none focus:border-primary"
+                className="h-8 rounded-full border border-input bg-card px-4 text-[11px] font-semibold text-navy outline-none focus:border-primary"
                 aria-label="Navigation mode"
               >
                 <option value="required">Complete Required Data</option>
