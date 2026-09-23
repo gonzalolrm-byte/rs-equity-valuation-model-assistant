@@ -154,7 +154,7 @@ export function JinnieChat() {
             if (!text) return null;
             return (
               <Message key={message.id} from={message.role}>
-                <MessageContent variant={message.role === "user" ? "contained" : "flat"}>
+                <MessageContent>
                   <MessageResponse>{text}</MessageResponse>
                 </MessageContent>
               </Message>
