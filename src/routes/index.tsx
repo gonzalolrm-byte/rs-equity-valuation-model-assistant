@@ -94,7 +94,7 @@ function Home() {
           />
         </div>
 
-        <div className="mt-10 flex flex-col items-center gap-2">
+        <div className="mt-8 flex flex-col items-center gap-2">
           <Button
             disabled={!selected}
             className="min-w-48 py-3"
