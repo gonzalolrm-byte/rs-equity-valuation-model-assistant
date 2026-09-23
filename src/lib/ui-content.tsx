@@ -52,6 +52,11 @@ export type UiLayoutOverride = {
   whiteSpace?: string | undefined;
   textAlign?: string | undefined;
   verticalAlign?: string | undefined;
+  /** Free repositioning offsets applied as a translate transform. */
+  offsetX?: string | undefined;
+  offsetY?: string | undefined;
+  /** Presentation-only removal: hides the element without touching app logic. */
+  hidden?: boolean | undefined;
 };
 
 export type UiLayoutMap = Record<string, UiLayoutOverride>;

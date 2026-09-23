@@ -12,6 +12,7 @@
  * or template generation — only CSS box properties on the selected element.
  */
 import { useLocation } from "@tanstack/react-router";
+import { Move } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useUiContentSafe, type UiLayoutOverride } from "@/lib/ui-content";
 
@@ -29,6 +30,9 @@ const MANAGED_PROPS = [
   "whiteSpace",
   "textAlign",
   "verticalAlign",
+  "position",
+  "transform",
+  "display",
 ] as const;
 
 export function scopeForPath(pathname: string) {
@@ -118,8 +122,18 @@ export function UiLayoutEditor() {
       const element = resolvePath(path);
       if (!element || isEditorChrome(element)) continue;
       for (const prop of MANAGED_PROPS) {
-        const value = override[prop];
-        if (value) element.style.setProperty(kebab(prop), value);
+        const value = override[prop as keyof UiLayoutOverride];
+        if (typeof value === "string" && value) element.style.setProperty(kebab(prop), value);
+      }
+      // Presentation-only delete: hide the component entirely.
+      if (override.hidden) element.style.setProperty("display", "none", "important");
+      // Free repositioning via the move handle.
+      if (override.offsetX || override.offsetY) {
+        element.style.setProperty("position", "relative");
+        element.style.setProperty(
+          "transform",
+          `translate(${override.offsetX || "0px"}, ${override.offsetY || "0px"})`,
+        );
       }
       appliedRef.current.add(element);
     }
@@ -243,6 +257,30 @@ export function UiLayoutEditor() {
     window.addEventListener("pointerup", onUp);
   };
 
+  /** Drags the whole component to a new position (translate offset). */
+  const startMove = (event: React.PointerEvent) => {
+    if (!selectedPath) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const base = layout[selectedPath];
+    const baseX = Number.parseInt(base?.offsetX ?? "0", 10) || 0;
+    const baseY = Number.parseInt(base?.offsetY ?? "0", 10) || 0;
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const onMove = (moveEvent: PointerEvent) => {
+      ui.setLayoutOverride(selectedPath, {
+        offsetX: `${baseX + moveEvent.clientX - startX}px`,
+        offsetY: `${baseY + moveEvent.clientY - startY}px`,
+      });
+    };
+    const onUp = () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  };
+
   if (!pickerActive) return null;
 
   return (
@@ -266,6 +304,15 @@ export function UiLayoutEditor() {
           </span>
           {layoutActive && (
           <>
+          <div
+            role="presentation"
+            onPointerDown={startMove}
+            title="Drag to move this component"
+            className="pointer-events-auto absolute flex size-6 cursor-move items-center justify-center rounded-full bg-primary text-primary-foreground shadow"
+            style={{ left: selectedRect.left - 12, top: selectedRect.top - 12 }}
+          >
+            <Move className="size-3.5" />
+          </div>
           <div
             role="presentation"
             onPointerDown={(event) => startDrag(event, "x")}

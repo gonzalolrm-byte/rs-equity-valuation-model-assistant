@@ -12,7 +12,9 @@ import {
   Move,
   Pencil,
   RotateCcw,
+  Trash2,
   Type,
+  Undo2,
   X,
 } from "lucide-react";
 import {
@@ -41,6 +43,10 @@ export function UiEditBar() {
   // Text picked directly off the page (boxes, tables, bars) rather than registered content.
   const textPath = !layoutMode && !selected ? ui.selectedPath : null;
   const textPathValue = textPath ? ui.pathText[textPath] : undefined;
+  // Components hidden (deleted) on this interface, so they can be restored.
+  const hiddenPaths = Object.entries(ui.layout)
+    .filter(([key, value]) => key.startsWith(`${scope}|`) && value.hidden)
+    .map(([key]) => key);
 
   return (
     <>
@@ -78,7 +84,7 @@ export function UiEditBar() {
           <span className="hidden items-center gap-1.5 text-[13px] opacity-90 lg:flex">
             <MousePointerClick className="size-3.5" />
             {layoutMode
-              ? "Click any component to resize it, or drag its edges"
+              ? "Click any component to resize, move (blue dot) or delete it"
               : "Click any text — headings, boxes, tables, bars, buttons — to rewrite it"}
           </span>
           <div className="ml-auto flex items-center gap-2">
@@ -108,6 +114,33 @@ export function UiEditBar() {
         </div>
       </div>
 
+      {layoutMode && hiddenPaths.length > 0 && (
+        <div
+          data-ui-editor
+          className="fixed left-4 top-16 z-50 w-[280px] rounded-xl border border-panel-border bg-card p-4 shadow-card"
+        >
+          <p className="text-[13px] font-bold text-navy">
+            Hidden components ({hiddenPaths.length})
+          </p>
+          <p className="mt-0.5 text-[12px] text-muted-foreground">
+            Deleted from view — restore any of them here.
+          </p>
+          <div className="mt-3 space-y-1.5">
+            {hiddenPaths.map((key) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => ui.setLayoutOverride(key, { hidden: false })}
+                className="flex w-full items-center gap-2 rounded-lg border border-input px-2.5 py-1.5 text-left text-[12px] font-medium text-navy hover:bg-secondary"
+              >
+                <Undo2 className="size-3.5 shrink-0" />
+                <span className="truncate">{shortPath(key)}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {layoutPath && (
         <aside
           data-ui-editor
@@ -125,11 +158,29 @@ export function UiEditBar() {
             </button>
           </div>
           <p className="mt-1 text-[12px] text-muted-foreground">
-            Drag the component&apos;s edges on the page, or enter exact values. Leave a field empty
-            to keep the original.
+            Drag the component&apos;s edges to resize, drag the blue dot to move it, or enter exact
+            values. Leave a field empty to keep the original.
           </p>
 
           <div className="mt-4 grid grid-cols-2 gap-3">
+            <label className="block">
+              <span className="mb-1 block text-[12px] text-muted-foreground">Move right</span>
+              <input
+                value={layoutOverride.offsetX ?? ""}
+                placeholder="e.g. 40px or -20px"
+                onChange={(event) => ui.setLayoutOverride(layoutPath, { offsetX: event.target.value })}
+                className="w-full rounded-lg border border-input bg-card px-2.5 py-1.5 text-[13px] text-navy outline-none focus:border-primary"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-[12px] text-muted-foreground">Move down</span>
+              <input
+                value={layoutOverride.offsetY ?? ""}
+                placeholder="e.g. 24px or -10px"
+                onChange={(event) => ui.setLayoutOverride(layoutPath, { offsetY: event.target.value })}
+                className="w-full rounded-lg border border-input bg-card px-2.5 py-1.5 text-[13px] text-navy outline-none focus:border-primary"
+              />
+            </label>
             {LAYOUT_FIELDS.map((field) => (
               <label key={field.key} className="block">
                 <span className="mb-1 block text-[12px] text-muted-foreground">{field.label}</span>
@@ -169,14 +220,40 @@ export function UiEditBar() {
             />
           </div>
 
-          <button
-            type="button"
-            onClick={() => ui.resetLayout(layoutPath)}
-            className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-input px-3 py-1.5 text-[13px] font-semibold text-navy hover:bg-secondary"
-          >
-            <RotateCcw className="size-3.5" />
-            Reset to original size
-          </button>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => ui.resetLayout(layoutPath)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-input px-3 py-1.5 text-[13px] font-semibold text-navy hover:bg-secondary"
+            >
+              <RotateCcw className="size-3.5" />
+              Reset to original
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                ui.setLayoutOverride(layoutPath, { hidden: !layoutOverride.hidden });
+                if (!layoutOverride.hidden) ui.selectPath(null);
+              }}
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[13px] font-semibold ${
+                layoutOverride.hidden
+                  ? "border-input text-navy hover:bg-secondary"
+                  : "border-destructive/40 text-destructive hover:bg-destructive/10"
+              }`}
+            >
+              {layoutOverride.hidden ? (
+                <>
+                  <Undo2 className="size-3.5" />
+                  Restore component
+                </>
+              ) : (
+                <>
+                  <Trash2 className="size-3.5" />
+                  Delete component
+                </>
+              )}
+            </button>
+          </div>
 
           <div className="mt-5 rounded-xl border border-border bg-secondary/50 p-3">
             <p className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
@@ -337,6 +414,13 @@ export function UiEditBar() {
 function readPageText(key: string) {
   const path = key.slice(key.indexOf("|") + 1);
   return resolvePath(path)?.textContent ?? "";
+}
+
+/** Short human-readable label for a `${scope}|${cssPath}` key. */
+function shortPath(key: string) {
+  const path = key.slice(key.indexOf("|") + 1);
+  const last = path.split(">").pop()?.trim() ?? path;
+  return last.replace(":nth-of-type(", " #").replace(")", "");
 }
 
 const WRAP_OPTIONS = [
