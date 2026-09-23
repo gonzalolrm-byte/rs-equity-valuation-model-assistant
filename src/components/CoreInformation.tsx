@@ -159,10 +159,19 @@ const INITIAL_GENERIC_TEMPLATES: GenericTemplate[] = [
 ];
 
 export function GenericTemplatesSection() {
-  const [templates, setTemplates] = useState<GenericTemplate[]>(INITIAL_GENERIC_TEMPLATES);
+  const {
+    state,
+    setGenericTemplateFiles,
+    removeGenericTemplateFile,
+    removeGenericTemplate,
+  } = useApp();
 
-  const update = (id: string, change: Partial<GenericTemplate>) =>
-    setTemplates((prev) => prev.map((item) => (item.id === id ? { ...item, ...change } : item)));
+  const templates = INITIAL_GENERIC_TEMPLATES.filter(
+    (template) => !state.removedGenericTemplates.includes(template.id),
+  ).map((template) => ({
+    ...template,
+    files: state.genericTemplateFiles[template.id] ?? [],
+  }));
 
   return (
     <div className="mt-4 space-y-4">
@@ -170,8 +179,9 @@ export function GenericTemplatesSection() {
         <GenericTemplateRow
           key={template.id}
           template={template}
-          onChange={(change) => update(template.id, change)}
-          onDelete={() => setTemplates((prev) => prev.filter((item) => item.id !== template.id))}
+          onUpload={(files) => setGenericTemplateFiles(template.id, files)}
+          onRemoveFile={(fileName) => removeGenericTemplateFile(template.id, fileName)}
+          onDelete={() => removeGenericTemplate(template.id)}
         />
       ))}
     </div>
