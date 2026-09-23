@@ -403,7 +403,32 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {
-      /* storage unavailable */
+      // Browser storage is full (usually because uploaded prompt files are
+      // stored inline). Retry without the heavy file payloads so the rest of
+      // the console settings still survive a refresh, and tell the user.
+      try {
+        const slim = {
+          ...state,
+          prompts: state.prompts.map((prompt) => {
+            const { promptFileData: _dropped, ...rest } = prompt;
+            return rest;
+          }),
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(slim));
+        if (typeof window !== "undefined" && !storageWarned) {
+          storageWarned = true;
+          window.alert(
+            "Browser storage is full, so uploaded prompt files could not be kept. Your actions and settings were saved, but please remove some uploaded files.",
+          );
+        }
+      } catch {
+        if (typeof window !== "undefined" && !storageWarned) {
+          storageWarned = true;
+          window.alert(
+            "Browser storage is full, so your latest changes could not be saved. Please remove some uploaded files and try again.",
+          );
+        }
+      }
     }
   }, [state, hydrated]);
 
