@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen, CircleHelp, Mail, UserRound } from "lucide-react";
+import { BookOpen, CircleHelp, Home, Mail, UserRound } from "lucide-react";
 
 export function AppHeader() {
   return (
