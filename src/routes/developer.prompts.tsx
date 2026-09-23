@@ -231,7 +231,7 @@ function WorkflowSection({
               {rows.length === 0 && (
                 <tr className="border-t border-border">
                   <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
-                    No actions match these filters.
+                    No actions yet.
                   </td>
                 </tr>
               )}
@@ -239,7 +239,7 @@ function WorkflowSection({
           </table>
         </div>
         <div className="border-t border-border px-4 py-3 text-[13px] text-muted-foreground">
-          <span>{filtered.length} action(s)</span>
+          <span>{rows.length} action(s)</span>
         </div>
 
       </div>
