@@ -57,7 +57,7 @@ function Prompts() {
         <EditableText as="h1" className="block font-heading text-2xl font-extrabold" group="Prompts & Actions">
           3. Prompts & Actions
         </EditableText>
-        <EditableText as="p" className="mt-2 block max-w-3xl text-[15px] leading-relaxed text-muted-foreground" group="Prompts & Actions">
+        <EditableText as="p" className="mt-2 block max-w-5xl text-[15px] leading-relaxed text-muted-foreground" group="Prompts & Actions">
           Manage the list of actions / questions and their corresponding Claude prompts, organized by workflow. Each item has a unique ID (A-## for the first-time standardized model, B-## for model updates), title and prompt that guides Claude's response.
         </EditableText>
       </div>
