@@ -135,7 +135,7 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
           </div>
 
           <div className="col-start-2 row-start-1 flex items-center">
-            <span className="block font-heading text-[17px] font-bold leading-tight text-navy">
+            <span className="block font-heading text-[17px] font-bold leading-none text-navy">
               Real Sector – Equity Valuation Model Assistant
             </span>
           </div>
@@ -160,7 +160,7 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
           </div>
 
           <div className="col-start-2 row-start-2 flex items-center">
-            <span className="block text-[13px] text-muted-foreground">Developer Console</span>
+            <span className="block text-[13px] leading-none text-muted-foreground">Developer Console</span>
           </div>
 
           <div className="col-start-2 row-start-3 flex flex-wrap items-center gap-2">
