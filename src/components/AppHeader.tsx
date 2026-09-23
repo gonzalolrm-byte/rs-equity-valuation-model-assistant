@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen, CircleHelp, Mail, UserRound } from "lucide-react";
+import { BookOpen, CircleHelp, Home, Mail, UserRound } from "lucide-react";
 
 export function AppHeader() {
   return (
@@ -19,6 +19,7 @@ export function AppHeader() {
         </Link>
 
         <nav className="ml-auto flex items-center gap-1 text-sm">
+          <HeaderLink to="/" icon={<Home className="size-4" />} label="Home" />
           <HeaderLink to="/help" icon={<CircleHelp className="size-4" />} label="Help" />
           <HeaderLink to="/guidelines" icon={<BookOpen className="size-4" />} label="Guidelines" />
           <HeaderLink to="/contact" icon={<Mail className="size-4" />} label="Contact" />
