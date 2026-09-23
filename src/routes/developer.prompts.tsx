@@ -94,16 +94,7 @@ function PromptsSection({
 
   return (
     <section>
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div />
-        <Button variant="secondary" onClick={() => setCreating(true)}>
-          <Plus className="size-4" />
-          Add Action
-        </Button>
-      </div>
-
-
-      <div className="mt-4 overflow-hidden rounded-xl border border-border bg-card shadow-card">
+      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-card">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[700px] text-left text-sm">
             <thead className="bg-secondary/70 text-[12px] uppercase tracking-wide text-navy-soft">
