@@ -293,6 +293,9 @@ type Ctx = {
   removeResourceFile: (id: string, fileName: string) => void;
   addResource: (resource: { name: string; description: string; kind: ResourceKind }) => void;
   deleteResource: (id: string) => void;
+  setGenericTemplateFiles: (id: string, files: File[]) => void;
+  removeGenericTemplateFile: (id: string, fileName: string) => void;
+  removeGenericTemplate: (id: string) => void;
 
   setSubsectorMeasurements: (subsector: string, setting: SubsectorMeasurementSetting) => void;
   resetSubsectorMeasurements: (subsector: string) => void;
