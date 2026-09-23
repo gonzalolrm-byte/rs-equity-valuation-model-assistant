@@ -276,6 +276,9 @@ const INITIAL_STATE: AppState = {
 
 const STORAGE_KEY = "ifc-valuation-assistant-v1";
 
+/** Only warn once per session when browser storage is full. */
+let storageWarned = false;
+
 type Ctx = {
   state: AppState;
   patch: (partial: Partial<AppState>) => void;
