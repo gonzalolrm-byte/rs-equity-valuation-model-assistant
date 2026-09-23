@@ -33,30 +33,42 @@ export const Route = createFileRoute("/developer/prompts")({
 });
 
 function Prompts() {
+  const [creating, setCreating] = useState(false);
   return (
     <div>
-      <div>
-        <EditableText as="h1" className="block font-heading text-2xl font-extrabold" group="Prompts & Actions">
-          3. Prompts & Actions
-        </EditableText>
-        <EditableText as="p" className="mt-2 block max-w-5xl text-[15px] leading-relaxed text-muted-foreground" group="Prompts & Actions">
-          Manage the list of actions / questions and their corresponding Claude prompts. Each item has a unique ID (A-##), title and prompt that guides Claude's response.
-        </EditableText>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <EditableText as="h1" className="block font-heading text-2xl font-extrabold" group="Prompts & Actions">
+            3. Prompts
+          </EditableText>
+          <EditableText as="p" className="mt-2 block max-w-2xl text-[15px] leading-relaxed text-muted-foreground" group="Prompts & Actions">
+            Manage the list of actions / questions and their corresponding Claude prompts. Each item has a unique ID (A-##), title and prompt that guides Claude's response.
+          </EditableText>
+        </div>
+        <Button variant="secondary" onClick={() => setCreating(true)}>
+          <Plus className="size-4" />
+          Add Action
+        </Button>
       </div>
 
       <div className="mt-4">
-        <PromptsSection />
+        <PromptsSection creating={creating} setCreating={setCreating} />
       </div>
     </div>
   );
 }
 
 
-function PromptsSection() {
+function PromptsSection({
+  creating,
+  setCreating,
+}: {
+  creating: boolean;
+  setCreating: (value: boolean) => void;
+}) {
   const { state, togglePromptStatus, deletePrompt, movePrompt } = useApp();
   const [editing, setEditing] = useState<PromptAction | null>(null);
 
-  const [creating, setCreating] = useState(false);
 
   const workflowPrompts = useMemo(
     () =>
@@ -82,16 +94,7 @@ function PromptsSection() {
 
   return (
     <section>
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div />
-        <Button variant="secondary" onClick={() => setCreating(true)}>
-          <Plus className="size-4" />
-          Add Action
-        </Button>
-      </div>
-
-
-      <div className="mt-4 overflow-hidden rounded-xl border border-border bg-card shadow-card">
+      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-card">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[700px] text-left text-sm">
             <thead className="bg-secondary/70 text-[12px] uppercase tracking-wide text-navy-soft">
