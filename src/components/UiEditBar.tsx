@@ -131,11 +131,29 @@ export function UiEditBar() {
             </button>
           </div>
           <p className="mt-1 text-[12px] text-muted-foreground">
-            Drag the component&apos;s edges on the page, or enter exact values. Leave a field empty
-            to keep the original.
+            Drag the component&apos;s edges to resize, drag the blue dot to move it, or enter exact
+            values. Leave a field empty to keep the original.
           </p>
 
           <div className="mt-4 grid grid-cols-2 gap-3">
+            <label className="block">
+              <span className="mb-1 block text-[12px] text-muted-foreground">Move right</span>
+              <input
+                value={layoutOverride.offsetX ?? ""}
+                placeholder="e.g. 40px or -20px"
+                onChange={(event) => ui.setLayoutOverride(layoutPath, { offsetX: event.target.value })}
+                className="w-full rounded-lg border border-input bg-card px-2.5 py-1.5 text-[13px] text-navy outline-none focus:border-primary"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-[12px] text-muted-foreground">Move down</span>
+              <input
+                value={layoutOverride.offsetY ?? ""}
+                placeholder="e.g. 24px or -10px"
+                onChange={(event) => ui.setLayoutOverride(layoutPath, { offsetY: event.target.value })}
+                className="w-full rounded-lg border border-input bg-card px-2.5 py-1.5 text-[13px] text-navy outline-none focus:border-primary"
+              />
+            </label>
             {LAYOUT_FIELDS.map((field) => (
               <label key={field.key} className="block">
                 <span className="mb-1 block text-[12px] text-muted-foreground">{field.label}</span>
