@@ -160,97 +160,21 @@ const INITIAL_GENERIC_TEMPLATES: GenericTemplate[] = [
 
 export function GenericTemplatesSection() {
   const [templates, setTemplates] = useState<GenericTemplate[]>(INITIAL_GENERIC_TEMPLATES);
-  const [adding, setAdding] = useState(false);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
 
   const update = (id: string, change: Partial<GenericTemplate>) =>
     setTemplates((prev) => prev.map((item) => (item.id === id ? { ...item, ...change } : item)));
 
-  const submit = () => {
-    if (!name.trim()) return;
-    setTemplates((prev) => [
-      ...prev,
-      {
-        id: `generic-${Date.now()}`,
-        name: name.trim(),
-        description: description.trim() || "No description provided.",
-        files: [],
-      },
-    ]);
-    setName("");
-    setDescription("");
-    setAdding(false);
-  };
-
   return (
-    <>
-      <div className="mt-4 space-y-4">
-        {templates.map((template) => (
-          <GenericTemplateRow
-            key={template.id}
-            template={template}
-            onChange={(change) => update(template.id, change)}
-            onDelete={() => setTemplates((prev) => prev.filter((item) => item.id !== template.id))}
-          />
-        ))}
-      </div>
-
-      {adding ? (
-        <section className="mt-4 rounded-xl border border-primary/40 bg-panel p-5">
-          <div className="flex items-center justify-between">
-            <h3 className="font-heading text-[16px] font-bold">New generic template</h3>
-            <button
-              type="button"
-              onClick={() => setAdding(false)}
-              className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-secondary"
-              aria-label="Cancel new generic template"
-            >
-              <X className="size-4" />
-            </button>
-          </div>
-          <div className="mt-4 grid gap-4">
-            <label className="text-[13px] font-semibold text-navy">
-              Name
-              <input
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                placeholder="e.g. Generic - Asset Heavy"
-                className="mt-1.5 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm font-normal text-navy outline-none focus:border-primary"
-              />
-            </label>
-            <label className="text-[13px] font-semibold text-navy">
-              Description
-              <textarea
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-                rows={2}
-                placeholder="What this template is used for."
-                className="mt-1.5 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm font-normal text-navy outline-none focus:border-primary"
-              />
-            </label>
-          </div>
-          <button
-            type="button"
-            onClick={submit}
-            disabled={!name.trim()}
-            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
-          >
-            <Plus className="size-4" />
-            Add template
-          </button>
-        </section>
-      ) : (
-        <button
-          type="button"
-          onClick={() => setAdding(true)}
-          className="mt-4 inline-flex items-center gap-2 rounded-lg border border-dashed border-primary/50 px-4 py-2.5 text-[13px] font-semibold text-primary transition-colors hover:bg-panel"
-        >
-          <Plus className="size-4" />
-          Add new generic template
-        </button>
-      )}
-    </>
+    <div className="mt-4 space-y-4">
+      {templates.map((template) => (
+        <GenericTemplateRow
+          key={template.id}
+          template={template}
+          onChange={(change) => update(template.id, change)}
+          onDelete={() => setTemplates((prev) => prev.filter((item) => item.id !== template.id))}
+        />
+      ))}
+    </div>
   );
 }
 
