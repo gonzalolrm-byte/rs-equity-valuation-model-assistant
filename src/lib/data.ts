@@ -371,7 +371,7 @@ export const UPDATE_ACTIONS = [
   },
 ] as const;
 
-export type ResourceKind = "template" | "reference";
+export type ResourceKind = "template" | "reference" | "guideline";
 
 export type DeveloperResource = {
   id: string;
@@ -426,6 +426,14 @@ export const INITIAL_RESOURCES: DeveloperResource[] = [
     kind: "reference",
     lastUpdated: "2026-09-01",
     files: ["Macro_Tool_2026Q3.xlsx"],
+  },
+  {
+    id: "res-guidelines",
+    name: "Valuation Guidelines",
+    description: "Reference guidance for completing the questionnaire and building standardized DCF models.",
+    kind: "guideline",
+    lastUpdated: "2026-09-01",
+    files: [],
   },
 ];
 
