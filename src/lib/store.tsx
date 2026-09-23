@@ -383,6 +383,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           deletedRegistryPromptIds: [...deletedRegistry],
           subsectorDefaultTemplates: saved.subsectorDefaultTemplates ?? {},
           subsectorConfigs: saved.subsectorConfigs ?? {},
+          genericTemplateFiles: saved.genericTemplateFiles ?? {},
+          removedGenericTemplates: saved.removedGenericTemplates ?? [],
 
 
           // merge answers field-by-field so saved state from an older question
