@@ -144,18 +144,18 @@ function DeveloperLayout({ onLock }: { onLock: () => void }) {
             <button
               type="button"
               onClick={startUiEditing}
-              className="hidden items-center gap-2 rounded-lg border border-input px-2.5 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-secondary xl:inline-flex"
+              className="hidden items-center gap-2 rounded-lg border border-input px-2.5 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-secondary lg:inline-flex"
             >
               <Pencil className="size-4" />
-              Edit User Interface
+              Edit UI
             </button>
             <button
               type="button"
               onClick={ui.startEditing}
-              className="hidden items-center gap-2 rounded-lg border border-input px-2.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-panel xl:inline-flex"
+              className="hidden items-center gap-2 rounded-lg border border-input px-2.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-panel lg:inline-flex"
             >
               <Pencil className="size-4" />
-              Edit Developer Console
+              Edit Console
             </button>
             <div className="flex items-center gap-2">
               <EditableText as="span" className="hidden text-[11px] font-semibold text-navy sm:inline" group="Developer Console">
