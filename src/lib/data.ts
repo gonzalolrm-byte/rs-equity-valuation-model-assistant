@@ -336,41 +336,6 @@ export const PUT_PRICE_MECHANISMS = [
   "Fair Value Determined by a Third Party",
 ] as const;
 
-/** Model update actions – each maps to a developer-controlled prompt action ID. */
-export const UPDATE_ACTIONS = [
-  {
-    actionId: "B-01",
-    label: "Add one year of historicals for roll-up purposes and update historical financials",
-    hint: "Rolls the model forward one year and refreshes the historical financial statements.",
-  },
-  {
-    actionId: "B-02",
-    label: "Update Cost of Equity parameters",
-    hint: "Uses the latest Cost of Equity report held in developer resources.",
-  },
-  {
-    actionId: "B-03",
-    label: "Update macro variables",
-    hint: "Inflation, FX and GDP assumptions from the latest macro tool.",
-  },
-  {
-    actionId: "B-04",
-    label: "Update YTD financials",
-    hint: "Adds year-to-date actuals from the uploaded documents.",
-  },
-  {
-    actionId: "B-05",
-    label:
-      "Update revenue, COGS and CapEx calibration factors so projections align with the client's latest projections / business plan",
-    hint: "Recalibrates projection drivers against the client's own financial model.",
-  },
-  {
-    actionId: "B-06",
-    label: "Update debt inputs so outputs match the company's projections",
-    hint: "Aligns debt schedules, drawdowns and amortization with company projections.",
-  },
-] as const;
-
 export type ResourceKind = "template" | "reference" | "guideline";
 
 export type DeveloperResource = {

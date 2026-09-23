@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, CheckCircle2, FileText, TrendingUp } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, FileText } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/Button";
 import { useApp } from "@/lib/store";
@@ -12,12 +12,12 @@ export const Route = createFileRoute("/role/user")({
       {
         name: "description",
         content:
-          "Generate a standardized valuation model for the first time, or update an existing portfolio company model with the latest data.",
+          "Generate a standardized valuation model for the first time with the latest data.",
       },
       { property: "og:title", content: "Model User — Real Sector Equity Valuation Model Assistant" },
       {
         property: "og:description",
-        content: "Generate a standardized valuation model or update an existing one.",
+        content: "Generate a standardized valuation model.",
       },
     ],
   }),
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/role/user")({
 function ModelUserPage() {
   const { state, patch } = useApp();
   const navigate = useNavigate();
-  const selected = state.workflow === "new" || state.workflow === "update" ? state.workflow : "";
+  const selected = state.workflow === "new";
 
   return (
     <div className="min-h-screen bg-background">
@@ -45,9 +45,9 @@ function ModelUserPage() {
           </EditableText>
         </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2">
+        <div className="mx-auto mt-10 grid max-w-xl gap-6">
           <ChoiceCard
-            selected={selected === "new"}
+            selected={selected}
             onSelect={() => patch({ workflow: "new" })}
             tone="primary"
             icon={<FileText className="size-7 text-primary" />}
@@ -56,19 +56,6 @@ function ModelUserPage() {
             benefits={[
               "Find the right template",
               "Automatically adapt and populate",
-              "Highlight missing information",
-            ]}
-          />
-          <ChoiceCard
-            selected={selected === "update"}
-            onSelect={() => patch({ workflow: "update" })}
-            tone="success"
-            icon={<TrendingUp className="size-7 text-success" />}
-            title="Update a Standardized Model"
-            description="Select this option if you already have a standardized valuation model and want to update it with the latest financial, operational, and market information."
-            benefits={[
-              "Upload your existing model",
-              "Update with latest data",
               "Highlight missing information",
             ]}
           />
@@ -86,14 +73,7 @@ function ModelUserPage() {
             <Button
               disabled={!selected}
               className="min-w-48 py-3"
-              onClick={() =>
-                navigate({
-                  to:
-                    selected === "new"
-                      ? "/new-model/company-information"
-                      : "/update-model/upload",
-                })
-              }
+              onClick={() => navigate({ to: "/new-model/company-information" })}
             >
               Next
               <ArrowRight className="size-4" />
