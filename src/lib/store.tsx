@@ -223,6 +223,10 @@ export type AppState = {
   sectorSpecifics: SectorSpecifics;
   /** Uploaded template file names per subsector template (prototype: names only). */
   subsectorTemplates: Record<string, string[]>;
+  /** Uploaded file names per generic DCF template (prototype: names only). */
+  genericTemplateFiles: Record<string, string[]>;
+  /** Generic DCF templates removed by the developer. */
+  removedGenericTemplates: string[];
   /**
    * Default templates generated per subsector from a generic template plus a
    * developer prompt. Prototype: metadata only, no workbook is produced.
@@ -258,6 +262,8 @@ const INITIAL_STATE: AppState = {
   resources: INITIAL_RESOURCES,
   sectorSpecifics: {},
   subsectorTemplates: {},
+  genericTemplateFiles: {},
+  removedGenericTemplates: [],
   subsectorDefaultTemplates: {},
   subsectorConfigs: {},
 
@@ -287,6 +293,9 @@ type Ctx = {
   removeResourceFile: (id: string, fileName: string) => void;
   addResource: (resource: { name: string; description: string; kind: ResourceKind }) => void;
   deleteResource: (id: string) => void;
+  setGenericTemplateFiles: (id: string, files: File[]) => void;
+  removeGenericTemplateFile: (id: string, fileName: string) => void;
+  removeGenericTemplate: (id: string) => void;
 
   setSubsectorMeasurements: (subsector: string, setting: SubsectorMeasurementSetting) => void;
   resetSubsectorMeasurements: (subsector: string) => void;
@@ -374,6 +383,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           deletedRegistryPromptIds: [...deletedRegistry],
           subsectorDefaultTemplates: saved.subsectorDefaultTemplates ?? {},
           subsectorConfigs: saved.subsectorConfigs ?? {},
+          genericTemplateFiles: saved.genericTemplateFiles ?? {},
+          removedGenericTemplates: saved.removedGenericTemplates ?? [],
 
 
           // merge answers field-by-field so saved state from an older question
@@ -574,6 +585,29 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         setState((prev) => ({
           ...prev,
           resources: prev.resources.filter((resource) => resource.id !== id),
+        })),
+      setGenericTemplateFiles: (id, files) =>
+        setState((prev) => ({
+          ...prev,
+          genericTemplateFiles: {
+            ...prev.genericTemplateFiles,
+            [id]: files.map((file) => file.name),
+          },
+        })),
+      removeGenericTemplateFile: (id, fileName) =>
+        setState((prev) => ({
+          ...prev,
+          genericTemplateFiles: {
+            ...prev.genericTemplateFiles,
+            [id]: (prev.genericTemplateFiles[id] ?? []).filter((file) => file !== fileName),
+          },
+        })),
+      removeGenericTemplate: (id) =>
+        setState((prev) => ({
+          ...prev,
+          removedGenericTemplates: prev.removedGenericTemplates.includes(id)
+            ? prev.removedGenericTemplates
+            : [...prev.removedGenericTemplates, id],
         })),
 
       setSubsectorMeasurements: (subsector, setting) =>
