@@ -223,6 +223,10 @@ export type AppState = {
   sectorSpecifics: SectorSpecifics;
   /** Uploaded template file names per subsector template (prototype: names only). */
   subsectorTemplates: Record<string, string[]>;
+  /** Uploaded file names per generic DCF template (prototype: names only). */
+  genericTemplateFiles: Record<string, string[]>;
+  /** Generic DCF templates removed by the developer. */
+  removedGenericTemplates: string[];
   /**
    * Default templates generated per subsector from a generic template plus a
    * developer prompt. Prototype: metadata only, no workbook is produced.
