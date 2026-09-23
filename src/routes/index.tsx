@@ -171,7 +171,7 @@ function OptionCard({
         >
           {icon}
         </span>
-        <span className="flex flex-col items-end gap-2">
+        <span className="flex flex-col items-end gap-1">
           <span
             className={[
               "flex size-6 items-center justify-center rounded-full border-2",
