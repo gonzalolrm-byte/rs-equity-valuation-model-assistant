@@ -51,27 +51,8 @@ function Prompts() {
           3. Prompts & Actions
         </EditableText>
         <EditableText as="p" className="mt-2 block max-w-5xl text-[15px] leading-relaxed text-muted-foreground" group="Prompts & Actions">
-          Manage the list of actions / questions and their corresponding Claude prompts, organized by workflow. Each item has a unique ID (A-## for the first-time standardized model, B-## for model updates), title and prompt that guides Claude's response.
+          Manage the list of actions / questions and their corresponding Claude prompts. Each item has a unique ID (A-##), title and prompt that guides Claude's response.
         </EditableText>
-      </div>
-
-      <div className="mt-6 inline-flex rounded-xl border border-border bg-card p-1 shadow-card">
-        {WORKFLOWS.map((item) => (
-          <button
-            key={item.key}
-            type="button"
-            onClick={() => setActiveWorkflow(item.key)}
-            aria-pressed={item.key === activeWorkflow}
-            className={[
-              "rounded-lg px-4 py-2 text-sm font-semibold transition-colors",
-              item.key === activeWorkflow
-                ? "bg-primary text-primary-foreground"
-                : "text-navy-soft hover:bg-secondary",
-            ].join(" ")}
-          >
-            {item.key}
-          </button>
-        ))}
       </div>
 
       <div className="mt-8">
