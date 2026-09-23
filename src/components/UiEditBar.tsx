@@ -416,6 +416,13 @@ function readPageText(key: string) {
   return resolvePath(path)?.textContent ?? "";
 }
 
+/** Short human-readable label for a `${scope}|${cssPath}` key. */
+function shortPath(key: string) {
+  const path = key.slice(key.indexOf("|") + 1);
+  const last = path.split(">").pop()?.trim() ?? path;
+  return last.replace(":nth-of-type(", " #").replace(")", "");
+}
+
 const WRAP_OPTIONS = [
   { value: "", label: "Default" },
   { value: "normal", label: "Wrap on" },
