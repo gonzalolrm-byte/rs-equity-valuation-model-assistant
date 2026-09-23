@@ -190,11 +190,13 @@ export function GenericTemplatesSection() {
 
 function GenericTemplateRow({
   template,
-  onChange,
+  onUpload,
+  onRemoveFile,
   onDelete,
 }: {
   template: GenericTemplate;
-  onChange: (change: Partial<GenericTemplate>) => void;
+  onUpload: (files: File[]) => void;
+  onRemoveFile: (fileName: string) => void;
   onDelete: () => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
