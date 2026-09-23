@@ -122,8 +122,18 @@ export function UiLayoutEditor() {
       const element = resolvePath(path);
       if (!element || isEditorChrome(element)) continue;
       for (const prop of MANAGED_PROPS) {
-        const value = override[prop];
-        if (value) element.style.setProperty(kebab(prop), value);
+        const value = override[prop as keyof UiLayoutOverride];
+        if (typeof value === "string" && value) element.style.setProperty(kebab(prop), value);
+      }
+      // Presentation-only delete: hide the component entirely.
+      if (override.hidden) element.style.setProperty("display", "none", "important");
+      // Free repositioning via the move handle.
+      if (override.offsetX || override.offsetY) {
+        element.style.setProperty("position", "relative");
+        element.style.setProperty(
+          "transform",
+          `translate(${override.offsetX || "0px"}, ${override.offsetY || "0px"})`,
+        );
       }
       appliedRef.current.add(element);
     }
