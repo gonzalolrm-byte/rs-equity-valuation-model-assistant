@@ -418,7 +418,7 @@ function ResourceRow({ id }: { id: string }) {
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="font-heading text-[16px] font-bold">{resource.name}</h2>
             <span className="rounded-full bg-secondary px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-navy-soft">
-              {resource.kind === "template" ? "Template" : "Reference data"}
+              {resource.kind === "template" ? "Template" : resource.kind === "reference" ? "Reference data" : "Guideline"}
             </span>
           </div>
           <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
