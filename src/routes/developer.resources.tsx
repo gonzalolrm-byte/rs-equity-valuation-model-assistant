@@ -1,4 +1,5 @@
 import { Outlet, createFileRoute } from "@tanstack/react-router";
+import { BookOpen, FileSpreadsheet, LineChart } from "lucide-react";
 
 export const Route = createFileRoute("/developer/resources")({
   component: CoreInformationLayout,
