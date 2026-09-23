@@ -29,6 +29,9 @@ export const Route = createFileRoute("/developer/resources/market-data")({
 function CoreMarketData() {
   return (
     <div>
+      <div className="mb-4">
+        <CoreBackButton />
+      </div>
       <CoreSectionHeader
         title="Core Market Data"
         description="Reference data such as cost of equity reports and macro assumptions that feed into the models."
