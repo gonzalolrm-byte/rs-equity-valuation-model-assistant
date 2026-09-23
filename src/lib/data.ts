@@ -507,7 +507,6 @@ export const PROMPT_CATEGORIES = [
   "Other Modeling Key Inputs",
   "Document Upload",
   "Model Generation",
-  "Model Updates",
   "Review and Generate",
 ];
 
@@ -515,9 +514,6 @@ export const PROMPT_STEPS = [
   "Workflow A – Step 1: Template Selection & Key Inputs",
   "Workflow A – Step 2: Document Upload",
   "Workflow A – Step 3: Model Generation",
-  "Workflow B – Step 1: Document Upload",
-  "Workflow B – Step 2: Model Updates",
-  "Workflow B – Step 3: Review and Generate",
 ];
 
 /**
