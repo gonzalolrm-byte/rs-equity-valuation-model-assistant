@@ -262,6 +262,8 @@ const INITIAL_STATE: AppState = {
   resources: INITIAL_RESOURCES,
   sectorSpecifics: {},
   subsectorTemplates: {},
+  genericTemplateFiles: {},
+  removedGenericTemplates: [],
   subsectorDefaultTemplates: {},
   subsectorConfigs: {},
 
