@@ -244,7 +244,7 @@ function GenericTemplateRow({
           className="hidden"
           onChange={(event) => {
             if (event.target.files?.length) {
-              onChange({ files: Array.from(event.target.files).map((file) => file.name) });
+              onUpload(Array.from(event.target.files));
             }
             event.target.value = "";
           }}
@@ -262,7 +262,7 @@ function GenericTemplateRow({
               <span className="min-w-0 flex-1 truncate text-sm text-navy">{file}</span>
               <button
                 type="button"
-                onClick={() => onChange({ files: template.files.filter((item) => item !== file) })}
+                onClick={() => onRemoveFile(file)}
                 className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                 aria-label={`Remove ${file}`}
               >
