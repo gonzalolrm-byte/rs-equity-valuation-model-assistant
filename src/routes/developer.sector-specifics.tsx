@@ -44,6 +44,7 @@ export const Route = createFileRoute("/developer/sector-specifics")({
   component: SectorSpecifics,
 });
 
+const CORE_BASE_TEMPLATE = "Generic - Consolidated DCF";
 const GENERIC_TEMPLATES = ["Generic - Unit Economics", "Generic - Percentage Based"];
 
 /** Capacity choices a developer can offer; the two special entries are implicit. */
@@ -607,7 +608,7 @@ function DefaultTemplateGenerator({
 }) {
   const { state, generateSubsectorDefaultTemplate, clearSubsectorDefaultTemplate } = useApp();
   const existing = (state.subsectorDefaultTemplates ?? {})[subsector];
-  const [base, setBase] = useState(existing?.baseTemplate ?? GENERIC_TEMPLATES[0]!);
+  const [base, setBase] = useState(CORE_BASE_TEMPLATE);
   const [prompt, setPrompt] = useState(existing?.prompt ?? "");
   const [open, setOpen] = useState(false);
   const [extraIds, setExtraIds] = useState<string[]>(existing?.extraPromptIds ?? ["A-001"]);
@@ -642,7 +643,7 @@ function DefaultTemplateGenerator({
           <p className="text-[13px] font-semibold text-navy">Default template</p>
           <p className="mt-1 text-[12px] text-muted-foreground">
             {existing
-              ? `${existing.fileName} · based on ${existing.baseTemplate} · generated ${new Date(existing.generatedAt).toLocaleString()}`
+              ? `${existing.fileName} · based on ${CORE_BASE_TEMPLATE} · generated ${new Date(existing.generatedAt).toLocaleString()}`
               : "Generate a default template from a generic DCF template and adapt it with a prompt."}
           </p>
         </div>
@@ -701,7 +702,7 @@ function DefaultTemplateGenerator({
               onChange={(event) => setBase(event.target.value)}
               className="mt-1.5 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm font-normal text-navy focus:border-primary focus:outline-none"
             >
-              {GENERIC_TEMPLATES.map((item) => (
+              {[CORE_BASE_TEMPLATE].map((item) => (
                 <option key={item} value={item}>
                   {item}
                 </option>
