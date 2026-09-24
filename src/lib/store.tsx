@@ -163,6 +163,8 @@ export type SubsectorDefaultTemplate = {
   generatedAt: string;
   outputMeasurement: string;
   capacityMeasurements: string[];
+  /** Optional extra prompts (by ID) attached on top of the mandatory A-001. */
+  extraPromptIds?: string[];
   /** The generated file body, kept so the developer can open or download it later. */
   content?: string;
 };
@@ -311,6 +313,7 @@ type Ctx = {
       prompt: string;
       outputMeasurement: string;
       capacityMeasurements: string[];
+      extraPromptIds?: string[];
     },
   ) => void;
   clearSubsectorDefaultTemplate: (subsector: string) => void;
@@ -684,6 +687,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             ["Generated at", generatedAt],
             ["Maximum Output / Units Sold measurement", input.outputMeasurement],
             ["Capacity measurements offered", input.capacityMeasurements.join("; ")],
+            ["Additional prompts applied", (input.extraPromptIds ?? []).join("; ") || "none"],
             ["Adaptation prompt", input.prompt],
           ];
           const content = rows
@@ -700,6 +704,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
                 generatedAt,
                 outputMeasurement: input.outputMeasurement,
                 capacityMeasurements: input.capacityMeasurements,
+                extraPromptIds: input.extraPromptIds ?? [],
                 content,
               },
             },
