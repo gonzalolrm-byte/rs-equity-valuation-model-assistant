@@ -163,6 +163,8 @@ export type SubsectorDefaultTemplate = {
   generatedAt: string;
   outputMeasurement: string;
   capacityMeasurements: string[];
+  /** Automatic summary of the developer settings used for this generation. */
+  specificationSummary?: string;
   /** Prompts (by ID) attached to this template. A-001 is pre-selected but optional. */
   extraPromptIds?: string[];
   /** The generated file body, kept so the developer can open or download it later. */
@@ -278,11 +280,10 @@ const INITIAL_STATE: AppState = {
 
 const STORAGE_KEY = "ifc-valuation-assistant-v1";
 
-const CORE_BASE_TEMPLATE = "Generic - Consolidated DCF";
+const CONSOLIDATED_DCF_FILE = "Generic (Consolidated DCF) - RS template.xlsx";
 
 function migrateGenericTemplateName(value: string) {
   return value
-    .replace(/Generic\s*-\s*(?:Unit Economics|Percentage Based)/gi, CORE_BASE_TEMPLATE)
     .replace(/\s*Keep all formulas, tabs and links intact\./gi, "");
 }
 
@@ -322,6 +323,7 @@ type Ctx = {
       outputMeasurement: string;
       capacityMeasurements: string[];
       extraPromptIds?: string[];
+      specificationSummary?: string;
     },
   ) => void;
   clearSubsectorDefaultTemplate: (subsector: string) => void;
@@ -408,7 +410,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             subsector,
             {
               ...template,
-              baseTemplate: CORE_BASE_TEMPLATE,
+              baseTemplate:
+                template.baseTemplate === "Generic - Consolidated DCF"
+                  ? CONSOLIDATED_DCF_FILE
+                  : template.baseTemplate,
               prompt: migrateGenericTemplateName(template.prompt),
               ...(template.content
                 ? { content: migrateGenericTemplateName(template.content) }
@@ -723,6 +728,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             ["Maximum Output / Units Sold measurement", input.outputMeasurement],
             ["Capacity measurements offered", input.capacityMeasurements.join("; ")],
             ["Additional prompts applied", (input.extraPromptIds ?? []).join("; ") || "none"],
+            ["Developer specification summary", input.specificationSummary ?? ""],
             ["Adaptation prompt", prompt],
           ];
           const content = rows
@@ -740,6 +746,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
                 outputMeasurement: input.outputMeasurement,
                 capacityMeasurements: input.capacityMeasurements,
                 extraPromptIds: input.extraPromptIds ?? [],
+                ...(input.specificationSummary
+                  ? { specificationSummary: input.specificationSummary }
+                  : {}),
                 content,
               },
             },
