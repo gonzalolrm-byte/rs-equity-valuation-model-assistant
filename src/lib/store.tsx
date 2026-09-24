@@ -163,7 +163,7 @@ export type SubsectorDefaultTemplate = {
   generatedAt: string;
   outputMeasurement: string;
   capacityMeasurements: string[];
-  /** Optional extra prompts (by ID) attached on top of the mandatory A-001. */
+  /** Prompts (by ID) attached to this template. A-001 is pre-selected but optional. */
   extraPromptIds?: string[];
   /** The generated file body, kept so the developer can open or download it later. */
   content?: string;
