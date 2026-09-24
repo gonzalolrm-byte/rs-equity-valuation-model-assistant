@@ -156,6 +156,12 @@ export class WorkbookEditor {
           return n === "#REF!" ? "" : m.replace(r, n);
         });
         xml = xml.replace(/\bsqref="([^"]+)"/g, (_m, v: string) => `sqref="${fixSqref(v)}"`);
+        xml = xml
+          .replace(/<dataValidation\b[^>]*\bsqref=""[^>]*(?:\/>|>[\s\S]*?<\/dataValidation>)/g, "")
+          .replace(/<conditionalFormatting\b[^>]*\bsqref=""[^>]*>[\s\S]*?<\/conditionalFormatting>/g, "")
+          .replace(/<dataValidations\b[^>]*>\s*<\/dataValidations>/g, "")
+          .replace(/(<dataValidations\b[^>]*\bcount=")\d+"/, (_m, a: string) =>
+            `${a}${(xml.match(/<dataValidation\b/g) ?? []).length}"`);
         xml = xml.replace(/<dimension\b[^>]*\/>/, "");
         xml = xml.replace(/<mergeCells count="\d+">/, () => {
           const n = (xml.match(/<mergeCell\b/g) ?? []).length;
