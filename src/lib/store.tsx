@@ -171,6 +171,10 @@ export type SubsectorDefaultTemplate = {
   extraPromptIds?: string[];
   /** The generated file body, kept so the developer can open or download it later. */
   content?: string;
+  /** Cloud storage path of the real adapted .xlsx workbook (Claude-adapted). */
+  storagePath?: string;
+  /** Cell-level changes Claude applied, plus any skipped for integrity. */
+  changeLog?: string[];
 };
 
 /**
@@ -349,6 +353,9 @@ type Ctx = {
       extraPromptIds?: string[];
       specificationSummary?: string;
       mode?: "as_is" | "adapt";
+      storagePath?: string;
+      fileName?: string;
+      changeLog?: string[];
     },
   ) => void;
   clearSubsectorDefaultTemplate: (subsector: string) => void;
@@ -769,7 +776,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             subsectorDefaultTemplates: {
               ...(prev.subsectorDefaultTemplates ?? {}),
               [subsector]: {
-                fileName: asIs ? input.baseTemplate : `Default_Template_${slug}.csv`,
+                fileName: asIs
+                  ? input.baseTemplate
+                  : input.fileName ?? `Default_Template_${slug}.csv`,
+                ...(input.storagePath ? { storagePath: input.storagePath } : {}),
+                ...(input.changeLog ? { changeLog: input.changeLog } : {}),
                 mode: asIs ? "as_is" : "adapt",
                 baseTemplate: input.baseTemplate,
                 prompt,
