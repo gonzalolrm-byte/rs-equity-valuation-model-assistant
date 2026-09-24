@@ -721,10 +721,10 @@ function DefaultTemplateGenerator({
           <div className="text-[13px] font-semibold text-navy">
             Additional prompts to apply
             <p className="mt-0.5 text-[12px] font-normal text-muted-foreground">
-              A-001 is always applied. Select any other prompts to attach to this sub-sector.
+              A-001 is pre-selected but optional — untick it to exclude it. Tick any other prompts to attach to this sub-sector.
             </p>
             {optionalPrompts.length === 0 ? (
-              <p className="mt-2 text-[12px] font-normal text-muted-foreground">No other prompts available yet.</p>
+              <p className="mt-2 text-[12px] font-normal text-muted-foreground">No prompts available yet.</p>
             ) : (
               <div className="mt-2 grid max-h-48 gap-1.5 overflow-y-auto rounded-lg border border-input bg-card p-2.5 sm:grid-cols-2">
                 {optionalPrompts.map((item) => (
