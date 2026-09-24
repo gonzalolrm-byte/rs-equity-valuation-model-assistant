@@ -617,14 +617,12 @@ function DefaultTemplateGenerator({
     ...DEFAULT_SUBSECTOR_CONFIG,
     ...((state.subsectorConfigs ?? {})[subsector] ?? {}),
   };
-  const uploadedGenericTemplates = state.genericTemplateFiles?.["generic-consolidated-dcf"] ?? [];
-  const genericTemplates = uploadedGenericTemplates.length
-    ? uploadedGenericTemplates
-    : FALLBACK_GENERIC_TEMPLATES;
+  const genericTemplates = FALLBACK_GENERIC_TEMPLATES;
   const initialBase = existing?.baseTemplate && genericTemplates.includes(existing.baseTemplate)
     ? existing.baseTemplate
     : genericTemplates[0] ?? CONSOLIDATED_DCF_FILE;
   const [base, setBase] = useState(initialBase);
+  const [mode, setMode] = useState<"as_is" | "adapt">(existing?.mode ?? "adapt");
   const [prompt, setPrompt] = useState(removeLegacyPromptInstruction(existing?.prompt ?? ""));
   const [open, setOpen] = useState(false);
   const [extraIds, setExtraIds] = useState<string[]>(existing?.extraPromptIds ?? ["A-001"]);
@@ -654,6 +652,17 @@ function DefaultTemplateGenerator({
   const defaultPrompt = `${a001Selected ? "Following the instructions in prompt A-001 (see the Prompts section), " : ""}based on the developer specifications below, identify and select the appropriate generic template. Use "${base}" to regenerate a new default template for ${subsector}. Available generic templates: ${genericTemplates.map((name) => `"${name}"`).join(" and ")}. Developer specification summary: ${specificationSummary}.`;
 
   const generate = () => {
+    if (mode === "as_is") {
+      generateSubsectorDefaultTemplate(subsector, {
+        baseTemplate: base,
+        prompt: "",
+        outputMeasurement,
+        capacityMeasurements,
+        mode: "as_is",
+      });
+      setOpen(false);
+      return;
+    }
     const validExtras = extraIds.filter((id) => optionalPrompts.some((p) => p.id === id)).sort();
     const otherExtras = validExtras.filter((id) => !(a001Selected && id === "A-001"));
     const basePrompt = prompt.trim() || defaultPrompt;
@@ -667,6 +676,7 @@ function DefaultTemplateGenerator({
       capacityMeasurements,
       extraPromptIds: validExtras,
       specificationSummary,
+      mode: "adapt",
     });
     setOpen(false);
   };
@@ -678,8 +688,10 @@ function DefaultTemplateGenerator({
           <p className="text-[13px] font-semibold text-navy">Default template</p>
           <p className="mt-1 text-[12px] text-muted-foreground">
             {existing
-              ? `${existing.fileName} · based on ${existing.baseTemplate} · generated ${new Date(existing.generatedAt).toLocaleString()}`
-              : "Generate a default template from a generic DCF template and adapt it with a prompt."}
+              ? existing.mode === "as_is"
+                ? `${existing.baseTemplate} · used as-is (unchanged) · made available ${new Date(existing.generatedAt).toLocaleString()}`
+                : `${existing.fileName} · adapted from ${existing.baseTemplate} · generated ${new Date(existing.generatedAt).toLocaleString()}`
+              : "Select a generic RS template, then use it as-is or adapt it to this sub-sector."}
           </p>
         </div>
         <button
@@ -722,7 +734,7 @@ function DefaultTemplateGenerator({
         )}
       </div>
 
-      {existing && !open && (
+      {existing && !open && existing.mode !== "as_is" && (
         <div className="mt-3 space-y-2">
           <div className="rounded-lg border border-border bg-card px-3 py-2.5">
             <p className="text-[12px] font-semibold text-navy">Developer specification summary</p>
@@ -752,6 +764,24 @@ function DefaultTemplateGenerator({
               ))}
             </select>
           </label>
+          <div className="text-[13px] font-semibold text-navy">
+            Template option
+            <div className="mt-1.5 grid gap-2 sm:grid-cols-2">
+              {([
+                ["as_is", "Use Generic Template As-Is", "The selected template stays unchanged and becomes this sub-sector's template."],
+                ["adapt", "Adapt Generic Template", "Adapt the selected template using this sub-sector's configuration and the selected prompts."],
+              ] as const).map(([value, label, hint]) => (
+                <label key={value} className={`flex cursor-pointer items-start gap-2 rounded-lg border bg-card p-3 ${mode === value ? "border-primary" : "border-input"}`}>
+                  <input type="radio" name={`mode-${subsector}`} checked={mode === value} onChange={() => setMode(value)} className="mt-0.5 accent-primary" />
+                  <span>
+                    <span className="block text-[13px] font-semibold">{label}</span>
+                    <span className="block text-[12px] font-normal text-muted-foreground">{hint}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+          {mode === "adapt" && (<>
           <div className="rounded-lg border border-border bg-card px-3 py-2.5">
             <p className="text-[13px] font-semibold text-navy">Developer specification summary</p>
             <p className="mt-1 text-[12px] leading-relaxed text-navy-soft">{specificationSummary}</p>
@@ -791,22 +821,23 @@ function DefaultTemplateGenerator({
               </div>
             )}
           </div>
+          </>)}
           <div className="flex flex-wrap gap-2">
-            <button
+            {mode === "adapt" && <button
               type="button"
               onClick={() => setPrompt(defaultPrompt)}
               className="inline-flex items-center gap-2 rounded-lg border border-input px-3.5 py-2 text-[13px] font-semibold text-navy transition-colors hover:bg-secondary"
             >
               <RotateCcw className="size-4" />
               Use suggested prompt
-            </button>
+            </button>}
             <button
               type="button"
               onClick={generate}
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
             >
               <Wand2 className="size-4" />
-              Generate
+              {mode === "as_is" ? "Make available" : "Generate"}
             </button>
             <button
               type="button"

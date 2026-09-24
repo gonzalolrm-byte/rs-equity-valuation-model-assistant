@@ -326,6 +326,7 @@ type Ctx = {
       capacityMeasurements: string[];
       extraPromptIds?: string[];
       specificationSummary?: string;
+      mode?: "as_is" | "adapt";
     },
   ) => void;
   clearSubsectorDefaultTemplate: (subsector: string) => void;
