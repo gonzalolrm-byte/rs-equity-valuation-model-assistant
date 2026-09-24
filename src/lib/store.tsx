@@ -280,8 +280,7 @@ const INITIAL_STATE: AppState = {
 
 const STORAGE_KEY = "ifc-valuation-assistant-v1";
 
-const UNIT_ECONOMICS_TEMPLATE = "Generic - Unit Economics";
-const PERCENTAGE_BASED_TEMPLATE = "Generic - Percentage Based";
+const CONSOLIDATED_DCF_FILE = "Generic (Consolidated DCF) - RS template.xlsx";
 
 function migrateGenericTemplateName(value: string) {
   return value
@@ -398,15 +397,14 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         ];
 
         const savedGenericFiles = saved.genericTemplateFiles ?? {};
-        const consolidatedFiles = savedGenericFiles["generic-consolidated-dcf"] ?? [];
-        const genericTemplateFiles = {
-          "generic-unit-economics": [
-            ...new Set([...(savedGenericFiles["generic-unit-economics"] ?? []), ...consolidatedFiles]),
-          ],
-          "generic-percentage-based": [
-            ...new Set([...(savedGenericFiles["generic-percentage-based"] ?? []), ...consolidatedFiles]),
-          ],
-        };
+        const consolidatedFiles = [
+          ...(savedGenericFiles["generic-consolidated-dcf"] ?? []),
+          ...(savedGenericFiles["generic-unit-economics"] ?? []),
+          ...(savedGenericFiles["generic-percentage-based"] ?? []),
+        ];
+        const genericTemplateFiles = consolidatedFiles.length
+          ? { "generic-consolidated-dcf": [...new Set(consolidatedFiles)] }
+          : {};
         const subsectorDefaultTemplates = Object.fromEntries(
           Object.entries(saved.subsectorDefaultTemplates ?? {}).map(([subsector, template]) => [
             subsector,
@@ -414,9 +412,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
               ...template,
               baseTemplate:
                 template.baseTemplate === "Generic - Consolidated DCF"
-                  ? (saved.subsectorConfigs?.[subsector]?.modelBasis === "percentage"
-                      ? PERCENTAGE_BASED_TEMPLATE
-                      : UNIT_ECONOMICS_TEMPLATE)
+                  ? CONSOLIDATED_DCF_FILE
                   : template.baseTemplate,
               prompt: migrateGenericTemplateName(template.prompt),
               ...(template.content

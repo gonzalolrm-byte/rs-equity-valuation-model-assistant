@@ -44,9 +44,9 @@ export const Route = createFileRoute("/developer/sector-specifics")({
   component: SectorSpecifics,
 });
 
-const UNIT_ECONOMICS_TEMPLATE = "Generic - Unit Economics";
-const PERCENTAGE_BASED_TEMPLATE = "Generic - Percentage Based";
-const GENERIC_TEMPLATES = [UNIT_ECONOMICS_TEMPLATE, PERCENTAGE_BASED_TEMPLATE];
+const CONSOLIDATED_DCF_FILE = "Generic (Consolidated DCF) - RS template.xlsx";
+const SOTP_FILE = "Generic (SOTP) - RS template.xlsx";
+const FALLBACK_GENERIC_TEMPLATES = [CONSOLIDATED_DCF_FILE, SOTP_FILE];
 
 function removeLegacyPromptInstruction(value: string) {
   return value.replace(/\s*Keep all formulas, tabs and links intact\./gi, "");
@@ -88,7 +88,7 @@ function SectorSpecifics() {
   const subsectors = [
     ...(SUBSECTORS[sector] ?? []).filter((item) => !removed.includes(item)),
     ...custom,
-    ...GENERIC_TEMPLATES,
+    "Generic - Consolidated DCF",
   ];
 
   const addSubsector = () => {
@@ -156,7 +156,7 @@ function SectorSpecifics() {
             key={subsector}
             sector={sector}
             subsector={subsector}
-            deletable={!GENERIC_TEMPLATES.includes(subsector)}
+            deletable={subsector !== "Generic - Consolidated DCF"}
           />
         ))}
       </div>
@@ -617,12 +617,13 @@ function DefaultTemplateGenerator({
     ...DEFAULT_SUBSECTOR_CONFIG,
     ...((state.subsectorConfigs ?? {})[subsector] ?? {}),
   };
-  const recommendedBase = config.modelBasis === "percentage"
-    ? PERCENTAGE_BASED_TEMPLATE
-    : UNIT_ECONOMICS_TEMPLATE;
-  const initialBase = existing?.baseTemplate && GENERIC_TEMPLATES.includes(existing.baseTemplate)
+  const uploadedGenericTemplates = state.genericTemplateFiles?.["generic-consolidated-dcf"] ?? [];
+  const genericTemplates = uploadedGenericTemplates.length
+    ? uploadedGenericTemplates
+    : FALLBACK_GENERIC_TEMPLATES;
+  const initialBase = existing?.baseTemplate && genericTemplates.includes(existing.baseTemplate)
     ? existing.baseTemplate
-    : recommendedBase;
+    : genericTemplates[0] ?? CONSOLIDATED_DCF_FILE;
   const [base, setBase] = useState(initialBase);
   const [prompt, setPrompt] = useState(removeLegacyPromptInstruction(existing?.prompt ?? ""));
   const [open, setOpen] = useState(false);
@@ -650,7 +651,7 @@ function DefaultTemplateGenerator({
     `Capacity measurements: ${capacityMeasurements.join(", ") || "none"}`,
     `Selected prompts: ${selectedPromptIds.join(", ") || "none"}`,
   ].join("; ");
-  const defaultPrompt = `${a001Selected ? "Following the instructions in prompt A-001 (see the Prompts section), " : ""}based on the developer specifications below, select and use the ${base} template to regenerate a new default template for ${subsector}. Developer specification summary: ${specificationSummary}.`;
+  const defaultPrompt = `${a001Selected ? "Following the instructions in prompt A-001 (see the Prompts section), " : ""}based on the developer specifications below, identify and select the appropriate generic template. Use "${base}" to regenerate a new default template for ${subsector}. Available generic templates: ${genericTemplates.map((name) => `"${name}"`).join(" and ")}. Developer specification summary: ${specificationSummary}.`;
 
   const generate = () => {
     const validExtras = extraIds.filter((id) => optionalPrompts.some((p) => p.id === id)).sort();
@@ -744,7 +745,7 @@ function DefaultTemplateGenerator({
               onChange={(event) => setBase(event.target.value)}
               className="mt-1.5 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm font-normal text-navy focus:border-primary focus:outline-none"
             >
-              {GENERIC_TEMPLATES.map((item) => (
+              {genericTemplates.map((item) => (
                 <option key={item} value={item}>
                   {item}
                 </option>
