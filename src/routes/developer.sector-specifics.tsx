@@ -695,7 +695,9 @@ function DefaultTemplateGenerator({
   ].join("; ");
   const defaultPrompt = DEFAULT_SUBSECTOR_PROMPT;
 
-  const generate = () => {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const generate = async () => {
     if (mode === "as_is") {
       generateSubsectorDefaultTemplate(subsector, {
         baseTemplate: base,
@@ -713,16 +715,56 @@ function DefaultTemplateGenerator({
     const finalPrompt = otherExtras.length
       ? `${basePrompt} Also apply prompt${otherExtras.length > 1 ? "s" : ""} ${otherExtras.join(", ")} (see the Prompts section).`
       : basePrompt;
-    generateSubsectorDefaultTemplate(subsector, {
-      baseTemplate: base,
-      prompt: finalPrompt,
-      outputMeasurement,
-      capacityMeasurements,
-      extraPromptIds: validExtras,
-      specificationSummary,
-      mode: "adapt",
+    const selectedPrompts = validExtras.flatMap((id) => {
+      const item = optionalPrompts.find((p) => p.id === id);
+      return item ? [{ id: item.id, title: item.title || item.category, text: item.promptText ?? "" }] : [];
     });
-    setOpen(false);
+    const instructions = a001Selected
+      ? `Following the instructions in prompt A-001 (see the Prompts section), ${finalPrompt}`
+      : finalPrompt;
+    setBusy(true);
+    setError(null);
+    try {
+      const { adaptSubsectorTemplate } = await import("@/lib/rs-templates.functions");
+      const result = await adaptSubsectorTemplate({
+        data: { subsector, baseTemplate: base, instructions, specificationSummary, prompts: selectedPrompts },
+      });
+      generateSubsectorDefaultTemplate(subsector, {
+        baseTemplate: result.masterUsed,
+        prompt: finalPrompt,
+        outputMeasurement,
+        capacityMeasurements,
+        extraPromptIds: validExtras,
+        specificationSummary,
+        mode: "adapt",
+        storagePath: result.path,
+        fileName: result.fileName,
+        changeLog: [
+          ...(result.summary ? [result.summary] : []),
+          ...result.applied.map((line) => `Changed ${line}`),
+          ...result.skipped.map((line) => `Skipped ${line}`),
+        ],
+      });
+      setOpen(false);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const openStored = async (download: boolean) => {
+    if (!existing?.storagePath) {
+      (download ? downloadGenerated : openGenerated)(existing?.fileName ?? "", existing?.content ?? "");
+      return;
+    }
+    try {
+      const { getTemplateDownloadUrl } = await import("@/lib/rs-templates.functions");
+      const { url } = await getTemplateDownloadUrl({ data: { path: existing.storagePath } });
+      window.location.href = url;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
   };
 
   return (
@@ -750,7 +792,7 @@ function DefaultTemplateGenerator({
           <>
             <button
               type="button"
-              onClick={() => openGenerated(existing.fileName, existing.content ?? "")}
+              onClick={() => void openStored(false)}
               className="inline-flex items-center gap-2 rounded-lg border border-input px-3.5 py-2 text-[13px] font-semibold text-navy transition-colors hover:bg-secondary"
             >
               <ExternalLink className="size-4" />
@@ -758,7 +800,7 @@ function DefaultTemplateGenerator({
             </button>
             <button
               type="button"
-              onClick={() => downloadGenerated(existing.fileName, existing.content ?? "")}
+              onClick={() => void openStored(true)}
               className="inline-flex items-center gap-2 rounded-lg border border-input px-3.5 py-2 text-[13px] font-semibold text-navy transition-colors hover:bg-secondary"
             >
               <Download className="size-4" />
@@ -778,6 +820,16 @@ function DefaultTemplateGenerator({
         )}
       </div>
 
+      {error && (
+        <p className="mt-3 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2.5 text-[12px] text-destructive">
+          {error}
+        </p>
+      )}
+      {existing && !open && existing.mode !== "as_is" && existing.changeLog && existing.changeLog.length > 0 && (
+        <ul className="mt-3 space-y-1 rounded-lg border border-border bg-card px-3 py-2.5 text-[12px] text-navy-soft">
+          {existing.changeLog.map((line, i) => <li key={i}>{line}</li>)}
+        </ul>
+      )}
       {existing && !open && existing.mode !== "as_is" && (
         <div className="mt-3 space-y-2">
           <div className="rounded-lg border border-border bg-card px-3 py-2.5">
@@ -877,11 +929,12 @@ function DefaultTemplateGenerator({
             </button>}
             <button
               type="button"
-              onClick={generate}
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+              onClick={() => void generate()}
+              disabled={busy}
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
             >
               <Wand2 className="size-4" />
-              {mode === "as_is" ? "Make available" : "Generate"}
+              {mode === "as_is" ? "Make available" : busy ? "Adapting with Claude…" : "Generate"}
             </button>
             <button
               type="button"
