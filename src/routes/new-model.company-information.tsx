@@ -326,8 +326,7 @@ function CompanyInformation() {
                                   !(state.removedSubsectors[a.sector] ?? []).includes(option),
                               ),
                               ...(state.customSubsectors[a.sector] ?? []),
-                              "Generic - Unit Economics",
-                              "Generic - Percentage Based",
+                              "Generic - Consolidated DCF",
                             ].filter((option) => {
                               if (row.key === "subsector") {
                                 return option !== a.subsector2 && option !== a.subsector3;
@@ -1050,7 +1049,8 @@ function SegmentMeasurements({
   // need operational measurement units.
   const resolvedModelBasis =
     modelBasis ??
-    (lineSubsector === "Generic - Percentage Based" ? "percentage" : "unit_economics");
+    state.subsectorConfigs[lineSubsector]?.modelBasis ??
+    "unit_economics";
   const isPercentageBased = resolvedModelBasis === "percentage";
   const needsOutputUnit = !isPercentageBased;
   const needsCapacityUnit = !isPercentageBased;
@@ -1452,8 +1452,7 @@ function SegmentMatrix({
               : (a.revenueStreams[line.value] ?? config.streams);
             const modelBasis = config.modelBasisLocked
               ? config.modelBasis
-              : (a.lineModelBasis[line.value] ??
-                (lineSubsector === "Generic - Percentage Based" ? "percentage" : config.modelBasis));
+              : (a.lineModelBasis[line.value] ?? config.modelBasis);
             return (
               <div key={line.value} className={[
                 "overflow-hidden rounded-lg border transition-colors",

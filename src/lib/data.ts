@@ -23,8 +23,7 @@ export const SECTORS = [
   "Telecommunications & Technology",
   "Transport & Logistics",
   "Water & Utilities",
-  "Generic - Unit Economics",
-  "Generic - Percentage Based",
+  "Generic - Consolidated DCF",
 ] as const;
 
 /**
@@ -123,8 +122,7 @@ export const SUBSECTORS: Record<string, string[]> = {
     "Solid Waste Management",
     "Utilities Infrastructure",
   ],
-  "Generic - Unit Economics": ["Default Unit Economics"],
-  "Generic - Percentage Based": ["Default Percentage Based"],
+  "Generic - Consolidated DCF": ["Default Consolidated DCF"],
 };
 
 export const CURRENCIES = [
@@ -732,8 +730,7 @@ export const SUBSECTOR_OUTPUT_MEASUREMENTS: Record<string, string> = {
   "Solid Waste Management": "Metric Tons (MT)",
   "Utilities Infrastructure": "Megawatt-hours (MWh)",
 
-  "Generic - Unit Economics": "Units",
-  "Generic - Percentage Based": "Units",
+  "Generic - Consolidated DCF": "Units",
 };
 
 /**
