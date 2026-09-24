@@ -151,6 +151,24 @@ const INITIAL_GENERIC_TEMPLATES: GenericTemplate[] = [
   },
 ];
 
+/** Sends uploaded .xlsx master templates to Cloud storage so Claude can adapt them. */
+async function storeMasterFiles(files: File[]) {
+  const { uploadMasterTemplate } = await import("@/lib/rs-templates.functions");
+  for (const file of files) {
+    if (!/\.xlsx$/i.test(file.name)) continue;
+    try {
+      const buf = new Uint8Array(await file.arrayBuffer());
+      let bin = "";
+      for (let i = 0; i < buf.length; i += 0x8000) {
+        bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
+      }
+      await uploadMasterTemplate({ data: { fileName: file.name, base64: btoa(bin) } });
+    } catch (error) {
+      window.alert(`Could not save "${file.name}" to Cloud storage: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+}
+
 export function GenericTemplatesSection() {
   const {
     state,
@@ -174,7 +192,10 @@ export function GenericTemplatesSection() {
         <GenericTemplateRow
           key={template.id}
           template={template}
-          onUpload={(files) => setGenericTemplateFiles(template.id, files)}
+          onUpload={(files) => {
+            setGenericTemplateFiles(template.id, files);
+            void storeMasterFiles(files);
+          }}
           onRemoveFile={(fileName) => removeGenericTemplateFile(template.id, fileName)}
           onDelete={() => removeGenericTemplate(template.id)}
         />

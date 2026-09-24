@@ -7,7 +7,14 @@ import { createHash, timingSafeEqual } from "node:crypto";
  * authentication: every visitor uses the same passcode. Role-based access
  * arrives with the backend phase.
  */
-import { developerSessionConfig as sessionConfig, type GateSession } from "./developer-session.server";
+const sessionConfig = {
+  password: process.env["SESSION_SECRET"] ?? "dev-only-fallback-session-secret-000000",
+  name: "developer-gate",
+  maxAge: 60 * 60 * 12,
+  cookie: { httpOnly: true, secure: true, sameSite: "lax" as const, path: "/" },
+};
+
+type GateSession = { unlocked?: boolean };
 
 function passcodeMatches(input: string, expected: string): boolean {
   const a = createHash("sha256").update(input, "utf8").digest();
