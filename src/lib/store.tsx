@@ -408,9 +408,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
               ...template,
               baseTemplate: CORE_BASE_TEMPLATE,
               prompt: migrateGenericTemplateName(template.prompt),
-              content: template.content
-                ? migrateGenericTemplateName(template.content)
-                : template.content,
+              ...(template.content
+                ? { content: migrateGenericTemplateName(template.content) }
+                : {}),
             },
           ]),
         );
