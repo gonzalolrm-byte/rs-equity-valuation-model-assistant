@@ -183,7 +183,8 @@ export async function applyEdits(bytes: Uint8Array, edits: CellEdit[]) {
         return `<calcPr${cleaned} fullCalcOnLoad="1"${close}>`;
       });
     } else {
-      wb = wb.replace("</workbook>", '<calcPr fullCalcOnLoad="1"/></workbook>');
+      const anchor = wb.includes("</definedNames>") ? "</definedNames>" : "</sheets>";
+      wb = wb.replace(anchor, `${anchor}<calcPr fullCalcOnLoad="1"/>`);
     }
     zip.file("xl/workbook.xml", wb);
   }
