@@ -9,7 +9,7 @@ import { StepProgress } from "@/components/StepProgress";
 import { PageHeading } from "@/components/form";
 import { runActions } from "@/lib/services/claudeService";
 import { buildModel } from "@/lib/services/excelService";
-import { useApp } from "@/lib/store";
+import { resolveSubsectorTemplate, useApp } from "@/lib/store";
 import { EditableText } from "@/lib/ui-content";
 import { WORKFLOW_A_STEPS } from "./new-model.company-information";
 
@@ -53,9 +53,7 @@ function GenerateStep() {
     );
     const model = buildModel({
       companyName: answers.companyName || "Company",
-      templateUsed:
-        state.subsectorTemplates[answers.subsector]?.[0] ??
-        `IFC_Standard_DCF_${answers.subsector.replace(/\s+/g, "_")}.xlsx`,
+      templateUsed: resolveSubsectorTemplate(state, answers.subsector).fileName,
       appliedActions: [],
     });
     setLines((prev) => [...prev, "Adapting template and populating available data…", "Done."]);

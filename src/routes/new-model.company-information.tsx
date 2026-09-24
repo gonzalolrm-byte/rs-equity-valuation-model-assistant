@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Info, Lightbulb, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, FileSpreadsheet, Info, Lightbulb, Trash2 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button, ButtonLink } from "@/components/Button";
@@ -25,7 +25,7 @@ import {
   SECTORS,
   SUBSECTORS,
 } from "@/lib/data";
-import { DEFAULT_SUBSECTOR_CONFIG, useApp, type SegmentMeasurement } from "@/lib/store";
+import { DEFAULT_SUBSECTOR_CONFIG, resolveSubsectorTemplate, useApp, type SegmentMeasurement } from "@/lib/store";
 import { EditableText } from "@/lib/ui-content";
 
 export const WORKFLOW_A_STEPS = [
@@ -1499,6 +1499,18 @@ function SegmentMatrix({
                 </div>
 
                 {lineSelected && <div className="space-y-2 border-t border-panel-border p-2 sm:p-3">
+                  {lineSubsector && (() => {
+                    const t = resolveSubsectorTemplate(state, lineSubsector);
+                    const label = t.source === "as_is" ? "Generic template (unchanged)" : t.source === "adapted" ? `Adapted from ${t.baseTemplate}` : t.source === "uploaded" ? "Uploaded sub-sector template" : "Default generic template";
+                    return (
+                      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-panel-border bg-panel/40 px-3 py-2 text-xs text-navy-soft">
+                        <FileSpreadsheet className="size-3.5 text-primary" />
+                        <span className="font-semibold text-navy">Template set by Developer:</span>
+                        <span className="truncate">{t.fileName}</span>
+                        <span className="text-muted-foreground">· {label}. Locked settings below are fixed; the rest you can adjust.</span>
+                      </div>
+                    );
+                  })()}
                   <div className="grid gap-3 rounded-lg border border-panel-border bg-card px-3 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
                     <div className="flex items-start gap-3">
                       <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 font-heading text-base font-bold text-primary">A</span>
