@@ -51,7 +51,7 @@ export async function openWorkbook(bytes: Uint8Array) {
   const sheets: SheetInfo[] = [];
   for (const m of wb.matchAll(/<sheet\b[^>]*\/?>/g)) {
     const name = decode(m[0].match(/\bname="([^"]*)"/)?.[1] ?? "");
-    const rid = m[0].match(/\br:id="([^"]+)"/)?.[1] ?? "";
+    const rid = m[0].match(/\b[\w]+:id="([^"]+)"/)?.[1] ?? "";
     const path = relMap.get(rid);
     if (path && zip.file(path)) sheets.push({ name, path, rid });
   }

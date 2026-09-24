@@ -266,8 +266,10 @@ export class WorkbookEditor {
     let wb = await this.read("xl/workbook.xml");
     const ids = [...wb.matchAll(/<sheet\b[^>]*\bsheetId="(\d+)"/g)].map((m) => Number(m[1]));
     const sheetId = Math.max(0, ...ids) + 1;
+    const nsPrefix =
+      wb.match(/xmlns:(\w+)="http:\/\/schemas\.openxmlformats\.org\/officeDocument\/2006\/relationships"/)?.[1] ?? "r";
     const safe = newName.replace(/[\\/?*[\]:]/g, " ").slice(0, 31);
-    wb = wb.replace("</sheets>", `<sheet name="${encode(safe).replace(/"/g, "&quot;")}" sheetId="${sheetId}" r:id="rId${rid}"/></sheets>`);
+    wb = wb.replace("</sheets>", `<sheet name="${encode(safe).replace(/"/g, "&quot;")}" sheetId="${sheetId}" ${nsPrefix}:id="rId${rid}"/></sheets>`);
     this.write("xl/workbook.xml", wb);
     this.sheets.push({ name: safe, path, rid: `rId${rid}` });
     return notes;
@@ -278,7 +280,7 @@ export class WorkbookEditor {
     if (this.sheets.length <= 1) throw new Error("cannot delete the only sheet");
     const index = this.sheets.indexOf(sh);
     let wb = await this.read("xl/workbook.xml");
-    wb = wb.replace(new RegExp(`<sheet\\b[^>]*\\br:id="${escRe(sh.rid)}"[^>]*/>`), "");
+    wb = wb.replace(new RegExp(`<sheet\\b[^>]*\\b\\w+:id="${escRe(sh.rid)}"[^>]*/>`), "");
     wb = wb.replace(/<definedName\b([^>]*)>([\s\S]*?)<\/definedName>/g, (m, attrs: string) => {
       const local = attrs.match(/\blocalSheetId="(\d+)"/);
       if (!local) return m;
