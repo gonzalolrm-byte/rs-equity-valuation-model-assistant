@@ -617,7 +617,7 @@ function DefaultTemplateGenerator({
     setExtraIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
   const a001Selected = extraIds.includes("A-001");
-  const defaultPrompt = `${a001Selected ? "Following the instructions in prompt A-001 (see the Prompts section), adapt" : "Adapt"} the ${base} template for ${subsector}. Set the Maximum Output / Units Sold measurement to "${outputMeasurement}" and offer these capacity measurements: ${capacityMeasurements.join(", ") || "none"}. Keep all formulas, tabs and links intact.`;
+  const defaultPrompt = `${a001Selected ? "Following the instructions in prompt A-001 (see the Prompts section), use" : "Use"} the ${base} template as the base and, applying the sub-sector's responses and the selected prompts, regenerate a new default template for ${subsector}. Set the Maximum Output / Units Sold measurement to "${outputMeasurement}" and offer these capacity measurements: ${capacityMeasurements.join(", ") || "none"}. Keep all formulas, tabs and links intact.`;
 
   const generate = () => {
     const validExtras = extraIds.filter((id) => optionalPrompts.some((p) => p.id === id)).sort();
