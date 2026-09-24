@@ -312,7 +312,7 @@ const UNIT_ECONOMICS_APPROACHES = [
       "Revenue and COGS are segmented by revenue stream and modeled using individual Units Sold (or equivalent).",
       "CapEx is not segmented and is therefore modeled at the aggregate level.",
     ],
-    example: "An agricultural company with different crops, each with its own production volumes and direct costs, but with a shared investment program (and processing facilities).",
+    example: "An agricultural company with different crops, each with its own production volumes and direct costs, but with a shared investment program (land and processing facilities).",
   },
   {
     value: "v4" as const,
