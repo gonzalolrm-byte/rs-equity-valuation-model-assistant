@@ -6,6 +6,7 @@
  * validations, links, charts, etc.) is copied byte-for-byte.
  */
 import JSZip from "jszip";
+import { WorkbookEditor, upsertCellXml, type StructOp } from "./xlsx-structure.server";
 
 export type CellEdit = {
   sheet: string;
@@ -15,7 +16,9 @@ export type CellEdit = {
   reason?: string;
 };
 
-export type SheetInfo = { name: string; path: string };
+export type SheetInfo = { name: string; path: string; rid: string };
+
+export type WorkbookOp = ({ op: "set_cell" } & CellEdit) | StructOp;
 
 const decode = (s: string) =>
   s
@@ -48,9 +51,9 @@ export async function openWorkbook(bytes: Uint8Array) {
   const sheets: SheetInfo[] = [];
   for (const m of wb.matchAll(/<sheet\b[^>]*\/?>/g)) {
     const name = decode(m[0].match(/\bname="([^"]*)"/)?.[1] ?? "");
-    const rid = m[0].match(/\br:id="([^"]+)"/)?.[1] ?? "";
+    const rid = m[0].match(/\b[\w]+:id="([^"]+)"/)?.[1] ?? "";
     const path = relMap.get(rid);
-    if (path && zip.file(path)) sheets.push({ name, path });
+    if (path && zip.file(path)) sheets.push({ name, path, rid });
   }
   const sstXml = (await zip.file("xl/sharedStrings.xml")?.async("string")) ?? "";
   const shared = [...sstXml.matchAll(/<si>([\s\S]*?)<\/si>/g)].map((m) =>
@@ -124,50 +127,67 @@ function applyToSheet(xml: string, edit: CellEdit): { xml: string; skipped?: str
     const style = existing.match(/\bs="(\d+)"/)?.[1] ?? "";
     return { xml: xml.replace(existing, buildCell(ref, style, edit)) };
   }
-  const r = rowIndex(ref);
-  const rowRe = new RegExp(`<row\\b[^>]*\\br="${r}"[^>]*?(?:/>|>([\\s\\S]*?)</row>)`);
-  const row = xml.match(rowRe);
-  const cellXml = buildCell(ref, "", edit);
-  if (row) {
-    const whole = row[0];
-    if (whole.endsWith("/>")) {
-      return { xml: xml.replace(whole, `${whole.slice(0, -2)}>${cellXml}</row>`) };
-    }
-    const inner = row[1] ?? "";
-    const cells = [...inner.matchAll(/<c\b[^>]*\br="([A-Z]+)\d+"[^>]*?(?:\/>|>[\s\S]*?<\/c>)/g)];
-    const after = cells.find((c) => colIndex(c[1] ?? "") > colIndex(ref));
-    const newInner = after ? inner.replace(after[0], cellXml + after[0]) : inner + cellXml;
-    return { xml: xml.replace(whole, whole.replace(inner, newInner)) };
-  }
-  const rows = [...xml.matchAll(/<row\b[^>]*\br="(\d+)"[^>]*?(?:\/>|>[\s\S]*?<\/row>)/g)];
-  const next = rows.find((m) => Number(m[1]) > r);
-  const newRow = `<row r="${r}">${cellXml}</row>`;
-  if (next) return { xml: xml.replace(next[0], newRow + next[0]) };
-  if (xml.includes("<sheetData/>")) return { xml: xml.replace("<sheetData/>", `<sheetData>${newRow}</sheetData>`) };
-  return { xml: xml.replace("</sheetData>", `${newRow}</sheetData>`) };
+  return { xml: upsertCellXml(xml, ref, buildCell(ref, "", edit)) };
 }
 
-export async function applyEdits(bytes: Uint8Array, edits: CellEdit[]) {
+export async function applyOperations(bytes: Uint8Array, ops: WorkbookOp[]) {
   const { zip, sheets } = await openWorkbook(bytes);
-  const applied: CellEdit[] = [];
-  const skipped: (CellEdit & { why: string })[] = [];
-  const cache = new Map<string, string>();
-  for (const edit of edits) {
-    const sheet = sheets.find((s) => s.name === edit.sheet);
-    if (!sheet) {
-      skipped.push({ ...edit, why: "sheet not found" });
-      continue;
+  const ed = new WorkbookEditor(zip, sheets);
+  const applied: string[] = [];
+  const skipped: string[] = [];
+  const label = (o: WorkbookOp) => {
+    const why = o.reason ? ` (${o.reason})` : "";
+    switch (o.op) {
+      case "set_cell": return `${o.sheet}!${o.cell} → ${o.value}${why}`;
+      case "insert_rows": case "delete_rows": return `${o.op.replace("_", " ")} ${o.count} at row ${o.at} on "${o.sheet}"${why}`;
+      case "insert_columns": case "delete_columns": return `${o.op.replace("_", " ")} ${o.count} at column ${o.at} on "${o.sheet}"${why}`;
+      case "copy_range": return `copy ${o.sheet}!${o.source} → ${o.targetSheet ?? o.sheet}!${o.target}${why}`;
+      case "clear_range": return `clear ${o.sheet}!${o.range}${why}`;
+      case "copy_sheet": return `copy sheet "${o.sheet}" as "${o.newName}"${why}`;
+      case "delete_sheet": return `delete sheet "${o.sheet}"${why}`;
     }
-    const xml = cache.get(sheet.path) ?? (await zip.file(sheet.path)!.async("string"));
-    const result = applyToSheet(xml, edit);
-    cache.set(sheet.path, result.xml);
-    if (result.skipped) skipped.push({ ...edit, why: result.skipped });
-    else applied.push(edit);
+  };
+  for (const o of ops) {
+    try {
+      switch (o.op) {
+        case "set_cell": {
+          const sh = ed.sheet(o.sheet);
+          const result = applyToSheet(await ed.read(sh.path), o);
+          if (result.skipped) { skipped.push(`${label(o)}: ${result.skipped}`); continue; }
+          ed.write(sh.path, result.xml);
+          break;
+        }
+        case "insert_rows": case "delete_rows":
+          if (!(o.at >= 1 && o.count >= 1)) throw new Error("invalid row position/count");
+          await ed.shift(o.sheet, { axis: "row", at: o.at, count: o.op === "insert_rows" ? o.count : -o.count });
+          break;
+        case "insert_columns": case "delete_columns": {
+          const at = colIndex(o.at.toUpperCase());
+          if (!(at >= 1 && o.count >= 1)) throw new Error("invalid column position/count");
+          await ed.shift(o.sheet, { axis: "col", at, count: o.op === "insert_columns" ? o.count : -o.count });
+          break;
+        }
+        case "copy_range": {
+          const notes = await ed.copyRange(o.sheet, o.source.toUpperCase(), o.target.toUpperCase(), o.targetSheet);
+          notes.forEach((n) => skipped.push(`${label(o)}: ${n}`));
+          break;
+        }
+        case "clear_range": await ed.clearRange(o.sheet, o.range.toUpperCase()); break;
+        case "copy_sheet": {
+          const notes = await ed.copySheet(o.sheet, o.newName);
+          notes.forEach((n) => skipped.push(`${label(o)}: ${n}`));
+          break;
+        }
+        case "delete_sheet": await ed.deleteSheet(o.sheet); break;
+      }
+      applied.push(label(o));
+    } catch (e) {
+      skipped.push(`${label(o)}: ${e instanceof Error ? e.message : String(e)}`);
+    }
   }
-  for (const [path, xml] of cache) zip.file(path, xml);
+  ed.flush();
 
   if (applied.length) {
-    // Excel rebuilds the calculation chain itself; a stale one can trigger repair prompts.
     if (zip.file("xl/calcChain.xml")) {
       zip.remove("xl/calcChain.xml");
       const ct = await zip.file("[Content_Types].xml")!.async("string");
@@ -175,20 +195,16 @@ export async function applyEdits(bytes: Uint8Array, edits: CellEdit[]) {
       const rels = await zip.file("xl/_rels/workbook.xml.rels")!.async("string");
       zip.file("xl/_rels/workbook.xml.rels", rels.replace(/<Relationship\b[^>]*Target="[^"]*calcChain\.xml"[^>]*\/>/, ""));
     }
-    // Force a full recalculation when the workbook is next opened.
     let wb = await zip.file("xl/workbook.xml")!.async("string");
     if (/<calcPr\b/.test(wb)) {
-      wb = wb.replace(/<calcPr\b([^>]*?)\s*(\/?)>/, (_m, attrs: string, close: string) => {
-        const cleaned = attrs.replace(/\sfullCalcOnLoad="[^"]*"/, "");
-        return `<calcPr${cleaned} fullCalcOnLoad="1"${close}>`;
-      });
+      wb = wb.replace(/<calcPr\b([^>]*?)\s*(\/?)>/, (_m, attrs: string, close: string) =>
+        `<calcPr${attrs.replace(/\sfullCalcOnLoad="[^"]*"/, "")} fullCalcOnLoad="1"${close}>`);
     } else {
       const anchor = wb.includes("</definedNames>") ? "</definedNames>" : "</sheets>";
       wb = wb.replace(anchor, `${anchor}<calcPr fullCalcOnLoad="1"/>`);
     }
     zip.file("xl/workbook.xml", wb);
   }
-
   const out = await zip.generateAsync({ type: "uint8array", compression: "DEFLATE" });
   return { bytes: out, applied, skipped };
 }
