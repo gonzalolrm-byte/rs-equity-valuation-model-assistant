@@ -65,13 +65,17 @@ export async function openWorkbook(bytes: Uint8Array) {
   return { zip, sheets, shared, names };
 }
 
+/** Sheets never included in the workbook map sent to Claude. */
+const EXCLUDED_SHEETS = ["AI Prompt"];
+
 /** Compact text map of labels and formulas so Claude can locate what to change. */
 export async function describeWorkbook(bytes: Uint8Array, maxChars = 120_000) {
   const { zip, sheets, shared, names } = await openWorkbook(bytes);
-  const lines: string[] = [`Sheets: ${sheets.map((s) => s.name).join(" | ")}`];
+  const visible = sheets.filter((s) => !EXCLUDED_SHEETS.includes(s.name));
+  const lines: string[] = [`Sheets: ${visible.map((s) => s.name).join(" | ")}`];
   if (names.length) lines.push(`Named ranges: ${names.slice(0, 200).join("; ")}`);
-  const perSheet = Math.max(2000, Math.floor(maxChars / Math.max(1, sheets.length)));
-  for (const sheet of sheets) {
+  const perSheet = Math.max(2000, Math.floor(maxChars / Math.max(1, visible.length)));
+  for (const sheet of visible) {
     const xml = (await zip.file(sheet.path)!.async("string")) ?? "";
     const out: string[] = [];
     let used = 0;
