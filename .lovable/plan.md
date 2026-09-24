@@ -1,13 +1,13 @@
-# Keep Core Template Uploads After Refresh
+# Add Template Selection and Specification Summary
 
 ## Implementation
-- Move the two Generic DCF template file lists into the application’s existing saved browser state.
-- Update upload, replace, remove-file, and remove-template actions to write through that saved state.
-- Preserve the current labels, controls, accepted file types, and page layout.
+- Restore **Generic - Unit Economics** and **Generic - Percentage Based** as the two base-template choices for every sub-sector.
+- Keep the selected base template saved with each generated sub-sector template.
+- Add an automatic developer-specification summary showing the selected approach, revenue-stream setup, output measurement, capacity measurements, and selected prompts.
+- Include that summary in the generation instructions so the prompt can select and regenerate the appropriate sector template from the developer’s specifications.
+- Preserve the existing generation controls, prompt selection behavior, and saved sub-sector settings.
 
 ## Verification
-- Upload a test file, refresh the page, and confirm the file entry remains visible.
-- Confirm the current project build remains error-free.
-
-## Technical note
-This fixes browser persistence for the displayed upload records. The prototype still stores them only in the current browser, not in shared online storage.
+- Open multiple sub-sectors and confirm both generic templates are selectable.
+- Confirm the automatic summary reflects each sub-sector’s saved settings and selected prompts.
+- Generate a template and confirm its displayed prompt and downloaded content include the chosen template and specification summary.
