@@ -163,6 +163,8 @@ export type SubsectorDefaultTemplate = {
   generatedAt: string;
   outputMeasurement: string;
   capacityMeasurements: string[];
+  /** Automatic summary of the developer settings used for this generation. */
+  specificationSummary?: string;
   /** Prompts (by ID) attached to this template. A-001 is pre-selected but optional. */
   extraPromptIds?: string[];
   /** The generated file body, kept so the developer can open or download it later. */
@@ -278,11 +280,11 @@ const INITIAL_STATE: AppState = {
 
 const STORAGE_KEY = "ifc-valuation-assistant-v1";
 
-const CORE_BASE_TEMPLATE = "Generic - Consolidated DCF";
+const UNIT_ECONOMICS_TEMPLATE = "Generic - Unit Economics";
+const PERCENTAGE_BASED_TEMPLATE = "Generic - Percentage Based";
 
 function migrateGenericTemplateName(value: string) {
   return value
-    .replace(/Generic\s*-\s*(?:Unit Economics|Percentage Based)/gi, CORE_BASE_TEMPLATE)
     .replace(/\s*Keep all formulas, tabs and links intact\./gi, "");
 }
 
@@ -322,6 +324,7 @@ type Ctx = {
       outputMeasurement: string;
       capacityMeasurements: string[];
       extraPromptIds?: string[];
+      specificationSummary?: string;
     },
   ) => void;
   clearSubsectorDefaultTemplate: (subsector: string) => void;
@@ -395,20 +398,26 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         ];
 
         const savedGenericFiles = saved.genericTemplateFiles ?? {};
-        const consolidatedFiles = [
-          ...(savedGenericFiles["generic-consolidated-dcf"] ?? []),
-          ...(savedGenericFiles["generic-unit-economics"] ?? []),
-          ...(savedGenericFiles["generic-percentage-based"] ?? []),
-        ];
-        const genericTemplateFiles = consolidatedFiles.length
-          ? { "generic-consolidated-dcf": [...new Set(consolidatedFiles)] }
-          : {};
+        const consolidatedFiles = savedGenericFiles["generic-consolidated-dcf"] ?? [];
+        const genericTemplateFiles = {
+          "generic-unit-economics": [
+            ...new Set([...(savedGenericFiles["generic-unit-economics"] ?? []), ...consolidatedFiles]),
+          ],
+          "generic-percentage-based": [
+            ...new Set([...(savedGenericFiles["generic-percentage-based"] ?? []), ...consolidatedFiles]),
+          ],
+        };
         const subsectorDefaultTemplates = Object.fromEntries(
           Object.entries(saved.subsectorDefaultTemplates ?? {}).map(([subsector, template]) => [
             subsector,
             {
               ...template,
-              baseTemplate: CORE_BASE_TEMPLATE,
+              baseTemplate:
+                template.baseTemplate === "Generic - Consolidated DCF"
+                  ? (saved.subsectorConfigs?.[subsector]?.modelBasis === "percentage"
+                      ? PERCENTAGE_BASED_TEMPLATE
+                      : UNIT_ECONOMICS_TEMPLATE)
+                  : template.baseTemplate,
               prompt: migrateGenericTemplateName(template.prompt),
               ...(template.content
                 ? { content: migrateGenericTemplateName(template.content) }
@@ -723,6 +732,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             ["Maximum Output / Units Sold measurement", input.outputMeasurement],
             ["Capacity measurements offered", input.capacityMeasurements.join("; ")],
             ["Additional prompts applied", (input.extraPromptIds ?? []).join("; ") || "none"],
+            ["Developer specification summary", input.specificationSummary ?? ""],
             ["Adaptation prompt", prompt],
           ];
           const content = rows
@@ -740,6 +750,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
                 outputMeasurement: input.outputMeasurement,
                 capacityMeasurements: input.capacityMeasurements,
                 extraPromptIds: input.extraPromptIds ?? [],
+                specificationSummary: input.specificationSummary,
                 content,
               },
             },

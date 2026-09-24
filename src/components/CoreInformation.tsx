@@ -143,10 +143,17 @@ export type GenericTemplate = {
 
 const INITIAL_GENERIC_TEMPLATES: GenericTemplate[] = [
   {
-    id: "generic-consolidated-dcf",
-    name: "Generic - Consolidated DCF",
+    id: "generic-unit-economics",
+    name: "Generic - Unit Economics",
     description:
-      "Core standardized DCF template used as the base for generating every sector-specific template.",
+      "Core template for sub-sectors modeled from operational units, volumes and unit economics.",
+    files: [],
+  },
+  {
+    id: "generic-percentage-based",
+    name: "Generic - Percentage Based",
+    description:
+      "Core template for sub-sectors modeled using percentage-based revenue, cost and investment assumptions.",
     files: [],
   },
 ];

@@ -44,8 +44,7 @@ export const Route = createFileRoute("/developer/sector-specifics")({
   component: SectorSpecifics,
 });
 
-const CORE_BASE_TEMPLATE = "Generic - Consolidated DCF";
-const GENERIC_TEMPLATES = [CORE_BASE_TEMPLATE];
+const GENERIC_TEMPLATES = ["Generic - Unit Economics", "Generic - Percentage Based"];
 
 function removeLegacyPromptInstruction(value: string) {
   return value.replace(/\s*Keep all formulas, tabs and links intact\./gi, "");
@@ -612,7 +611,15 @@ function DefaultTemplateGenerator({
 }) {
   const { state, generateSubsectorDefaultTemplate, clearSubsectorDefaultTemplate } = useApp();
   const existing = (state.subsectorDefaultTemplates ?? {})[subsector];
-  const [base, setBase] = useState(CORE_BASE_TEMPLATE);
+  const config = {
+    ...DEFAULT_SUBSECTOR_CONFIG,
+    ...((state.subsectorConfigs ?? {})[subsector] ?? {}),
+  };
+  const recommendedBase = config.modelBasis === "percentage" ? GENERIC_TEMPLATES[1] : GENERIC_TEMPLATES[0];
+  const initialBase = existing?.baseTemplate && GENERIC_TEMPLATES.includes(existing.baseTemplate)
+    ? existing.baseTemplate
+    : recommendedBase;
+  const [base, setBase] = useState(initialBase);
   const [prompt, setPrompt] = useState(removeLegacyPromptInstruction(existing?.prompt ?? ""));
   const [open, setOpen] = useState(false);
   const [extraIds, setExtraIds] = useState<string[]>(existing?.extraPromptIds ?? ["A-001"]);
@@ -621,7 +628,25 @@ function DefaultTemplateGenerator({
     setExtraIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
   const a001Selected = extraIds.includes("A-001");
-  const defaultPrompt = `${a001Selected ? "Following the instructions in prompt A-001 (see the Prompts section), use" : "Use"} the ${base} template as the base and, applying the sub-sector's responses and the selected prompts, regenerate a new default template for ${subsector}. Set the Maximum Output / Units Sold measurement to "${outputMeasurement}" and offer these capacity measurements: ${capacityMeasurements.join(", ") || "none"}.`;
+  const selectedPromptIds = extraIds
+    .filter((id) => optionalPrompts.some((item) => item.id === id))
+    .sort();
+  const approachLabel = config.modelBasis === "percentage" ? "Percentage Based" : "Unit Economics";
+  const streamLabel = config.streamMode === "multi"
+    ? `Multiple Revenue Streams (${config.streams.length})`
+    : "Single Revenue Stream";
+  const unitApproach = config.modelBasis === "unit_economics" && config.streamMode === "multi"
+    ? `; Unit Economics structure: ${config.unitEconomicsApproach.toUpperCase()}`
+    : "";
+  const specificationSummary = [
+    `Sub-sector: ${subsector}`,
+    `Revenue modeling approach: ${approachLabel}`,
+    `Revenue structure: ${streamLabel}${unitApproach}`,
+    `Maximum Output / Units Sold measurement: ${outputMeasurement}`,
+    `Capacity measurements: ${capacityMeasurements.join(", ") || "none"}`,
+    `Selected prompts: ${selectedPromptIds.join(", ") || "none"}`,
+  ].join("; ");
+  const defaultPrompt = `${a001Selected ? "Following the instructions in prompt A-001 (see the Prompts section), " : ""}based on the developer specifications below, select and use the ${base} template to regenerate a new default template for ${subsector}. Developer specification summary: ${specificationSummary}.`;
 
   const generate = () => {
     const validExtras = extraIds.filter((id) => optionalPrompts.some((p) => p.id === id)).sort();
@@ -636,6 +661,7 @@ function DefaultTemplateGenerator({
       outputMeasurement,
       capacityMeasurements,
       extraPromptIds: validExtras,
+      specificationSummary,
     });
     setOpen(false);
   };
@@ -647,7 +673,7 @@ function DefaultTemplateGenerator({
           <p className="text-[13px] font-semibold text-navy">Default template</p>
           <p className="mt-1 text-[12px] text-muted-foreground">
             {existing
-              ? `${existing.fileName} · based on ${CORE_BASE_TEMPLATE} · generated ${new Date(existing.generatedAt).toLocaleString()}`
+              ? `${existing.fileName} · based on ${existing.baseTemplate} · generated ${new Date(existing.generatedAt).toLocaleString()}`
               : "Generate a default template from a generic DCF template and adapt it with a prompt."}
           </p>
         </div>
@@ -692,9 +718,17 @@ function DefaultTemplateGenerator({
       </div>
 
       {existing && !open && (
-        <p className="mt-3 rounded-lg border border-border bg-secondary/40 px-3 py-2.5 text-[12px] leading-relaxed text-navy-soft">
-          {removeLegacyPromptInstruction(existing.prompt)}
-        </p>
+        <div className="mt-3 space-y-2">
+          <div className="rounded-lg border border-border bg-card px-3 py-2.5">
+            <p className="text-[12px] font-semibold text-navy">Developer specification summary</p>
+            <p className="mt-1 text-[12px] leading-relaxed text-navy-soft">
+              {existing.specificationSummary ?? specificationSummary}
+            </p>
+          </div>
+          <p className="rounded-lg border border-border bg-secondary/40 px-3 py-2.5 text-[12px] leading-relaxed text-navy-soft">
+            {removeLegacyPromptInstruction(existing.prompt)}
+          </p>
+        </div>
       )}
 
       {open && (
@@ -706,13 +740,17 @@ function DefaultTemplateGenerator({
               onChange={(event) => setBase(event.target.value)}
               className="mt-1.5 w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm font-normal text-navy focus:border-primary focus:outline-none"
             >
-              {[CORE_BASE_TEMPLATE].map((item) => (
+              {GENERIC_TEMPLATES.map((item) => (
                 <option key={item} value={item}>
                   {item}
                 </option>
               ))}
             </select>
           </label>
+          <div className="rounded-lg border border-border bg-card px-3 py-2.5">
+            <p className="text-[13px] font-semibold text-navy">Developer specification summary</p>
+            <p className="mt-1 text-[12px] leading-relaxed text-navy-soft">{specificationSummary}</p>
+          </div>
           <label className="text-[13px] font-semibold text-navy">
             Prompt — measurement units and other specifics
             <textarea
