@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { useSession } from "@tanstack/react-start/server";
+import { developerSessionConfig } from "./developer-session.server";
 import { createHash, timingSafeEqual } from "node:crypto";
 
 /**
@@ -7,12 +8,7 @@ import { createHash, timingSafeEqual } from "node:crypto";
  * authentication: every visitor uses the same passcode. Role-based access
  * arrives with the backend phase.
  */
-const sessionConfig = {
-  password: process.env["SESSION_SECRET"] ?? "dev-only-fallback-session-secret-000000",
-  name: "developer-gate",
-  maxAge: 60 * 60 * 12,
-  cookie: { httpOnly: true, secure: true, sameSite: "lax" as const, path: "/" },
-};
+const sessionConfig = developerSessionConfig;
 
 type GateSession = { unlocked?: boolean };
 

@@ -4,7 +4,7 @@ export const developerSessionConfig = {
   password: process.env["SESSION_SECRET"] ?? "dev-only-fallback-session-secret-000000",
   name: "developer-gate",
   maxAge: 60 * 60 * 12,
-  cookie: { httpOnly: true, secure: true, sameSite: "lax" as const, path: "/" },
+  cookie: { httpOnly: true, secure: true, sameSite: "none" as const, partitioned: true, path: "/" },
 };
 
 export type GateSession = { unlocked?: boolean };
