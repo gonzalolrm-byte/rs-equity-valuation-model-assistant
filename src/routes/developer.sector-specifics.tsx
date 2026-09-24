@@ -610,20 +610,20 @@ function DefaultTemplateGenerator({
   const [base, setBase] = useState(existing?.baseTemplate ?? GENERIC_TEMPLATES[0]!);
   const [prompt, setPrompt] = useState(existing?.prompt ?? "");
   const [open, setOpen] = useState(false);
-  const [extraIds, setExtraIds] = useState<string[]>(existing?.extraPromptIds ?? []);
-  const optionalPrompts = [...state.prompts]
-    .filter((item) => item.id !== "A-001")
-    .sort((a, b) => a.id.localeCompare(b.id));
+  const [extraIds, setExtraIds] = useState<string[]>(existing?.extraPromptIds ?? ["A-001"]);
+  const optionalPrompts = [...state.prompts].sort((a, b) => a.id.localeCompare(b.id));
   const toggleExtra = (id: string) =>
     setExtraIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
-  const defaultPrompt = `Following the instructions in prompt A-001 (see the Prompts section), adapt the ${base} template for ${subsector}. Set the Maximum Output / Units Sold measurement to "${outputMeasurement}" and offer these capacity measurements: ${capacityMeasurements.join(", ") || "none"}. Keep all formulas, tabs and links intact.`;
+  const a001Selected = extraIds.includes("A-001");
+  const defaultPrompt = `${a001Selected ? "Following the instructions in prompt A-001 (see the Prompts section), adapt" : "Adapt"} the ${base} template for ${subsector}. Set the Maximum Output / Units Sold measurement to "${outputMeasurement}" and offer these capacity measurements: ${capacityMeasurements.join(", ") || "none"}. Keep all formulas, tabs and links intact.`;
 
   const generate = () => {
     const validExtras = extraIds.filter((id) => optionalPrompts.some((p) => p.id === id)).sort();
+    const otherExtras = validExtras.filter((id) => !(a001Selected && id === "A-001"));
     const basePrompt = prompt.trim() || defaultPrompt;
-    const finalPrompt = validExtras.length
-      ? `${basePrompt} Also apply prompt${validExtras.length > 1 ? "s" : ""} ${validExtras.join(", ")} (see the Prompts section).`
+    const finalPrompt = otherExtras.length
+      ? `${basePrompt} Also apply prompt${otherExtras.length > 1 ? "s" : ""} ${otherExtras.join(", ")} (see the Prompts section).`
       : basePrompt;
     generateSubsectorDefaultTemplate(subsector, {
       baseTemplate: base,
@@ -721,10 +721,10 @@ function DefaultTemplateGenerator({
           <div className="text-[13px] font-semibold text-navy">
             Additional prompts to apply
             <p className="mt-0.5 text-[12px] font-normal text-muted-foreground">
-              A-001 is always applied. Select any other prompts to attach to this sub-sector.
+              A-001 is pre-selected but optional — untick it to exclude it. Tick any other prompts to attach to this sub-sector.
             </p>
             {optionalPrompts.length === 0 ? (
-              <p className="mt-2 text-[12px] font-normal text-muted-foreground">No other prompts available yet.</p>
+              <p className="mt-2 text-[12px] font-normal text-muted-foreground">No prompts available yet.</p>
             ) : (
               <div className="mt-2 grid max-h-48 gap-1.5 overflow-y-auto rounded-lg border border-input bg-card p-2.5 sm:grid-cols-2">
                 {optionalPrompts.map((item) => (
