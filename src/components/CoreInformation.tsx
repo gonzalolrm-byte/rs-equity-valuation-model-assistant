@@ -144,9 +144,9 @@ export type GenericTemplate = {
 const INITIAL_GENERIC_TEMPLATES: GenericTemplate[] = [
   {
     id: "generic-consolidated-dcf",
-    name: "Generic - Consolidated DCF",
+    name: "Generic RS Templates",
     description:
-      "Core standardized DCF template used as the base for generating every sector-specific template.",
+      "The two master generic templates (Consolidated DCF and SOTP) available to every sub-sector as the base template.",
     files: [],
   },
 ];
@@ -203,7 +203,7 @@ function GenericTemplateRow({
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="font-heading text-[16px] font-bold">{template.name}</h3>
             <span className="rounded-full bg-secondary px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-navy-soft">
-              Generic DCF
+              Master templates
             </span>
           </div>
           <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
