@@ -278,6 +278,12 @@ const INITIAL_STATE: AppState = {
 
 const STORAGE_KEY = "ifc-valuation-assistant-v1";
 
+const CORE_BASE_TEMPLATE = "Generic - Consolidated DCF";
+
+function migrateGenericTemplateName(value: string) {
+  return value.replace(/Generic\s*-\s*(?:Unit Economics|Percentage Based)/gi, CORE_BASE_TEMPLATE);
+}
+
 /** Only warn once per session when browser storage is full. */
 let storageWarned = false;
 
@@ -350,7 +356,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         // Reconcile the action registry: keep developer edits for actions that
         // still exist, adopt any newly shipped actions, and drop actions that
         // were removed from the registry (while keeping developer-created ones).
-        const savedPrompts = saved.prompts ?? [];
+        const savedPrompts = (saved.prompts ?? []).map((prompt) => ({
+          ...prompt,
+          promptText: migrateGenericTemplateName(prompt.promptText),
+        }));
         const deletedRegistry = new Set(saved.deletedRegistryPromptIds ?? []);
         // The developer's saved list is the source of truth (edits, new actions,
         // deletions and renumbering). Only adopt newly shipped registry actions
@@ -383,15 +392,38 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           ),
         ];
 
+        const savedGenericFiles = saved.genericTemplateFiles ?? {};
+        const consolidatedFiles = [
+          ...(savedGenericFiles["generic-consolidated-dcf"] ?? []),
+          ...(savedGenericFiles["generic-unit-economics"] ?? []),
+          ...(savedGenericFiles["generic-percentage-based"] ?? []),
+        ];
+        const genericTemplateFiles = consolidatedFiles.length
+          ? { "generic-consolidated-dcf": [...new Set(consolidatedFiles)] }
+          : {};
+        const subsectorDefaultTemplates = Object.fromEntries(
+          Object.entries(saved.subsectorDefaultTemplates ?? {}).map(([subsector, template]) => [
+            subsector,
+            {
+              ...template,
+              baseTemplate: CORE_BASE_TEMPLATE,
+              prompt: migrateGenericTemplateName(template.prompt),
+              content: template.content
+                ? migrateGenericTemplateName(template.content)
+                : template.content,
+            },
+          ]),
+        );
+
         setState({
           ...INITIAL_STATE,
           ...saved,
           prompts,
           resources,
           deletedRegistryPromptIds: [...deletedRegistry],
-          subsectorDefaultTemplates: saved.subsectorDefaultTemplates ?? {},
+          subsectorDefaultTemplates,
           subsectorConfigs: saved.subsectorConfigs ?? {},
-          genericTemplateFiles: saved.genericTemplateFiles ?? {},
+          genericTemplateFiles,
           removedGenericTemplates: saved.removedGenericTemplates ?? [],
 
 

@@ -326,8 +326,7 @@ function CompanyInformation() {
                                   !(state.removedSubsectors[a.sector] ?? []).includes(option),
                               ),
                               ...(state.customSubsectors[a.sector] ?? []),
-                              "Generic - Unit Economics",
-                              "Generic - Percentage Based",
+                              "Generic - Consolidated DCF",
                             ].filter((option) => {
                               if (row.key === "subsector") {
                                 return option !== a.subsector2 && option !== a.subsector3;

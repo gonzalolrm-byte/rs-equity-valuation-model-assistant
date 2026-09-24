@@ -45,7 +45,7 @@ export const Route = createFileRoute("/developer/sector-specifics")({
 });
 
 const CORE_BASE_TEMPLATE = "Generic - Consolidated DCF";
-const GENERIC_TEMPLATES = ["Generic - Unit Economics", "Generic - Percentage Based"];
+const GENERIC_TEMPLATES = [CORE_BASE_TEMPLATE];
 
 /** Capacity choices a developer can offer; the two special entries are implicit. */
 const CAPACITY_CHOICES = CAPACITY_MEASUREMENTS.filter(
