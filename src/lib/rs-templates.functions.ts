@@ -48,7 +48,7 @@ export const getTemplateDownloadUrl = createServerFn({ method: "POST" })
     const sb = await admin();
     const { data: signed, error } = await sb.storage
       .from(BUCKET)
-      .createSignedUrl(data.path, 60 * 10, { download: data.path.split("/").pop() });
+      .createSignedUrl(data.path, 60 * 10, { download: data.path.split("/").pop() ?? true });
     if (error || !signed) throw new Error(error?.message ?? "Could not create download link");
     return { url: signed.signedUrl };
   });
@@ -193,7 +193,10 @@ ${map}`;
       return r.success ? [r.data] : [];
     });
 
-    const result = await applyEdits(bytes, edits);
+    const result = await applyEdits(
+      bytes,
+      edits.map((e) => ({ sheet: e.sheet, cell: e.cell, kind: e.kind, value: e.value, ...(e.reason ? { reason: e.reason } : {}) })),
+    );
     const fileName = `Default_Template_${slugify(data.subsector)}.xlsx`;
     const path = `subsectors/${slugify(data.subsector)}/${fileName}`;
     const { error: upErr } = await sb.storage.from(BUCKET).upload(path, result.bytes, {

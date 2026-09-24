@@ -54,10 +54,10 @@ export async function openWorkbook(bytes: Uint8Array) {
   }
   const sstXml = (await zip.file("xl/sharedStrings.xml")?.async("string")) ?? "";
   const shared = [...sstXml.matchAll(/<si>([\s\S]*?)<\/si>/g)].map((m) =>
-    [...m[1].matchAll(/<t[^>]*>([\s\S]*?)<\/t>/g)].map((t) => decode(t[1])).join(""),
+    [...(m[1] ?? "").matchAll(/<t[^>]*>([\s\S]*?)<\/t>/g)].map((t) => decode(t[1] ?? "")).join(""),
   );
   const names = [...wb.matchAll(/<definedName\b[^>]*name="([^"]+)"[^>]*>([\s\S]*?)<\/definedName>/g)].map(
-    (m) => `${decode(m[1])} = ${decode(m[2])}`,
+    (m) => `${decode(m[1] ?? "")} = ${decode(m[2] ?? "")}`,
   );
   return { zip, sheets, shared, names };
 }
@@ -73,7 +73,7 @@ export async function describeWorkbook(bytes: Uint8Array, maxChars = 120_000) {
     const out: string[] = [];
     let used = 0;
     for (const m of xml.matchAll(/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)) {
-      const attrs = m[1];
+      const attrs = m[1] ?? "";
       const inner = m[2] ?? "";
       const ref = attrs.match(/\br="([A-Z]+\d+)"/)?.[1];
       if (!ref) continue;
@@ -135,7 +135,7 @@ function applyToSheet(xml: string, edit: CellEdit): { xml: string; skipped?: str
     }
     const inner = row[1] ?? "";
     const cells = [...inner.matchAll(/<c\b[^>]*\br="([A-Z]+)\d+"[^>]*?(?:\/>|>[\s\S]*?<\/c>)/g)];
-    const after = cells.find((c) => colIndex(c[1]) > colIndex(ref));
+    const after = cells.find((c) => colIndex(c[1] ?? "") > colIndex(ref));
     const newInner = after ? inner.replace(after[0], cellXml + after[0]) : inner + cellXml;
     return { xml: xml.replace(whole, whole.replace(inner, newInner)) };
   }
