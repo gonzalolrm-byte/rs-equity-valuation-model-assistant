@@ -211,6 +211,28 @@ export const DEFAULT_SUBSECTOR_CONFIG: SubsectorConfigDefaults = {
 
 
 
+/**
+ * The final template the Developer made available for a sub-sector — the
+ * starting point for the Model User. Developer choice wins over uploads.
+ */
+export function resolveSubsectorTemplate(
+  state: Pick<AppState, "subsectorDefaultTemplates" | "subsectorTemplates">,
+  subsector: string,
+): { fileName: string; baseTemplate: string; source: "as_is" | "adapted" | "uploaded" | "fallback" } {
+  const developer = (state.subsectorDefaultTemplates ?? {})[subsector];
+  if (developer) {
+    return {
+      fileName: developer.fileName,
+      baseTemplate: developer.baseTemplate,
+      source: developer.mode === "as_is" ? "as_is" : "adapted",
+    };
+  }
+  const uploaded = (state.subsectorTemplates ?? {})[subsector]?.[0];
+  if (uploaded) return { fileName: uploaded, baseTemplate: uploaded, source: "uploaded" };
+  const fallback = "Generic (Consolidated DCF) - RS template.xlsx";
+  return { fileName: fallback, baseTemplate: fallback, source: "fallback" };
+}
+
 export type AppState = {
   workflow: "" | "new" | "update" | "developer" | "user" | "validator";
   /** Developer setting: "required" enforces field validation, "free" unlocks navigation for demos. */
