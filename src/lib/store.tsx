@@ -750,7 +750,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
                 outputMeasurement: input.outputMeasurement,
                 capacityMeasurements: input.capacityMeasurements,
                 extraPromptIds: input.extraPromptIds ?? [],
-                specificationSummary: input.specificationSummary,
+                ...(input.specificationSummary
+                  ? { specificationSummary: input.specificationSummary }
+                  : {}),
                 content,
               },
             },

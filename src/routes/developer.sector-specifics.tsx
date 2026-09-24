@@ -44,7 +44,9 @@ export const Route = createFileRoute("/developer/sector-specifics")({
   component: SectorSpecifics,
 });
 
-const GENERIC_TEMPLATES = ["Generic - Unit Economics", "Generic - Percentage Based"];
+const UNIT_ECONOMICS_TEMPLATE = "Generic - Unit Economics";
+const PERCENTAGE_BASED_TEMPLATE = "Generic - Percentage Based";
+const GENERIC_TEMPLATES = [UNIT_ECONOMICS_TEMPLATE, PERCENTAGE_BASED_TEMPLATE];
 
 function removeLegacyPromptInstruction(value: string) {
   return value.replace(/\s*Keep all formulas, tabs and links intact\./gi, "");
@@ -615,7 +617,9 @@ function DefaultTemplateGenerator({
     ...DEFAULT_SUBSECTOR_CONFIG,
     ...((state.subsectorConfigs ?? {})[subsector] ?? {}),
   };
-  const recommendedBase = config.modelBasis === "percentage" ? GENERIC_TEMPLATES[1] : GENERIC_TEMPLATES[0];
+  const recommendedBase = config.modelBasis === "percentage"
+    ? PERCENTAGE_BASED_TEMPLATE
+    : UNIT_ECONOMICS_TEMPLATE;
   const initialBase = existing?.baseTemplate && GENERIC_TEMPLATES.includes(existing.baseTemplate)
     ? existing.baseTemplate
     : recommendedBase;
