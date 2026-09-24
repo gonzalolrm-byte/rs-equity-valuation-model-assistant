@@ -9,7 +9,7 @@ import { StepProgress } from "@/components/StepProgress";
 import { PageHeading } from "@/components/form";
 import { runActions } from "@/lib/services/claudeService";
 import { buildModel } from "@/lib/services/excelService";
-import { useApp } from "@/lib/store";
+import { resolveSubsectorTemplate, useApp } from "@/lib/store";
 import { EditableText } from "@/lib/ui-content";
 import { WORKFLOW_A_STEPS } from "./new-model.company-information";
 

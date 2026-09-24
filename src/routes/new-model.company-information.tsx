@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, Info, Lightbulb, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, FileSpreadsheet, Info, Lightbulb, Trash2 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button, ButtonLink } from "@/components/Button";
@@ -25,7 +25,7 @@ import {
   SECTORS,
   SUBSECTORS,
 } from "@/lib/data";
-import { DEFAULT_SUBSECTOR_CONFIG, useApp, type SegmentMeasurement } from "@/lib/store";
+import { DEFAULT_SUBSECTOR_CONFIG, resolveSubsectorTemplate, useApp, type SegmentMeasurement } from "@/lib/store";
 import { EditableText } from "@/lib/ui-content";
 
 export const WORKFLOW_A_STEPS = [
