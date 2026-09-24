@@ -281,7 +281,9 @@ const STORAGE_KEY = "ifc-valuation-assistant-v1";
 const CORE_BASE_TEMPLATE = "Generic - Consolidated DCF";
 
 function migrateGenericTemplateName(value: string) {
-  return value.replace(/Generic\s*-\s*(?:Unit Economics|Percentage Based)/gi, CORE_BASE_TEMPLATE);
+  return value
+    .replace(/Generic\s*-\s*(?:Unit Economics|Percentage Based)/gi, CORE_BASE_TEMPLATE)
+    .replace(/\s*Keep all formulas, tabs and links intact\./gi, "");
 }
 
 /** Only warn once per session when browser storage is full. */
@@ -713,6 +715,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         setState((prev) => {
           const generatedAt = new Date().toISOString();
           const slug = subsector.replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_|_$/g, "");
+          const prompt = migrateGenericTemplateName(input.prompt);
           const rows = [
             ["Default template (prototype)", subsector],
             ["Base generic template", input.baseTemplate],
@@ -720,7 +723,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             ["Maximum Output / Units Sold measurement", input.outputMeasurement],
             ["Capacity measurements offered", input.capacityMeasurements.join("; ")],
             ["Additional prompts applied", (input.extraPromptIds ?? []).join("; ") || "none"],
-            ["Adaptation prompt", input.prompt],
+            ["Adaptation prompt", prompt],
           ];
           const content = rows
             .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
@@ -732,7 +735,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
               [subsector]: {
                 fileName: `Default_Template_${slug}.csv`,
                 baseTemplate: input.baseTemplate,
-                prompt: input.prompt,
+                prompt,
                 generatedAt,
                 outputMeasurement: input.outputMeasurement,
                 capacityMeasurements: input.capacityMeasurements,

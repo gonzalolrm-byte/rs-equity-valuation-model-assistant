@@ -47,6 +47,10 @@ export const Route = createFileRoute("/developer/sector-specifics")({
 const CORE_BASE_TEMPLATE = "Generic - Consolidated DCF";
 const GENERIC_TEMPLATES = [CORE_BASE_TEMPLATE];
 
+function removeLegacyPromptInstruction(value: string) {
+  return value.replace(/\s*Keep all formulas, tabs and links intact\./gi, "");
+}
+
 /** Capacity choices a developer can offer; the two special entries are implicit. */
 const CAPACITY_CHOICES = CAPACITY_MEASUREMENTS.filter(
   (unit) => unit !== SAME_AS_OUTPUT_MEASUREMENT && unit !== OTHER_MEASUREMENT,
@@ -609,7 +613,7 @@ function DefaultTemplateGenerator({
   const { state, generateSubsectorDefaultTemplate, clearSubsectorDefaultTemplate } = useApp();
   const existing = (state.subsectorDefaultTemplates ?? {})[subsector];
   const [base, setBase] = useState(CORE_BASE_TEMPLATE);
-  const [prompt, setPrompt] = useState(existing?.prompt ?? "");
+  const [prompt, setPrompt] = useState(removeLegacyPromptInstruction(existing?.prompt ?? ""));
   const [open, setOpen] = useState(false);
   const [extraIds, setExtraIds] = useState<string[]>(existing?.extraPromptIds ?? ["A-001"]);
   const optionalPrompts = [...state.prompts].sort((a, b) => a.id.localeCompare(b.id));
@@ -689,7 +693,7 @@ function DefaultTemplateGenerator({
 
       {existing && !open && (
         <p className="mt-3 rounded-lg border border-border bg-secondary/40 px-3 py-2.5 text-[12px] leading-relaxed text-navy-soft">
-          {existing.prompt}
+          {removeLegacyPromptInstruction(existing.prompt)}
         </p>
       )}
 
