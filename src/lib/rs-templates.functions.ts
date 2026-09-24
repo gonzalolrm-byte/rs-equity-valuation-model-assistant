@@ -94,7 +94,7 @@ async function callClaude(userContent: string) {
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify({
-      model: process.env["ANTHROPIC_MODEL"] ?? "claude-sonnet-4-5",
+      model: process.env["ANTHROPIC_MODEL"] ?? "claude-sonnet-5",
       max_tokens: 16000,
       stream: true,
       system: SYSTEM,
