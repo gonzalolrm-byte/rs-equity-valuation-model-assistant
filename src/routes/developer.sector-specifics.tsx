@@ -47,6 +47,8 @@ export const Route = createFileRoute("/developer/sector-specifics")({
 const CONSOLIDATED_DCF_FILE = "Generic (Consolidated DCF) - RS template.xlsx";
 const SOTP_FILE = "Generic (SOTP) - RS template.xlsx";
 const FALLBACK_GENERIC_TEMPLATES = [CONSOLIDATED_DCF_FILE, SOTP_FILE];
+const DEFAULT_SUBSECTOR_PROMPT =
+  "Adapt the selected base Generic template for this subsector using the Developer Specifications Summary and selected prompt(s).";
 
 function removeLegacyPromptInstruction(value: string) {
   return value.replace(/\s*Keep all formulas, tabs and links intact\./gi, "");
@@ -623,7 +625,7 @@ function DefaultTemplateGenerator({
     : genericTemplates[0] ?? CONSOLIDATED_DCF_FILE;
   const [base, setBase] = useState(initialBase);
   const [mode, setMode] = useState<"as_is" | "adapt">(existing?.mode ?? "adapt");
-  const [prompt, setPrompt] = useState(removeLegacyPromptInstruction(existing?.prompt ?? ""));
+  const [prompt, setPrompt] = useState(DEFAULT_SUBSECTOR_PROMPT);
   const [open, setOpen] = useState(false);
   const [extraIds, setExtraIds] = useState<string[]>(existing?.extraPromptIds ?? ["A-001"]);
   const optionalPrompts = [...state.prompts].sort((a, b) => a.id.localeCompare(b.id));
@@ -649,7 +651,7 @@ function DefaultTemplateGenerator({
     `Capacity measurements: ${capacityMeasurements.join(", ") || "none"}`,
     `Selected prompts: ${selectedPromptIds.join(", ") || "none"}`,
   ].join("; ");
-  const defaultPrompt = `${a001Selected ? "Following the instructions in prompt A-001 (see the Prompts section), " : ""}based on the developer specifications below, identify and select the appropriate generic template. Use "${base}" to regenerate a new default template for ${subsector}. Available generic templates: ${genericTemplates.map((name) => `"${name}"`).join(" and ")}. Developer specification summary: ${specificationSummary}.`;
+  const defaultPrompt = DEFAULT_SUBSECTOR_PROMPT;
 
   const generate = () => {
     if (mode === "as_is") {
