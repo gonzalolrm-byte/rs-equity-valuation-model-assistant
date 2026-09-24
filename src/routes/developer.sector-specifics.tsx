@@ -611,7 +611,7 @@ function DefaultTemplateGenerator({
   const [prompt, setPrompt] = useState(existing?.prompt ?? "");
   const [open, setOpen] = useState(false);
 
-  const defaultPrompt = `Adapt the ${base} template for ${subsector}. Set the Maximum Output / Units Sold measurement to "${outputMeasurement}" and offer these capacity measurements: ${capacityMeasurements.join(", ") || "none"}. Keep all formulas, tabs and links intact.`;
+  const defaultPrompt = `Following the instructions in prompt A-001 (see the Prompts section), adapt the ${base} template for ${subsector}. Set the Maximum Output / Units Sold measurement to "${outputMeasurement}" and offer these capacity measurements: ${capacityMeasurements.join(", ") || "none"}. Keep all formulas, tabs and links intact.`;
 
   const generate = () => {
     generateSubsectorDefaultTemplate(subsector, {
