@@ -163,6 +163,8 @@ export type SubsectorDefaultTemplate = {
   generatedAt: string;
   outputMeasurement: string;
   capacityMeasurements: string[];
+  /** "as_is" = master generic template used unchanged; "adapt" = adapted to the sub-sector. */
+  mode?: "as_is" | "adapt";
   /** Automatic summary of the developer settings used for this generation. */
   specificationSummary?: string;
   /** Prompts (by ID) attached to this template. A-001 is pre-selected but optional. */
@@ -720,8 +722,13 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         setState((prev) => {
           const generatedAt = new Date().toISOString();
           const slug = subsector.replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_|_$/g, "");
-          const prompt = migrateGenericTemplateName(input.prompt);
-          const rows = [
+          const asIs = input.mode === "as_is";
+          const prompt = asIs ? "" : migrateGenericTemplateName(input.prompt);
+          const rows = asIs ? [
+            ["Sub-sector template", subsector],
+            ["Generic template used as-is (unchanged)", input.baseTemplate],
+            ["Made available at", generatedAt],
+          ] : [
             ["Default template (prototype)", subsector],
             ["Base generic template", input.baseTemplate],
             ["Generated at", generatedAt],
@@ -739,7 +746,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
             subsectorDefaultTemplates: {
               ...(prev.subsectorDefaultTemplates ?? {}),
               [subsector]: {
-                fileName: `Default_Template_${slug}.csv`,
+                fileName: asIs ? input.baseTemplate : `Default_Template_${slug}.csv`,
+                mode: asIs ? "as_is" : "adapt",
                 baseTemplate: input.baseTemplate,
                 prompt,
                 generatedAt,
