@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { EditableText } from "@/lib/ui-content";
 import {
+  ChevronDown,
   Download,
   ExternalLink,
   FileText,
@@ -85,6 +86,7 @@ function SectorSpecifics() {
   const { state, addCustomSubsector } = useApp();
   const [sector, setSector] = useState<string>(SECTORS[0]);
   const [newSubsector, setNewSubsector] = useState("");
+  const [expandedSubsector, setExpandedSubsector] = useState<string | null>(null);
   const removed = state.removedSubsectors[sector] ?? [];
   const custom = state.customSubsectors[sector] ?? [];
   const subsectors = [
@@ -115,7 +117,10 @@ function SectorSpecifics() {
           <select
             id="sector-select"
             value={sector}
-            onChange={(event) => setSector(event.target.value)}
+            onChange={(event) => {
+              setSector(event.target.value);
+              setExpandedSubsector(null);
+            }}
             className="mt-1.5 h-10 w-full rounded-lg border border-input bg-card px-3 text-[12px] font-normal text-navy focus:border-primary focus:outline-none"
           >
             {SECTORS.map((item) => (
@@ -159,6 +164,8 @@ function SectorSpecifics() {
             sector={sector}
             subsector={subsector}
             deletable={subsector !== "Generic - Consolidated DCF"}
+            expanded={expandedSubsector === subsector}
+            onToggle={() => setExpandedSubsector((current) => current === subsector ? null : subsector)}
           />
         ))}
       </div>
@@ -179,10 +186,14 @@ function SubsectorCard({
   sector,
   subsector,
   deletable = false,
+  expanded,
+  onToggle,
 }: {
   sector: string;
   subsector: string;
   deletable?: boolean;
+  expanded: boolean;
+  onToggle: () => void;
 }) {
   const {
     state,
@@ -191,6 +202,7 @@ function SubsectorCard({
     resetSubsectorConfig,
     deleteSubsector,
   } = useApp();
+  const generatedTemplate = (state.subsectorDefaultTemplates ?? {})[subsector];
   const shipped = defaultSubsectorMeasurements(subsector, sector);
   const override = state.sectorSpecifics[subsector];
   const current = {
@@ -200,27 +212,56 @@ function SubsectorCard({
       override?.capacityOptions?.length ? override.capacityOptions : shipped.capacityOptions,
   };
   const edited = Boolean(override);
+  const baseTemplate = generatedTemplate?.baseTemplate ?? CONSOLIDATED_DCF_FILE;
+  const generationStatus = generatedTemplate
+    ? generatedTemplate.mode === "as_is"
+      ? "Available as-is"
+      : "Generated"
+    : "Not generated";
 
   const setOutput = (output: string) =>
     setSubsectorMeasurements(subsector, { ...current, output });
 
   return (
     <section className="overflow-hidden rounded-lg border border-panel-border bg-card shadow-card">
-      <div className="border-b border-panel-border bg-panel/30 px-4 py-3">
-      <div className="flex flex-wrap items-start gap-3">
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 className="font-heading text-[15px] font-bold">{subsector}</h2>
-            {edited && (
-              <span className="rounded-full bg-panel px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-primary">
-                Edited
+      <div className={expanded ? "border-b border-panel-border bg-panel/30" : "bg-panel/20"}>
+        <div className="flex min-w-0 items-stretch">
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-expanded={expanded}
+            aria-controls={`subsector-details-${subsector.replace(/[^a-zA-Z0-9_-]/g, "-")}`}
+            className="grid min-w-0 flex-1 items-center gap-x-5 gap-y-2 px-4 py-3 text-left transition-colors hover:bg-secondary/55 md:grid-cols-[minmax(180px,1fr)_minmax(260px,1.5fr)_auto]"
+          >
+            <span className="flex min-w-0 items-center gap-2">
+              <span className="truncate font-heading text-[15px] font-bold text-navy">{subsector}</span>
+              {edited && (
+                <span className="shrink-0 rounded-full bg-panel px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-primary">
+                  Edited
+                </span>
+              )}
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[10px] font-semibold uppercase text-muted-foreground">Base Generic template</span>
+              <span className="block truncate text-[12px] font-medium text-navy-soft">{baseTemplate}</span>
+            </span>
+            <span className="flex items-center gap-3 md:justify-end">
+              <span className={[
+                "rounded-full px-2.5 py-1 text-[11px] font-semibold",
+                generatedTemplate ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground",
+              ].join(" ")}>
+                {generationStatus}
               </span>
-            )}
-          </div>
-          <p className="mt-0.5 text-[11px] text-muted-foreground">
-            Shipped default: {shipped.output}
-          </p>
+              <ChevronDown className={`size-4 shrink-0 text-navy-soft transition-transform ${expanded ? "rotate-180" : ""}`} />
+            </span>
+          </button>
         </div>
+      </div>
+
+      {expanded && (
+      <div id={`subsector-details-${subsector.replace(/[^a-zA-Z0-9_-]/g, "-")}`}>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-panel-border bg-card px-4 py-2.5">
+        <p className="text-[11px] text-muted-foreground">Shipped default: {shipped.output}</p>
         <div className="flex items-center gap-2">
           {edited && (
             <button
@@ -248,7 +289,6 @@ function SubsectorCard({
             </button>
           )}
         </div>
-      </div>
       </div>
 
       <div className="px-3 pb-3">
@@ -278,6 +318,8 @@ function SubsectorCard({
 
       <TemplateUpload subsector={subsector} />
       </div>
+      </div>
+      )}
     </section>
   );
 }
