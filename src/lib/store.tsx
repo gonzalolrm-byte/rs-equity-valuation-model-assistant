@@ -349,20 +349,22 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         // were removed from the registry (while keeping developer-created ones).
         const savedPrompts = saved.prompts ?? [];
         const deletedRegistry = new Set(saved.deletedRegistryPromptIds ?? []);
-        const registryIds = new Set(INITIAL_PROMPTS.map((prompt) => prompt.id));
-        const prompts: PromptAction[] = [
-          // Registry prompts the developer deleted stay deleted across reloads.
-          ...INITIAL_PROMPTS.filter((prompt) => !deletedRegistry.has(prompt.title)).map((prompt) => {
-            const savedPrompt = savedPrompts.find((item) => item.id === prompt.id);
-            // Only keep developer edits when the shipped action at this ID is
-            // still the same action; otherwise the renumbered registry wins.
-            return savedPrompt && savedPrompt.title === prompt.title ? savedPrompt : prompt;
-          }),
-          // Only keep non-registry actions that were actually created by a
-          // developer in the console; shipped actions removed from the
-          // registry are dropped from saved state.
-          ...savedPrompts.filter((item) => !registryIds.has(item.id) && item.custom === true),
-        ];
+        // The developer's saved list is the source of truth (edits, new actions,
+        // deletions and renumbering). Only adopt newly shipped registry actions
+        // that are not already present and were not deleted.
+        const savedTitles = new Set(savedPrompts.map((item) => item.title));
+        const savedIds = new Set(savedPrompts.map((item) => item.id));
+        const prompts: PromptAction[] = saved.prompts
+          ? [
+              ...savedPrompts,
+              ...INITIAL_PROMPTS.filter(
+                (prompt) =>
+                  !deletedRegistry.has(prompt.title) &&
+                  !savedTitles.has(prompt.title) &&
+                  !savedIds.has(prompt.id),
+              ),
+            ]
+          : INITIAL_PROMPTS;
         // Reconcile the developer resource registry: keep uploaded files for
         // resources that still exist, adopt newly shipped resources, drop
         // resources removed from the registry, and keep developer-created ones.
