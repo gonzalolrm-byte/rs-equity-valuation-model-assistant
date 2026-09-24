@@ -9,3 +9,5 @@
 - [x] Remove the Sector Specifics / Core Information / Prompts / Governance secondary nav bar from the Developer Console.
 - [x] Use the two uploaded Core Information files as each sub-sector's selectable generic templates.
 
+
+- [x] Regenerate produces a real Claude-adapted .xlsx from the selected master Generic RS template (stored in Cloud)
