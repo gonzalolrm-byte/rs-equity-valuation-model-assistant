@@ -68,17 +68,15 @@ export async function openWorkbook(bytes: Uint8Array) {
 /** Sheets never included in the workbook map sent to Claude. */
 const EXCLUDED_SHEETS = ["AI Prompt"];
 
-/** Compact text map of labels and formulas so Claude can locate what to change. */
-export async function describeWorkbook(bytes: Uint8Array, maxChars = 120_000) {
+/** Complete text map of every non-empty cell so Claude can locate what to change. No truncation. */
+export async function describeWorkbook(bytes: Uint8Array) {
   const { zip, sheets, shared, names } = await openWorkbook(bytes);
   const visible = sheets.filter((s) => !EXCLUDED_SHEETS.includes(s.name));
   const lines: string[] = [`Sheets: ${visible.map((s) => s.name).join(" | ")}`];
-  if (names.length) lines.push(`Named ranges: ${names.slice(0, 200).join("; ")}`);
-  const perSheet = Math.max(2000, Math.floor(maxChars / Math.max(1, visible.length)));
+  if (names.length) lines.push(`Named ranges: ${names.join("; ")}`);
   for (const sheet of visible) {
     const xml = (await zip.file(sheet.path)!.async("string")) ?? "";
     const out: string[] = [];
-    let used = 0;
     for (const m of xml.matchAll(/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)) {
       const attrs = m[1] ?? "";
       const inner = m[2] ?? "";
@@ -94,13 +92,7 @@ export async function describeWorkbook(bytes: Uint8Array, maxChars = 120_000) {
       else if (t === "str" && v !== undefined) text = JSON.stringify(decode(v));
       else if (v !== undefined) text = v;
       if (text === undefined || text === '""') continue;
-      const line = `${ref}: ${text.length > 160 ? `${text.slice(0, 160)}…` : text}`;
-      used += line.length + 1;
-      if (used > perSheet) {
-        out.push("… (truncated)");
-        break;
-      }
-      out.push(line);
+      out.push(`${ref}: ${text}`);
     }
     lines.push(`\n### Sheet "${sheet.name}"\n${out.join("\n")}`);
   }
