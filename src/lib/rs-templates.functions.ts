@@ -183,30 +183,30 @@ ${data.instructions}
 SELECTED PROMPTS
 ${promptBlock}`;
 
-    const { text, stop } = await callClaude(bytes, userText);
+    const { describeWorkbook, applyOperations } = await import("./xlsx-surgery.server");
+    const workbookMap = await describeWorkbook(bytes);
+    const fullText = `${userText}\n\nWORKBOOK MAP\n${workbookMap}`;
+
+    const { text, stop } = await callClaude(fullText);
     if (stop === "max_tokens") {
-      throw new Error("Claude's reply was cut off because the adapted file is too large to return in one response.");
+      throw new Error("Claude's reply was cut off. Please regenerate.");
     }
     const json = text.match(/\{[\s\S]*\}/)?.[0];
-    let parsed: { file?: string; summary?: string } = {};
+    let parsed: { summary?: string; operations?: unknown[] } = {};
     try {
       parsed = json ? JSON.parse(json) : {};
     } catch {
       throw new Error("Claude's reply could not be read. Please regenerate.");
     }
-    if (!parsed.file || typeof parsed.file !== "string") {
-      throw new Error("Claude did not return an adapted file. Please regenerate.");
+    const operations = Array.isArray(parsed.operations) ? parsed.operations : [];
+    if (!operations.length) {
+      throw new Error("Claude returned no changes to apply. Please regenerate.");
     }
-    const clean = parsed.file.replace(/\s+/g, "");
-    let outBytes: Uint8Array;
-    try {
-      outBytes = Uint8Array.from(atob(clean), (c) => c.charCodeAt(0));
-    } catch {
-      throw new Error("Claude returned a file that could not be decoded. Please regenerate.");
-    }
-    if (outBytes.length < 100 || outBytes[0] !== 0x50 || outBytes[1] !== 0x4b) {
-      throw new Error("Claude's reply was not a valid Excel file. Please regenerate.");
-    }
+
+    const { bytes: outBytes, applied, skipped } = await applyOperations(
+      bytes,
+      operations as import("./xlsx-surgery.server").WorkbookOp[],
+    );
 
     const fileName = `Default_Template_${slugify(data.subsector)}.xlsx`;
     const path = `subsectors/${slugify(data.subsector)}/${fileName}`;
