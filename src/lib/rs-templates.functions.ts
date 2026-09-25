@@ -221,7 +221,7 @@ ${promptBlock}`;
       path,
       masterUsed: master,
       summary: parsed.summary ?? "",
-      applied: [] as string[],
-      skipped: [] as string[],
+      applied,
+      skipped,
     };
   });
