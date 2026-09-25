@@ -215,9 +215,11 @@ export class WorkbookEditor {
       const ref = `${numToCol(c + dc)}${r + dr}`;
       let cx = m[0].replace(/\br="[A-Z]+\d+"/, `r="${ref}"`);
       if (/<f\b[^>]*t="shared"[^>]*\/>/.test(cx) || /<f\b[^>]*t="shared"/.test(cx)) {
-        // Shared formulas can't be copied as-is; keep the cached value only.
-        cx = cx.replace(/<f\b[^>]*\/>|<f\b[^>]*>[\s\S]*?<\/f>/, "");
-        skipped.push(`${m[1]}${m[2]} (shared formula copied as value)`);
+        // Shared formulas cannot be copied as-is.
+        // Emit a plain empty cell preserving only the style attribute.
+        const style = cx.match(/\bs="(\d+)"/)?.[1];
+        cx = `<c r="${ref}"${style ? ` s="${style}"` : ""}/>`;
+        skipped.push(`${m[1]}${m[2]} (shared formula replaced with empty styled cell)`);
       }
       cx = cx.replace(/<f\b([^>]*)>([\s\S]*?)<\/f>/, (_x, at: string, body: string) => {
         const f = mapFormulaRefs(decode(body), (_sheet, rf) =>
