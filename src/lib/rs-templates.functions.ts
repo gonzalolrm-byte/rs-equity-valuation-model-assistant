@@ -90,23 +90,7 @@ async function callClaude(userText: string) {
     max_tokens: 64000,
     stream: true,
     system: SYSTEM,
-    messages: [
-      {
-        role: "user",
-        content: [
-          {
-            type: "document",
-            source: {
-              type: "base64",
-              media_type:
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-              data: bytesToBase64(fileBytes),
-            },
-          },
-          { type: "text", text: userText },
-        ],
-      },
-    ],
+    messages: [{ role: "user", content: userText }],
   };
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
