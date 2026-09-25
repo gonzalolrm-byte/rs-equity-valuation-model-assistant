@@ -12,4 +12,4 @@
 
 - [x] Regenerate produces a real Claude-adapted .xlsx from the selected master Generic RS template (stored in Cloud)
 
-- [ ] Export full workbook map to Word (.docx) deliverable
+- [x] Export full workbook map to Word (.docx) deliverable
